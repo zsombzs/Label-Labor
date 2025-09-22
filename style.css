@@ -124,12 +124,12 @@ body {
 .page {
   width: 210mm;
   height: 280mm;
-  padding: 5mm;
+  padding: 3mm;
   box-sizing: border-box;
   border: black 1px solid;
   display: grid;
-  grid-template-columns: repeat(3, 66mm);
-  grid-template-rows: repeat(8, 32mm);
+  grid-template-columns: repeat(3, 67mm);
+  grid-template-rows: repeat(8, 33mm);
   gap: 1mm;
   margin: 0;
   background-color: white;
@@ -148,8 +148,8 @@ body {
 }
 
 .label {
-  width: 66mm;
-  height: 32mm;
+  width: 67mm;
+  height: 33mm;
   border: 1px solid #000000;
   padding: 1mm;
   font-family: Calibri, sans-serif;
@@ -217,10 +217,10 @@ body {
 .price-box1 {
   border: 0.5px solid black;
   width: 100px;
-  height: 35px;
+  height: 36px;
   padding: 0 5px;
   font-weight: bold;
-  bottom: 4mm;
+  bottom: 5mm;
   right: 4mm;
 }
 
@@ -229,7 +229,7 @@ body {
   height: 10px;
   padding: 0 5px;
   font-weight: normal;
-  bottom: 15mm;
+  bottom: 15.5mm;
   right: 2.5mm;
 }
 
@@ -322,7 +322,7 @@ body {
   max-width: 120px;
   height: auto;
   position: absolute;
-  bottom: 1mm;
+  bottom: 0mm;
   left: 1mm;
   font-family: Calibri, sans-serif;
   font-weight: bold;

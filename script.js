@@ -64,25 +64,37 @@ function renderLabels(data) {
       let price = "";
       let pricePerUnit = "";
       let unitLabel = "";
-      if (ar !== "") {
-        // Ha van ár
-        price = formatPrice(ar);
-        if (ftPerL !== "") {
-          pricePerUnit = formatPrice(ftPerL);
-          unitLabel = "Ft/l";
-        } else if (ftPerKg !== "") {
-          pricePerUnit = formatPrice(ftPerKg);
-          unitLabel = "Ft/kg";
+      if (/db$/i.test(kiszereles)) {
+        // DB kiszerelés
+        unitLabel = "Ft/db";
+        if (ar !== "") {
+          pricePerUnit = formatPrice(ar);
+          price = formatPrice(ar);
+        } else {
+          pricePerUnit = "";
+          price = ""; // price-box1 marad üres, price-box2-ben csak Ft/db jelenik meg
         }
       } else {
-        // Ha nincs ár
-        price = "";
-        if (kiszereles.match(/ml|l/i)) {
-          unitLabel = "Ft/l";
-        } else if (kiszereles.match(/g|kg/i)) {
-          unitLabel = "Ft/kg";
+        // Egyéb esetek
+        if (ar !== "") {
+          price = formatPrice(ar);
+          if (ftPerL !== "") {
+            pricePerUnit = formatPrice(ftPerL);
+            unitLabel = "Ft/l";
+          } else if (ftPerKg !== "") {
+            pricePerUnit = formatPrice(ftPerKg);
+            unitLabel = "Ft/kg";
+          }
+        } else {
+          price = "";
+          if (kiszereles.match(/ml|l/i)) {
+            unitLabel = "Ft/l";
+          } else if (kiszereles.match(/g|kg/i)) {
+            unitLabel = "Ft/kg";
+          }
         }
       }
+  
 
       div.innerHTML = `
         <img src="${logoPath}" class="logo">
@@ -132,27 +144,76 @@ function renderLabels(data) {
 
 
 
-function generatePDF() {
-    document.querySelectorAll("svg.barcode").forEach(svg => {
-      const svgData = new XMLSerializer().serializeToString(svg);
-      const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-      const url = URL.createObjectURL(svgBlob);
+  function generatePDF() {
+    const downloadBtn = document.getElementById("downloadBtn");
+  
+    // Gomb tiltása
+    downloadBtn.disabled = true;
+  
+    // Progress bar létrehozása, ha még nincs
+    let progressContainer = document.getElementById("progressContainer");
+    if (!progressContainer) {
+      progressContainer = document.createElement("div");
+      progressContainer.id = "progressContainer";
+  
+      const progressBar = document.createElement("div");
+      progressBar.id = "progressBar";
+  
+      progressContainer.appendChild(progressBar);
+      downloadBtn.parentNode.insertBefore(progressContainer, downloadBtn.nextSibling);
+    }
+  
+    const progressBar = document.getElementById("progressBar");
+    progressBar.style.width = "0%";
+  
+    let startTime = Date.now();
+    const duration = 9000;
+    const interval = 50; // frissítés: 50ms
+  
+    const timer = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const percent = Math.min((elapsed / duration) * 100, 100);
+      progressBar.style.width = percent + "%";
+  
+      if (elapsed >= duration) {
+        clearInterval(timer);
+  
+        // PDF generálás
+        createPDF();
+  
+        // Gomb újra engedélyezése
+        downloadBtn.disabled = false;
+  
+        // Progress bar eltüntetése
+        progressContainer.remove();
+      }
+    }, interval);
+  }
+  
+// Az eredeti PDF generálás logikája, kiszervezve külön függvénybe
+function createPDF() {
+  document.querySelectorAll("svg.barcode").forEach(svg => {
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
 
-      const img = document.createElement("img");
-      img.src = url;
-      img.className = svg.className;
-      svg.parentNode.replaceChild(img, svg);
-    });
-    let element = document.getElementById("labels");
-    let opt = {
-      margin: 0,
-      filename: "cimkek.pdf",
-      image: { type: 'jpeg', quality: 1 },
-      html2canvas: { scale: 4, useCORS: true, backgroundColor: '#ffffff' },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().set(opt).from(element).save();
+    const img = document.createElement("img");
+    img.src = url;
+    img.className = svg.className;
+    svg.parentNode.replaceChild(img, svg);
+  });
+
+  let element = document.getElementById("labels");
+  let opt = {
+    margin: 0,
+    filename: "cimkek.pdf",
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 4, useCORS: true, backgroundColor: '#ffffff' },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(element).save();
 }
+
 
 function downloadTemplate() {
     const link = document.createElement("a");

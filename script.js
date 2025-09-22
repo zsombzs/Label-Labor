@@ -167,7 +167,7 @@ function renderLabels(data) {
     progressBar.style.width = "0%";
   
     let startTime = Date.now();
-    const duration = 9000;
+    const duration = 12000;
     const interval = 50; // frissítés: 50ms
   
     const timer = setInterval(() => {
@@ -207,8 +207,8 @@ function createPDF() {
   let opt = {
     margin: 0,
     filename: "cimkek.pdf",
-    image: { type: 'jpeg', quality: 1 },
-    html2canvas: { scale: 4, useCORS: true, backgroundColor: '#ffffff' },
+    image: { type: 'jpeg', quality: 0.8 },
+    html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
   html2pdf().set(opt).from(element).save();

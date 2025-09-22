@@ -59,7 +59,7 @@ function renderLabels(data) {
       const ar = row["Ár"] || "";
       const ftPerL = row["Ft/l"] || "";
       const ftPerKg = row["Ft/kg"] || "";
-      
+
       // Árak formázása és egységár címke meghatározása
       let price = "";
       let pricePerUnit = "";
@@ -148,7 +148,7 @@ function generatePDF() {
       margin: 0,
       filename: "cimkek.pdf",
       image: { type: 'jpeg', quality: 1 },
-      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+      html2canvas: { scale: 4, useCORS: true, backgroundColor: '#ffffff' },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
     html2pdf().set(opt).from(element).save();

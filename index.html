@@ -10,11 +10,14 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1 class="focim">European Aerosols</h1>
-  <div class="alcim-container">
-    <h2 class="alcim">Címke generátor</h2>
-    <img id="infoIcon" src="info.png" alt="Info ikon">
+  <div class="cim-container">
+    <h1 class="focim">European Aerosols</h1>
+    <div class="right-side">
+      <h2 class="alcim">Címke generátor</h2>
+      <img id="infoIcon" src="info.png" alt="Info ikon">
+    </div>
   </div>
+  
 
   <div id="infoModal" class="modal">
     <div class="modal-content">
@@ -35,7 +38,16 @@
       <button id="closeBtnBottom" class="btn">Bezárás</button>
     </div>
   </div>
+  <div class="controls">
+    <button class="btn" id="sablonBtn">1. Sablon Excel letöltése</button>
+    <label for="excelFile" class="btn">2. Excel fájl feltöltése (.xlsm)</label>
+    <input type="file" id="excelFile" accept=".xlsm">
+    <button class="btn" id="downloadBtn" onclick="generatePDF()">3. PDF letöltése</button>
+  </div>
   <div class="label-type">
+    <div id="progressContainer">
+      <div id="progressBar"></div>
+    </div>
     <label class="circle-radio">
       <input type="radio" name="labelType" value="A" checked>
       <span></span>
@@ -46,12 +58,6 @@
       <span></span>
       HG címke
     </label>
-  </div>
-  <div class="controls">
-    <button class="btn" id="sablonBtn">Sablon Excel letöltése</button>
-    <label for="excelFile" class="btn">Excel fájl feltöltése (.xlsm)</label>
-    <input type="file" id="excelFile" accept=".xlsm">
-    <button class="btn" id="downloadBtn">PDF letöltése</button>
   </div>
   <div id="labels"></div>
   <script type="module" src="script.js"></script>

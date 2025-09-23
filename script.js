@@ -143,52 +143,40 @@ function renderLabels(data) {
   });
 
 
+function generatePDF() {
+  const downloadBtn = document.getElementById("downloadBtn");
+  const progressContainer = document.getElementById("progressContainer");
+  const progressBar = document.getElementById("progressBar");
 
-  function generatePDF() {
-    const downloadBtn = document.getElementById("downloadBtn");
-  
-    // Gomb tiltása
-    downloadBtn.disabled = true;
-  
-    // Progress bar létrehozása, ha még nincs
-    let progressContainer = document.getElementById("progressContainer");
-    if (!progressContainer) {
-      progressContainer = document.createElement("div");
-      progressContainer.id = "progressContainer";
-  
-      const progressBar = document.createElement("div");
-      progressBar.id = "progressBar";
-  
-      progressContainer.appendChild(progressBar);
-      downloadBtn.parentNode.insertBefore(progressContainer, downloadBtn.nextSibling);
+  // Gomb tiltása
+  document.querySelectorAll("button").forEach(btn => btn.disabled = true);
+
+  // Progress bar megjelenítése
+  progressContainer.style.display = "block";
+  progressBar.style.width = "0%";
+
+  let startTime = Date.now();
+  const duration = 12000;
+  const interval = 50;
+
+  const timer = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    const percent = Math.min((elapsed / duration) * 100, 100);
+    progressBar.style.width = percent + "%";
+
+    if (percent === 100) {
+      clearInterval(timer);
+
+      // PDF generálás
+      createPDF();
+
+      // Gomb újra engedélyezése és progress bar eltüntetése
+      downloadBtn.disabled = false;
+      progressContainer.style.display = "none";
     }
-  
-    const progressBar = document.getElementById("progressBar");
-    progressBar.style.width = "0%";
-  
-    let startTime = Date.now();
-    const duration = 12000;
-    const interval = 50; // frissítés: 50ms
-  
-    const timer = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const percent = Math.min((elapsed / duration) * 100, 100);
-      progressBar.style.width = percent + "%";
-  
-      if (elapsed >= duration) {
-        clearInterval(timer);
-  
-        // PDF generálás
-        createPDF();
-  
-        // Gomb újra engedélyezése
-        downloadBtn.disabled = false;
-  
-        // Progress bar eltüntetése
-        progressContainer.remove();
-      }
-    }, interval);
-  }
+  }, interval);
+}
+
   
 // Az eredeti PDF generálás logikája, kiszervezve külön függvénybe
 function createPDF() {

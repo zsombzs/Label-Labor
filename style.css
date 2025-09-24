@@ -332,7 +332,6 @@ body {
   transform-origin: top center;
   padding: 3mm;
   box-sizing: border-box;
-  border: black 1px solid;
   display: grid;
   grid-template-columns: repeat(3, 67mm);
   grid-template-rows: repeat(8, 33mm);

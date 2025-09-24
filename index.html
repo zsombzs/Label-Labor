@@ -12,10 +12,6 @@
 <body>
   <div class="cim-container">
     <h1 class="focim">European Aerosols</h1>
-    <div class="right-side">
-      <h2 class="alcim">Címke generátor</h2>
-      <img id="infoIcon" src="info.png" alt="Info ikon">
-    </div>
   </div>
   
 
@@ -24,42 +20,58 @@
       <h1>Használati útmutató</h1>
       <h3>A címkekészítés folyamata:</h3>
       <p>
-        1. A címke típusának kiválasztása <span class="highlight">"EA címke"</span> vagy <span class="highlight">"HG címke"</span><br>
-        <br>
-        2. A  <span class="highlight">"Sablon Excel letöltése"</span> gombra kattintva le kell tölteni a excel_sablon.xlsm fájlt.
-        A fájl megnyitásánál engedélyezni kell a makrókat a "Makrók engedélyezése" gombbal.<br><br>
+        1. A  <span class="highlight">"Sablon Excel letöltése"</span> gombra kattintva le kell tölteni a excel_sablon.xlsm fájlt.
+        A fájl megnyitásával együtt engedélyezni kell a makrókat.<br><br>
         Az exceltáblázatban a <span style="color: red;">piros</span> háttérrel rendelkező fejlécekkel ellátott oszlopokba kell az adatokat bemásolni, a <span style="color: rgb(4, 0, 255);">kék</span> fejléces oszlopokat a program fogja kitölteni.
-        <br><br>Ezután egyszerre kijelöljük a <span class="highlight">C (Megnevezés), D (Kiszerelés), E (Ár) oszlopokat</span>, majd az <span class="highlight">"Adatok_Rendszerezese"</span> nevű makrót kell lefuttatni, ezzel kitölti a program a szükséges cellákat.
-        <br><br>Az adatok ellenőrzése után le kell menteni a fájlt. 
         Fontos, hogy a <span class="highlight">Kiszerelés</span> oszlopban <span class="highlight">szóközzel</span> el legyen választva a mennyiség és a mértékegység pl. "400 ml" vagy "1 kg".<br><br>
-        3. Az <span class="highlight">"Excel fájl feltöltése (.xlsm)"</span> gombra kattintva fel kell tölteni az előző lépésben megszerkesztett Excel fájlt.<br><br>
-        4. A címkék ellenőrzése utána a <span class="highlight">"PDF letöltése"</span> gomb megnyomásával a címkéket tartalmazó .pdf fájl letöltése.<br>
+        <br>Ezután egyszerre kijelöljük a <span class="highlight">C (Megnevezés), D (Kiszerelés), E (Ár) oszlopokat</span>, majd az <span class="highlight">"Adatok_Rendszerezese"</span> nevű makrót kell lefuttatni, ezzel kitölti a program a szükséges cellákat.
+        <br>Az adatok ellenőrzése után le kell menteni a fájlt.<br><br>
+        2. Az <span class="highlight">"Excel fájl feltöltése (.xlsm)"</span> gombra kattintva fel kell tölteni az előző lépésben megszerkesztett Excel fájlt.<br><br>
+        3. A címke típusának kiválasztása <span class="highlight">"EA címke"</span> vagy <span class="highlight">"HG címke"</span>.<br>
+        A címkék ellenőrzése utána a <span class="highlight">"PDF letöltése"</span> gomb megnyomásával a címkéket tartalmazó .pdf fájl letöltése.<br>
+        <br>
       </p>
       <button id="closeBtnBottom" class="btn">Bezárás</button>
     </div>
   </div>
-  <div class="controls">
-    <button class="btn" id="sablonBtn">1. Sablon Excel letöltése</button>
-    <label for="excelFile" class="btn">2. Excel fájl feltöltése (.xlsm)</label>
-    <input type="file" id="excelFile" accept=".xlsm">
-    <button class="btn" id="downloadBtn" onclick="generatePDF()">3. PDF letöltése</button>
-  </div>
-  <div class="label-type">
-    <div id="progressContainer">
-      <div id="progressBar"></div>
+  <div class="main-container">
+    <!-- Bal oldali oszlop -->
+    <div class="left-panel">
+      <div class="controls1">
+        <button class="btn" id="sablonBtn">1. Sablon Excel letöltése</button>
+      </div>
+      <div class="controls2">
+        <label for="excelFile" class="btn">2. Excel fájl feltöltése (.xlsm)</label>
+        <input type="file" id="excelFile" accept=".xlsm">
+      </div>
+      <div class="controls3">
+        <button class="btn" id="downloadBtn" onclick="generatePDF()">3. PDF letöltése</button>
+      </div>
+      <div class="label-type">
+        <label class="circle-radio">
+          <input type="radio" name="labelType" value="A" checked>
+          <span></span>EA címke
+        </label>
+        <label class="circle-radio">
+          <input type="radio" name="labelType" value="B">
+          <span></span>HG címke
+        </label>
+      </div>
+      <div class="downloading-bar">
+      <div id="progressContainer">
+        <div id="progressBar"></div>
+      </div>
     </div>
-    <label class="circle-radio">
-      <input type="radio" name="labelType" value="A" checked>
-      <span></span>
-      EA címke
-    </label>
-    <label class="circle-radio">
-      <input type="radio" name="labelType" value="B">
-      <span></span>
-      HG címke
-    </label>
+    </div>
+    <!-- Jobb oldali oszlop -->
+    <div class="right-panel">
+      <div class="alcim-container">
+        <h2 class="alcim">Címke generátor</h2>
+        <img id="infoIcon" src="info.png" alt="Info ikon">
+      </div>
+      <div id="labels"></div>
+    </div>
   </div>
-  <div id="labels"></div>
   <script type="module" src="script.js"></script>
   <script src="info.js"></script>
   <script>

@@ -72,10 +72,9 @@ function renderLabels(data) {
           price = formatPrice(ar);
         } else {
           pricePerUnit = "";
-          price = ""; // price-box1 marad üres, price-box2-ben csak Ft/db jelenik meg
+          price = "";
         }
       } else {
-        // Egyéb esetek
         if (ar !== "") {
           price = formatPrice(ar);
           if (ftPerL !== "") {
@@ -156,7 +155,7 @@ function generatePDF() {
   progressBar.style.width = "0%";
 
   let startTime = Date.now();
-  const duration = 12000;
+  const duration = 6000;
   const interval = 50;
 
   const timer = setInterval(() => {
@@ -170,15 +169,14 @@ function generatePDF() {
       // PDF generálás
       createPDF();
 
-      // Gomb újra engedélyezése és progress bar eltüntetése
-      downloadBtn.disabled = false;
-      progressContainer.style.display = "none";
+      progressBar.style.backgroundColor = "#f6bd60";
+      progressBar.style.width = "0%";
+
+      document.querySelectorAll("button").forEach(btn => btn.disabled = false);
     }
   }, interval);
 }
 
-  
-// Az eredeti PDF generálás logikája, kiszervezve külön függvénybe
 function createPDF() {
   document.querySelectorAll("svg.barcode").forEach(svg => {
     const svgData = new XMLSerializer().serializeToString(svg);

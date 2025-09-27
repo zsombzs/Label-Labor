@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import bcrypt
+import uvicorn
 
 # .env betöltése
 load_dotenv()
@@ -20,7 +21,7 @@ app = FastAPI()
 # CORS middleware, csak a frontend domain engedélyezve
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://cimkegenerator.netlify.app"],
+    allow_origins=[FRONTEND_URL],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -32,7 +33,6 @@ class LoginRequest(BaseModel):
 
 @app.post("/api/login")
 def login(req: LoginRequest):
-    # Lekérdezzük a céget a Supabase táblából
     response = supabase.table("companies")\
         .select("username, password_hash, redirect_url")\
         .eq("username", req.username).execute()
@@ -43,9 +43,13 @@ def login(req: LoginRequest):
     user = response.data[0]
     password_hash = user["password_hash"]
 
-    # Ellenőrizzük a jelszót bcrypt-tel
     if not bcrypt.checkpw(req.password.encode("utf-8"), password_hash.encode("utf-8")):
         raise HTTPException(status_code=401, detail="Hibás felhasználónév vagy jelszó")
 
-    # Sikeres belépés, visszaadjuk az átirányítási URL-t
     return {"redirect_url": user["redirect_url"]}
+
+
+if __name__ == "__main__":
+    # Lokális teszt port, Railway-en a $PORT változót használja
+    PORT = int(os.getenv("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=PORT)

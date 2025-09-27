@@ -4,7 +4,6 @@ body {
   margin:0;
   padding:0;
   overflow-x: hidden;
-  overflow-y: hidden;
   }
 
 .cim-container {
@@ -207,7 +206,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
-  padding-bottom: 2%;
+  padding-bottom: 12%;
 }
 
 .alcim-container {
@@ -327,15 +326,15 @@ body {
 }
 
 .page {
-  width: 210mm;
-  height: 280mm;
+  width: 192mm;
+  height: 286mm;
   transform-origin: top center;
-  padding: 3mm;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: repeat(3, 67mm);
-  grid-template-rows: repeat(8, 33mm);
+  grid-template-columns: repeat(3, 62.7mm);
+  grid-template-rows: repeat(7, 39.7mm);
   gap: 1mm;
+  padding: 1mm;
   margin: 0;
   background-color: white;
 }
@@ -353,8 +352,8 @@ body {
 }
 
 .label {
-  width: 67mm;
-  height: 33mm;
+  width: 62.7mm;
+  height: 39.7mm;
   border: 1px solid #000000;
   padding: 1mm;
   font-family: Calibri, sans-serif;
@@ -367,15 +366,18 @@ body {
   box-sizing: border-box;
 }
 .logo {
-  width: 60px;
+  width: 65px;
   position: absolute;
-  top: 8x;
+  top: 15px;
   right: 8px;
 }
 .line1 {
   font-weight: bold;
   font-family: Calibri, sans-serif;
-  font-size: 11pt;
+  font-size: 10.5pt;
+  position: absolute;
+  top: 15px;
+  left: 5px;
 }
 .line2 {
   display: flex;
@@ -383,30 +385,29 @@ body {
   align-items: center;
   font-family: Calibri, sans-serif;
   font-weight: bold;
-  font-size: 11pt;
+  font-size: 10.5pt;
   width: 100%;
   overflow: visible;
+  position: absolute;
+  top: 35px;
+  left: 5px;
 }
 
-.line2 .left {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.line3 {
+  font-family: Calibri, sans-serif;
+  font-size: 9.5pt;
+  position: absolute;
+  top: 75px;
+  left: 5px;
 }
 
 .kiszereles {
   font-family: Calibri, sans-serif;
   font-weight: bold;
-  font-size: 11pt;
+  font-size: 10.5pt;
   position: absolute;
-  top: 24px;
-  right: 75px;
-}
-
-.bottom {
-  display: flex;
-  justify-content: space-between;
-  margin-top:8px;
+  top: 55px;
+  right: 77px;
 }
 
 .price-box1,
@@ -425,8 +426,8 @@ body {
   height: 36px;
   padding: 0 5px;
   font-weight: bold;
-  bottom: 5mm;
-  right: 4mm;
+  bottom: 4mm;
+  right: 3mm;
 }
 
 .price-box2 {
@@ -434,8 +435,8 @@ body {
   height: 10px;
   padding: 0 5px;
   font-weight: normal;
-  bottom: 15.5mm;
-  right: 2.5mm;
+  bottom: 14mm;
+  right: 3mm;
 }
 
 .price-box1 .amount {
@@ -466,12 +467,15 @@ body {
   font-size: 8pt;
 }
 
-.barcode {
-  width: 50%;
-  height: auto;
+.barcode-container {
   position: absolute;
-  bottom: 3mm;
-  left: 1mm;
+  bottom: 1mm;
+  left: 0mm;
+  width: 55%;
+}
+.barcode {
+  width: 100%;
+  height: auto;
   font-family: Calibri, sans-serif;
   font-weight: bold;
 }

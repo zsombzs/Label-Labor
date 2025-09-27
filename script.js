@@ -42,7 +42,7 @@ function renderLabels(data) {
     let pageDiv = null;
   
     data.forEach((row, index) => {
-      if (index % 24 === 0) {
+      if (index % 21 === 0) {
         pageDiv = document.createElement("div");
         pageDiv.className = "page";
         container.appendChild(pageDiv);
@@ -54,7 +54,7 @@ function renderLabels(data) {
       const logoPath = getSelectedLogo();
   
       const line1 = (row["Első_sor"] || "").substring(0, 20);
-      const secondLineText = (row["Második_sor"] || "").substring(0, 10);
+      const secondLineText = (row["Második_sor"] || "").substring(0, 20);
       const kiszereles = row["Kiszerelés"] || "";
       const ar = row["Ár"] || "";
       const ftPerL = row["Ft/l"] || "";
@@ -195,7 +195,7 @@ function createPDF() {
     filename: "cimkek.pdf",
     image: { type: 'jpeg', quality: 0.8 },
     html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    jsPDF: { unit: 'mm', format: 'A4', orientation: 'portrait' }
   };
   html2pdf().set(opt).from(element).save();
 }

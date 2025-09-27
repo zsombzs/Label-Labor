@@ -20,7 +20,7 @@ app = FastAPI()
 # CORS middleware, csak a frontend domain engedélyezve
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL],
+    allow_origins=["https://cimkegenerator.netlify.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

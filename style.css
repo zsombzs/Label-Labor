@@ -1,0 +1,303 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  :root {
+    --cream: #f1dac4;
+    --dusty-rose: #a69cac;
+    --slate-blue: #474973;
+    --dark-navy: #161b33;
+    --deep-dark: #0d0c1d;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--deep-dark) 0%, var(--dark-navy) 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cream);
+    overflow: hidden;
+    position: relative;
+  }
+  
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, var(--slate-blue)20, transparent 50%),
+      radial-gradient(circle at 80% 20%, var(--slate-blue)15, transparent 50%),
+      radial-gradient(circle at 40% 80%, var(--dusty-rose)10, transparent 50%);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  
+  .header-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem 2rem;
+    background: rgba(13, 12, 29, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--dusty-rose);
+    z-index: 100;
+  }
+  
+  .header-container h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--cream);
+    margin: 0;
+    text-align: left;
+    background: linear-gradient(45deg, var(--cream), var(--dusty-rose));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .login-container {
+    background: rgba(22, 27, 51, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 
+      0 25px 50px rgba(13, 12, 29, 0.5),
+      0 0 0 1px rgba(241, 218, 196, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    animation: slideIn 0.8s ease-out;
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 2.5rem;
+    opacity: 0.8;
+  }
+  
+  #loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  input {
+    background: rgba(71, 73, 115, 0.2);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+    color: var(--cream);
+    outline: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+  }
+  
+  input::placeholder {
+    color: var(--dusty-rose);
+    opacity: 0.8;
+  }
+  
+  input:focus {
+    border-color: var(--dusty-rose);
+    background: rgba(71, 73, 115, 0.3);
+    box-shadow: 0 0 20px rgba(166, 156, 172, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  button[type="submit"] {
+    background: linear-gradient(135deg, var(--dusty-rose), var(--slate-blue));
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cream);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  button[type="submit"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(241, 218, 196, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  button[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+      0 10px 25px rgba(166, 156, 172, 0.3),
+      0 0 30px rgba(166, 156, 172, 0.2);
+  }
+  
+  button[type="submit"]:hover::before {
+    left: 100%;
+  }
+  
+  button[type="submit"]:active {
+    transform: translateY(-1px);
+  }
+  
+  button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  @media (max-width: 480px) {
+    .login-container {
+      margin: 1rem;
+      padding: 2rem;
+    }
+    
+    h1 {
+      font-size: 2rem;
+    }
+    
+    h2 {
+      font-size: 1rem;
+    }
+  }
+  
+  .login-container::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: linear-gradient(45deg, var(--dusty-rose), transparent, var(--slate-blue));
+    border-radius: 20px;
+    z-index: -1;
+    opacity: 0.3;
+  }
+
+.custom-notification {
+    position: fixed;
+    top: 200px;
+    right: -400px;
+    width: 350px;
+    z-index: 1000;
+    transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  .custom-notification.show {
+    right: 20px;
+  }
+  
+  .notification-content {
+    background: rgba(22, 27, 51, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--dusty-rose);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 
+      0 10px 25px rgba(13, 12, 29, 0.4),
+      0 0 20px rgba(166, 156, 172, 0.1);
+  }
+  
+  .notification-icon {
+    font-size: 1.2rem;
+    font-weight: bold;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  
+  .custom-notification.success .notification-icon {
+    background: rgba(72, 187, 120, 0.2);
+    color: #48bb78;
+  }
+  
+  .custom-notification.error .notification-icon {
+    background: rgba(245, 101, 101, 0.2);
+    color: #f56565;
+  }
+  
+  .notification-message {
+    color: var(--cream);
+    font-size: 0.9rem;
+    flex: 1;
+    line-height: 1.4;
+  }
+  
+  .notification-close {
+    background: none;
+    border: none;
+    color: var(--dusty-rose);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+  
+  .notification-close:hover {
+    background: rgba(166, 156, 172, 0.1);
+    transform: scale(1.1);
+  }
+  
+  @media (max-width: 480px) {
+    .custom-notification {
+      width: calc(100vw - 40px);
+      right: -100vw;
+    }
+    
+    .custom-notification.show {
+      right: 20px;
+    }
+    
+    .notification-content {
+      padding: 0.75rem 1rem;
+    }
+    
+    .notification-message {
+      font-size: 0.85rem;
+    }
+  }

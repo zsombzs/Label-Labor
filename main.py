@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 import bcrypt
 import uvicorn
 
-# .env betöltése
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -18,13 +17,12 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = FastAPI()
 
-# CORS middleware - javított konfiguráció
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://cimkegenerator.netlify.app",
-        "http://localhost:3000",  # fejlesztéshez
-        "http://127.0.0.1:5500",  # Live Server-hez
+        "http://localhost:3000",
+        "http://127.0.0.1:5500",  # Live Server
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -35,7 +33,7 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
-# Kifejezett OPTIONS handler (ha szükséges)
+# OPTIONS handler
 @app.options("/api/login")
 def login_options():
     return {"message": "OK"}
@@ -63,11 +61,10 @@ def login(req: LoginRequest):
         return {"redirect_url": user["redirect_url"]}
     
     except Exception as e:
-        print(f"Login error: {e}")  # Railway logs-ban látható lesz
+        print(f"Login error: {e}")  
         raise HTTPException(status_code=500, detail="Szerverhiba")
 
 
 if __name__ == "__main__":
-    # Lokális teszt port, Railway-en a $PORT változót használja
     PORT = int(os.getenv("PORT", 8000))
     uvicorn.run("main:app", host="0.0.0.0", port=PORT)

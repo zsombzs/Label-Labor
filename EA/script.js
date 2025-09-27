@@ -1,6 +1,6 @@
 function getSelectedLogo() {
   const selectedType = document.querySelector('input[name="labelType"]:checked').value;
-  return selectedType === "A" ? "ea.png" : "hg.png";
+  return selectedType === "A" ? "assets/ea.png" : "assets/hg.png";
 }
 
 document.querySelectorAll('input[name="labelType"]').forEach(radio => {
@@ -203,8 +203,8 @@ function createPDF() {
 
 function downloadTemplate() {
     const link = document.createElement("a");
-    link.href = "excel_sablon.xlsm";
-    link.download = "excel_sablon.xlsm";
+    link.href = "ea_excel_sablon.xlsm";
+    link.download = "ea_excel_sablon.xlsm";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

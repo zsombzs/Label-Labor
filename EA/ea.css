@@ -242,7 +242,7 @@ body {
 }
 
 #infoIcon:hover {
-  content: url("info_darker.png");
+  content: url("assets/info_darker.png");
   scale: 1.3;
 }
 

@@ -4,54 +4,7 @@ body {
   margin:0;
   padding:0;
   overflow-x: hidden;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes glow {
-  0%, 100% {
-    box-shadow: 0 0 5px rgba(204, 219, 220, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(204, 219, 220, 0.8), 0 0 30px rgba(204, 219, 220, 0.6);
-  }
-}
 
 .cim-container {
   display: flex;
@@ -63,12 +16,6 @@ body {
   border-top: 4px solid #01161e;
   width: 100%;
   padding: 2%;
-  transition: all 0.3s ease;
-}
-
-.cim-container:hover {
-  background-color: #004d73;
-  animation: glow 2s ease-in-out infinite;
 }
 
 .focim {
@@ -78,20 +25,12 @@ body {
   text-align: center;
   margin: 0;
   color: #ccdbdc;
-  transition: all 0.3s ease;
-  cursor: default;
-}
-
-.focim:hover {
-  text-shadow: 2px 2px 8px rgba(204, 219, 220, 0.6);
-  transform: scale(1.02);
 }
 
 .main-container {
   display: flex;
   width: 100%;
   height: 100vh;
-  animation: fadeInUp 1s ease-out;
 }
 
 .left-panel {
@@ -115,13 +54,6 @@ body {
   margin-top: 4%;
   margin-bottom: 4%;
   color: #ccdbdc;
-  transition: all 0.3s ease;
-}
-
-.label-type:hover {
-  background-color: #0096cc;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 126, 167, 0.3);
 }
 
 .circle-radio input {
@@ -136,47 +68,17 @@ body {
   border-radius: 50%;
   margin-right: 10px;
   vertical-align: middle;
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition: background-color 0.2s, transform 0.2s;
   cursor: pointer;
-  position: relative;
-}
-
-.circle-radio span:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 10px rgba(0, 50, 73, 0.5);
-}
-
-.circle-radio span::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background-color: #003249;
-  transition: all 0.3s ease;
-  transform: translate(-50%, -50%);
 }
 
 .circle-radio input:checked + span {
   background-color: #003249;
-  animation: pulse 0.6s ease-out;
-}
-
-.circle-radio input:checked + span::before {
-  width: 100%;
-  height: 100%;
 }
 
 .circle-radio {
   display: flex;
   align-items: center;
-  transition: all 0.3s ease;
-}
-
-.circle-radio:hover {
-  transform: translateX(5px);
 }
 
 .btn {
@@ -193,57 +95,34 @@ body {
   display: inline-block;
   text-align: center;
   color: #ccdbdc;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  position: relative;
-  overflow: hidden;
-}
-
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.btn:hover::before {
-  left: 100%;
+  transition: transform 0.2s, background 0.2s;
 }
 
 .btn:nth-of-type(1) {
   background: #003249;
 }
-
 .btn:nth-of-type(1):hover {
-  background: #00a2b0;
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(128, 206, 215, 0.4);
-}
-
-.btn:active {
-  animation: pulse 0.3s ease-out;
-}
-
-.controls1, .controls2, .controls3 {
-  display: flex;
-  justify-content: center;
-  font-weight: bold;
-  font-size: calc(16px + 0.5vw);
-  background-color: #007ea7;
-  transition: all 0.3s ease;
+  background: #80ced7;
 }
 
 .controls1 {
+  display: flex;
+  justify-content: center;
   margin-top: 20px;
+  font-weight: bold;
+  font-size: calc(16px + 0.5vw);
+  background-color: #007ea7;
   padding-top: 5.5%;
   padding-bottom: 8%;
   border-top: 4px solid #01161e;
 }
 
 .controls2 {
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  font-size: calc(16px + 0.5vw);
+  background-color: #007ea7;
   padding-bottom: 8%;
 }
 
@@ -251,28 +130,14 @@ body {
   display: none;
 }
 
-.controls2 label {
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 10px 20px;
-  border-radius: 5px;
-  background-color: rgba(255,255,255,0.1);
-}
-
-.controls2 label:hover {
-  background-color: rgba(255,255,255,0.2);
-  transform: scale(1.05);
-}
-
 .controls3 {
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  font-size: calc(16px + 0.5vw);
+  background-color: #007ea7;
   padding-bottom: 5.5%;
   border-bottom: 4px solid #01161e;
-}
-
-.controls1:hover, .controls2:hover, .controls3:hover {
-  background-color: #0096cc;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(0, 126, 167, 0.3);
 }
 
 .downloading-bar {
@@ -285,14 +150,9 @@ body {
   padding: 4%;
   border-top: 4px solid #01161e;
   border-bottom: 4px solid #01161e;
-  animation: fadeInUp 2.5s ease-out;
-  transition: all 0.3s ease;
 }
 
-.downloading-bar:hover {
-  background-color: #0096cc;
-}
-
+/* Progress bar*/
 #progressContainer {
     width: 90%; 
     margin-left: 5%;
@@ -310,44 +170,31 @@ body {
     text-align: center;
     justify-content: center;
     line-height: 25px;
-    transition: all 0.3s ease;
-}
-
-#progressContainer:hover {
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2), 0 0 10px rgba(246, 189, 96, 0.5);
-}
-
-#progressBar {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(45deg, #f6bd60, #f7931e, #f6bd60);
-  background-size: 20px 20px;
-  border-radius: 8px 0 0 8px;
-  transition: width 0.1s linear;
-  position: relative;
-  z-index: 1;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: -20px 0; }
-  100% { background-position: 20px 0; }
-}
-
-#progressContainer::after {
-  content: "Downloading PDF...";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  transition: all 0.3s ease;
-}
+  }
+  
+  #progressBar {
+    height: 100%;
+    width: 0%;
+    background-color: #f6bd60;
+    border-radius: 8px 0 0 8px;
+    transition: width 0.1s linear;
+    position: relative;
+    z-index: 1;
+  }
+  
+  #progressContainer::after {
+    content: "Downloading PDF...";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
 
 .right-panel {
   width: 60%;
@@ -377,13 +224,6 @@ body {
   border-top: 4px solid #01161e;
   border-bottom: 4px solid #01161e;
   width: 100%;
-  transition: all 0.3s ease;
-}
-
-.alcim-container:hover {
-  background-color: #0096cc;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(0, 126, 167, 0.3);
 }
 
 .alcim {
@@ -392,30 +232,20 @@ body {
   font-weight: bold;
   margin: 0;
   color: #ccdbdc;
-  transition: all 0.3s ease;
-  cursor: default;
-}
-
-.alcim:hover {
-  text-shadow: 2px 2px 8px rgba(204, 219, 220, 0.6);
-  transform: scale(1.02);
 }
 
 #infoIcon {
   width: calc(16px + 2vw);
   height: calc(16px + 2vw);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  filter: brightness(1);
+  transition: 0.2s;
 }
 
 #infoIcon:hover {
   content: url("assets/info_darker.png");
-  transform: scale(1.3) rotate(360deg);
-  filter: brightness(1.2) drop-shadow(0 0 8px rgba(204, 219, 220, 0.6));
+  scale: 1.3;
 }
 
-/* Modal animációk */
 .modal {
   display: none;
   position: fixed;
@@ -426,13 +256,6 @@ body {
   height: 100%;
   overflow: auto;
   background-color: rgba(0,0,0,0.75);
-  backdrop-filter: blur(5px);
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .modal-content {
@@ -448,13 +271,7 @@ body {
   max-width: 800px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.35);
   position: relative;
-  animation: modalSlideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  transition: all 0.3s ease;
-}
-
-.modal-content:hover {
-  box-shadow: 0 12px 35px rgba(0,0,0,0.45);
-  transform: translateY(-2px);
+  animation: fadeIn 0.3s ease;
 }
 
 .modal-content h1,
@@ -464,14 +281,12 @@ body {
   color: #007ea7;
   font-weight: bold;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
-  animation: fadeInUp 0.8s ease-out;
 }
 
 .modal-content p {
   font-size: calc(0.8vw + 12px);
   line-height: 1.6;
   margin-bottom: 25px;
-  animation: fadeInUp 1s ease-out;
 }
 
 .highlight {
@@ -480,12 +295,6 @@ body {
   padding: 2px 6px;
   background-color: rgba(0,126,167,0.1);
   border-radius: 3px;
-  transition: all 0.3s ease;
-}
-
-.highlight:hover {
-  background-color: rgba(0,126,167,0.2);
-  transform: scale(1.05);
 }
 
 #closeBtnBottom {
@@ -501,35 +310,12 @@ body {
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  position: relative;
-  overflow: hidden;
-}
-
-#closeBtnBottom::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-#closeBtnBottom:hover::before {
-  left: 100%;
+  transition: background 0.3s, transform 0.2s;
 }
 
 #closeBtnBottom:hover {
   background-color: #003249;
-  transform: scale(1.05) translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 50, 73, 0.4);
-}
-
-#closeBtnBottom:active {
-  transform: scale(0.98);
-  animation: pulse 0.3s ease-out;
+  transform: scale(1.05);
 }
 
 
@@ -692,23 +478,4 @@ body {
   height: auto;
   font-family: Calibri, sans-serif;
   font-weight: bold;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .right-panel {
-    scroll-behavior: smooth;
-  }
-}
-
-.loading {
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-.floating {
-  animation: float 3s ease-in-out infinite;
 }

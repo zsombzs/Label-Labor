@@ -195,9 +195,32 @@ function createPDF() {
     filename: "cimkek.pdf",
     image: { type: 'jpeg', quality: 0.8 },
     html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' },
-    jsPDF: { unit: 'mm', format: 'A4', orientation: 'portrait' }
+    jsPDF: { unit: 'mm', format: 'A4', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
-  html2pdf().set(opt).from(element).save();
+  html2pdf()
+    .set(opt)
+    .from(element)
+    .toPdf()
+    .get('pdf')
+    .then(function(pdf) {
+      const totalPages = pdf.internal.getNumberOfPages();
+      
+      // Minden oldalra oldalszám hozzáadása - középen
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(10);
+        pdf.setTextColor(100, 100, 100);
+        
+        // Oldalszám középen, alul
+        const pageText = `${i} / ${totalPages}`;
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        
+        pdf.text(pageText, pageWidth / 2, pageHeight - 3, { align: 'center' });
+      }
+    })
+    .save();
 }
 
 

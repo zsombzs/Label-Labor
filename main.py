@@ -20,9 +20,11 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "https://labellabor.com",
+        "https://www.labellabor.com",
         "https://cimkegenerator.netlify.app",
         "http://localhost:3000",
-        "http://127.0.0.1:5500",  # Live Server
+        "http://127.0.0.1:5500" # Live Server
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],

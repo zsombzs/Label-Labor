@@ -55,7 +55,7 @@ function renderLabels(data) {
   
       const line1 = (row["Első_sor"] || "").substring(0, 20);
       const secondLineText = (row["Második_sor"] || "").substring(0, 20);
-      const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 15);
+      const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 17);
       const kiszereles = row["Kiszerelés"] || "";
       const ar = row["Ár"] || "";
       const ftPerL = row["Ft/l"] || "";

@@ -367,7 +367,7 @@ body {
 .logo {
   width: 65px;
   position: absolute;
-  top: 13px;
+  top: 11px;
   right: 8px;
 }
 .line1 {
@@ -410,7 +410,7 @@ body {
   font-size: 11pt;
   position: absolute;
   top: 55px;
-  right: 65px;
+  right: 52px;
 }
 
 .price-box1,

@@ -55,7 +55,7 @@ function renderLabels(data) {
   
       const line1 = (row["Első_sor"] || "").substring(0, 20);
       const secondLineText = (row["Második_sor"] || "").substring(0, 20);
-      const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 13);
+      const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 15);
       const kiszereles = row["Kiszerelés"] || "";
       const ar = row["Ár"] || "";
       const ftPerL = row["Ft/l"] || "";
@@ -102,7 +102,7 @@ function renderLabels(data) {
         <div class="line2">${secondLineText}</div>
         <div class="line3">${thirdLineText}</div> 
         <div class="kiszereles">${kiszereles}</div>
-        <div class="line4">${("cikkszám: " + (row["Cikkszám"] || "")).substring(0, 20)}</div>
+        <div class="line4">${("cikkszám: " + (row["Cikkszám"] || "")).substring(0, 24)}</div>
         <div class="barcode-container">
           <svg class="barcode"></svg>
         </div>

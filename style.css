@@ -52,11 +52,11 @@
   }
   
   .header-container h1 {
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     font-weight: 700;
     color: var(--cream);
     margin: 0;
-    text-align: left;
+    text-align: center;
     background: linear-gradient(45deg, var(--cream), var(--dusty-rose));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -91,11 +91,11 @@
   }
   
   h2 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 600;
     color: var(--cream);
     margin-bottom: 2.5rem;
-    opacity: 0.8;
+    opacity: 0.9;
   }
   
   #loginForm {
@@ -203,6 +203,19 @@
     border-radius: 20px;
     z-index: -1;
     opacity: 0.3;
+  }
+
+  .footer-container {
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem 2rem;
+    background: rgba(13, 12, 29, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 2px solid var(--dusty-rose);
+    z-index: 100;
   }
 
 .custom-notification {

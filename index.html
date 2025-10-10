@@ -4,28 +4,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Label Labor</title>
-  <link rel="icon" type="image/png" href="icon.png">
-  <link rel="shortcut icon" type="image/png" href="icon.png">
-  <link rel="apple-touch-icon" href="icon.png">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="icon" type="image/png" href="assets/main_icon.png">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+  <div class="mobile-warning">
+    <div class="mobile-warning-icon">🖥️</div>
+    <h2>Desktop Only</h2>
+    <p>A Label Labor jelenleg csak asztali számítógépen/laptopon érhető el.<br>Ha számítógépen használja, növelje az ablak méretét!</p>
+  </div>
+
   <div class="header-container">
     <h1>Label Labor 1.0.1</h1>
   </div>
 
-  <div class="login-container">
-    <h2>Sign in</h2>
+  <div class="login-wrapper">
     <form id="loginForm">
-      <input type="text" id="username" placeholder="Username" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <button type="submit">Login</button>
+      <div class="login-container">
+        <div class="label-content">
+
+          <img src="assets/main_icon.png" alt="Logo" class="label-logo">
+          
+
+          <div class="inputs">
+            <div class="input-line">
+              <input type="text" id="username" placeholder="Username" required>
+            </div>
+            <div class="input-line">
+              <input type="password" id="password" placeholder="Password" required>
+            </div>
+          </div>
+  
+          
+          <div class="barcode-container">
+            <img src="assets/barcode.png" alt="Barcode">
+          </div>
+  
+          
+          <div class="price-box">
+            <span class="amount">9.999,- Ft</span>
+          </div>
+        </div>
+      </div>
+  
+      
+      <button type="submit" class="login-button">Login</button>
     </form>
   </div>
-<!--   <div class="footer-container">
-    Contact: info@labellabor.com
-  </div> -->
-  <script type="module" src="main.js"></script>
+  
+
+  
+  <div class="footer-container">
+    <p class="contacts">Contact: info@labellabor.com</p>
+  </div>
+
+  <script src="main.js"></script>
 </body>
 </html>

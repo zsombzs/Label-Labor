@@ -1,3 +1,17 @@
+const API_URL = "https://labelgenerator-production.up.railway.app";
+
+// Felhasználónév kinyerése az URL-ből
+function getUsername() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const path = window.location.pathname;
+  
+  // Ha ea.html vagy más aloldal, akkor az URL-ből nyerjük ki
+  if (path.includes('ea.html')) {
+    return 'ea'; // vagy dinamikusan az URL-ből
+  }
+  return null;
+}
+
 function getSelectedLogo() {
   const selectedType = document.querySelector('input[name="labelType"]:checked').value;
   return selectedType === "A" ? "assets/ea.png" : "assets/hg.png";
@@ -7,7 +21,7 @@ document.querySelectorAll('input[name="labelType"]').forEach(radio => {
   radio.addEventListener('change', () => {
     const fileInput = document.getElementById("excelFile");
     if (fileInput.files.length > 0) {
-      handleFile({ target: fileInput }); // újrarendereli a címkéket a friss logóval
+      handleFile({ target: fileInput });
     }
   });
 });
@@ -36,10 +50,14 @@ function formatPrice(price) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+let totalLabelsGenerated = 0;
+
 function renderLabels(data) {
     const container = document.getElementById("labels");
     container.innerHTML = "";
     let pageDiv = null;
+    
+    totalLabelsGenerated = data.length; // Eltároljuk hány címkét generáltunk
   
     data.forEach((row, index) => {
       if (index % 21 === 0) {
@@ -61,12 +79,10 @@ function renderLabels(data) {
       const ftPerL = row["Ft/l"] || "";
       const ftPerKg = row["Ft/kg"] || "";
 
-      // Árak formázása és egységár címke meghatározása
       let price = "";
       let pricePerUnit = "";
       let unitLabel = "";
       if (/db$/i.test(kiszereles)) {
-        // DB kiszerelés
         unitLabel = "Ft/db";
         if (ar !== "") {
           pricePerUnit = formatPrice(ar);
@@ -94,7 +110,6 @@ function renderLabels(data) {
           }
         }
       }
-  
 
       div.innerHTML = `
         <img src="${logoPath}" class="logo">
@@ -116,10 +131,10 @@ function renderLabels(data) {
               <span class="unit">${unitLabel ? ",- " + unitLabel : ""}</span>
             </div>
         </div>
-      `;``
+      `;
   
       pageDiv.appendChild(div);
-      // "EAN-13"
+      
       const barcodeSVG = div.querySelector(".barcode");
       const eanCode = row["EAN-13"];
       if (eanCode) {
@@ -133,24 +148,68 @@ function renderLabels(data) {
         });
       }
     });
-
-  }
+}
   
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelector("#downloadBtn").addEventListener("click", generatePDF);
-    document.querySelector("#sablonBtn").addEventListener("click", downloadTemplate);
-  });
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelector("#downloadBtn").addEventListener("click", generatePDF);
+  document.querySelector("#sablonBtn").addEventListener("click", downloadTemplate);
+  
+  // Betöltjük a cég címkeszámát, ha van username
+  loadCompanyLabelCount();
+});
 
+async function updateLabelCount(count) {
+  const username = getUsername();
+  if (!username) return;
+  
+  try {
+    const response = await fetch(`${API_URL}/api/update-label-count`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, count }),
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log(`Címkeszám frissítve: ${data.new_count}`);
+      updateDisplayedCount(data.new_count);
+    }
+  } catch (error) {
+    console.error("Hiba a címkeszám frissítésekor:", error);
+  }
+}
+
+function updateDisplayedCount(count) {
+  const countElement = document.getElementById("companyLabelCount");
+  if (countElement) {
+    countElement.textContent = count.toLocaleString('hu-HU');
+  }
+}
+
+async function loadCompanyLabelCount() {
+  const username = getUsername();
+  if (!username) return;
+  
+  try {
+    const response = await fetch(`${API_URL}/api/company-label-count/${username}`);
+    if (response.ok) {
+      const data = await response.json();
+      updateDisplayedCount(data.count);
+    }
+  } catch (error) {
+    console.error("Hiba a címkeszám betöltésekor:", error);
+  }
+}
 
 function generatePDF() {
   const downloadBtn = document.getElementById("downloadBtn");
   const progressContainer = document.getElementById("progressContainer");
   const progressBar = document.getElementById("progressBar");
 
-  // Gomb tiltása
   document.querySelectorAll("button").forEach(btn => btn.disabled = true);
 
-  // Progress bar megjelenítése
   progressContainer.style.display = "block";
   progressBar.style.width = "0%";
 
@@ -166,8 +225,10 @@ function generatePDF() {
     if (percent === 100) {
       clearInterval(timer);
 
-      // PDF generálás
       createPDF();
+      
+      // Frissítjük a címkeszámot
+      updateLabelCount(totalLabelsGenerated);
 
       progressBar.style.backgroundColor = "#f6bd60";
       progressBar.style.width = "0%";
@@ -206,13 +267,11 @@ function createPDF() {
     .then(function(pdf) {
       const totalPages = pdf.internal.getNumberOfPages();
       
-      // Minden oldalra oldalszám hozzáadása - középen
       for (let i = 1; i <= totalPages; i++) {
         pdf.setPage(i);
         pdf.setFontSize(10);
         pdf.setTextColor(100, 100, 100);
         
-        // Oldalszám középen, alul
         const pageText = `${i} / ${totalPages}`;
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
@@ -222,7 +281,6 @@ function createPDF() {
     })
     .save();
 }
-
 
 function downloadTemplate() {
     const link = document.createElement("a");

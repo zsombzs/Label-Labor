@@ -4,11 +4,9 @@ const API_URL = "https://labelgenerator-production.up.railway.app";
 
 // Custom notification function
 function showNotification(message, type = 'error') {
-  // Remove existing notifications
   const existing = document.querySelector('.custom-notification');
   if (existing) existing.remove();
 
-  // Create notification element
   const notification = document.createElement('div');
   notification.className = `custom-notification ${type}`;
   notification.innerHTML = `
@@ -21,16 +19,58 @@ function showNotification(message, type = 'error') {
 
   document.body.appendChild(notification);
 
-  // Auto remove after 5 seconds
   setTimeout(() => {
     if (notification.parentElement) {
       notification.remove();
     }
   }, 5000);
 
-  // Slide in animation
   setTimeout(() => notification.classList.add('show'), 10);
 }
+
+// Összes címkeszám betöltése
+async function loadTotalLabelCount() {
+  try {
+    const response = await fetch(`${API_URL}/api/total-label-count`);
+    if (response.ok) {
+      const data = await response.json();
+      updateCounterDisplay(data.total_count);
+    }
+  } catch (error) {
+    console.error("Hiba a címkeszám betöltésekor:", error);
+  }
+}
+
+function updateCounterDisplay(count) {
+  const counterElement = document.getElementById("totalLabelCount");
+  if (counterElement) {
+    // Animált számláló effekt
+    animateCounter(counterElement, 0, count, 2000);
+  }
+}
+
+function animateCounter(element, start, end, duration) {
+  const range = end - start;
+  const increment = range / (duration / 16); // 60 FPS
+  let current = start;
+  
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= end) {
+      current = end;
+      clearInterval(timer);
+    }
+    element.textContent = Math.floor(current).toLocaleString('hu-HU');
+  }, 16);
+}
+
+// Oldal betöltésekor frissítjük a számlálót
+document.addEventListener("DOMContentLoaded", () => {
+  loadTotalLabelCount();
+  
+  // 30 másodpercenként frissítjük
+  setInterval(loadTotalLabelCount, 30000);
+});
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -38,7 +78,6 @@ form.addEventListener("submit", async (e) => {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
-  // Loading state
   const submitBtn = form.querySelector('button[type="submit"]');
   const originalText = submitBtn.textContent;
   submitBtn.textContent = "Login...";
@@ -68,9 +107,11 @@ form.addEventListener("submit", async (e) => {
     const data = await res.json();
     console.log("Login successful:", data);
     
+    // Eltároljuk a felhasználónevet a sessionStorage-ban
+    sessionStorage.setItem('currentUsername', username);
+    
     showNotification("Sikeres bejelentkezés! Átirányítás...", 'success');
     
-    // Short delay before redirect for user feedback
     setTimeout(() => {
       window.location.href = data.redirect_url;
     }, 1500);
@@ -79,7 +120,6 @@ form.addEventListener("submit", async (e) => {
     console.error("Hiba a bejelentkezésnél:", err);
     showNotification("Szerverhiba! Kérlek próbáld újra.", 'error');
   } finally {
-    // Reset button
     submitBtn.textContent = originalText;
     submitBtn.disabled = false;
   }

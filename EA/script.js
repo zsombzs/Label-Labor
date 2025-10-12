@@ -1,15 +1,8 @@
 const API_URL = "https://labelgenerator-production.up.railway.app";
 
-// Felhasználónév kinyerése az URL-ből
+const COMPANY_USERNAME = 'EA_HU';
 function getUsername() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const path = window.location.pathname;
-  
-  // Ha ea.html vagy más aloldal, akkor az URL-ből nyerjük ki
-  if (path.includes('ea.html')) {
-    return 'ea'; // vagy dinamikusan az URL-ből
-  }
-  return null;
+  return COMPANY_USERNAME;
 }
 
 function getSelectedLogo() {

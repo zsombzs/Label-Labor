@@ -7,7 +7,7 @@ const translations = {
       'back-login': '← Back to Login',
       'login': 'Login',
       'all-labels': 'All generated labels: ',
-      'demo-video': 'Demo Video',
+      'demo-video': 'Tutorial Video',
       'user-guide': 'User Guide',
       'step1-title': 'Login',
       'step1-desc': 'Log in to the main page using the provided username and password.',

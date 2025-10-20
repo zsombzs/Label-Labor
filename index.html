@@ -11,22 +11,27 @@
 <body>
   <div class="mobile-warning">
     <div class="mobile-warning-icon">🖥️</div>
-    <h2>Desktop Only</h2>
-    <p>A Label Labor jelenleg csak asztali számítógépen/laptopon érhető el.<br>Ha számítógépen használja, növelje az ablak méretét!</p>
+    <h2 data-lang="desktop-only">Desktop Only</h2>
+    <p data-lang="desktop-warning">Label Labor is currently only available on desktop/laptop.<br>If using a computer, please increase the window size!</p>
   </div>
 
   <div class="header-container">
-    <h1>Label Labor 1.0.1</h1>
+    <div class="header-left">
+      <h1>Label Labor 1.0.1</h1>
+      <div class="language-switcher">
+        <button class="lang-btn active" data-lang-code="en">EN</button>
+        <button class="lang-btn" data-lang-code="hu">HU</button>
+      </div>
+    </div>
+    <a href="info.html" class="info-link" data-lang="what-is">What is Label Labor?</a>
   </div>
 
   <div class="login-wrapper">
     <form id="loginForm">
       <div class="login-container">
         <div class="label-content">
-
           <img src="assets/main_icon.png" alt="Logo" class="label-logo">
           
-
           <div class="inputs">
             <div class="input-line">
               <input type="text" id="username" placeholder="Username" required>
@@ -36,32 +41,30 @@
             </div>
           </div>
   
-          
           <div class="barcode-container">
             <img src="assets/barcode.png" alt="Barcode">
           </div>
   
-          
           <div class="price-box">
-            <span class="amount">9.999,- Ft</span>
+            <span class="amount">9.900,- Ft</span>
           </div>
         </div>
       </div>
   
-      
-      <button type="submit" class="login-button">Login</button>
+      <button type="submit" class="login-button" data-lang="login">Login</button>
       <div class="stats-container">
         <div class="stats-card">
-          <span class="stats-text">All generated labels: <span class="stats-number" id="totalLabelCount">0</span></span>
+          <span class="stats-text" data-lang="all-labels">All generated labels: <span class="stats-number" id="totalLabelCount">0</span></span>
         </div>
       </div>
     </form>
   </div>
 
   <div class="footer-container">
-    <p class="contacts">Contact: info@labellabor.com</p>
+    <p class="contacts" data-lang="contact">Contact: info@labellabor.com</p>
   </div>
 
+  <script src="language.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

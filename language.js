@@ -21,6 +21,8 @@ const translations = {
       'step5-desc': 'By clicking the "Upload Excel File (.xlsm)" button, upload the previously edited Excel template file. Then, if there are multiple label types, select the appropriate one.',
       'step6-title': 'Check Labels, Download PDF',
       'step6-desc': 'After checking the data on the labels, click the "Download PDF" button to download the labels.pdf file. You can follow this process with the "Downloading PDF..." bar. If you want to generate new labels, make sure to refresh the page first.',
+      'step7-title': 'Printing the labels',
+      'step7-desc': 'Printing the labels.pdf file with any standard printer (for example, the kind used for printing invoices).',
       'contact': 'Contact: info@labellabor.com'
     },
     hu: {
@@ -33,9 +35,9 @@ const translations = {
       'demo-video': 'Bemutató videó',
       'user-guide': 'Használati útmutató',
       'step1-title': 'Bejelentkezés',
-      'step1-desc': 'A kapott felhasználónévvel (username) és jelszóval (password) be kell jelentkezni a főoldalon.',
+      'step1-desc': 'A kapott felhasználónévvel (username) és jelszóval (password) jelentkezzen be a főoldalon.',
       'step2-title': 'Sablon excel fájl letöltése',
-      'step2-desc': 'Töltse le a sablon excel fájlt a "Sablon Excel letöltése" gombra kattintva. Az excel megnyitása után engedélyezni kell a makrókat. Probléma esetén: info@labellabor.com',
+      'step2-desc': 'Töltse le a sablon excel fájlt a "Sablon Excel letöltése" gombra kattintva. Az excel megnyitása után engedélyezze a makrókat. Probléma esetén: info@labellabor.com',
       'step3-title': 'Sablon Excel celláinak kitöltése',
       'step3-desc': 'A <span style="color: red;">piros</span> oszlopokba kell bemásolni a megfelelő adatokat (max kb. 350 sor) úgy, hogy a bemásolt adatoknál ne legyenek felesleges sorok (cellákon belül és kívül) és sorközök. A "Kiszerelés" oszlopban a mennyiség és a mértékegység legyen szóközzel elválasztva, pl. "1 kg" vagy "400 ml". Darabos kiszerelés esetén a helyes formátum: "db". Az "Ár" oszlopnál nem kell odaírni, hogy "Ft" vagy "forint", a helyes formátum pl. "999". A bemásolt adatok leellenőrzése után le kell futtatni az "Adatok_rendszerezese" nevű makrót, amely segítségével a program ki fogja tölteni a <span style="color: #378eff;">kék</span> oszlopokban található cellákat.',
       'step4-title': 'Cellák tartalmának ellenőrzése/módosítása',
@@ -44,6 +46,8 @@ const translations = {
       'step5-desc': 'Az "Excel fájl feltöltése (.xlsm)" gombra kattintva fel kell tölteni az előbb megszerkesztett excel sablon fájlt. Ezután ha több féle címketípus van, akkor ki kell választani a megfelelőt.',
       'step6-title': 'Címkék ellenőrzése, PDF letöltése',
       'step6-desc': 'A Címkén lévő adatok ellenőrzése után a "PDF letöltése" gombra kattintva le kell tölteni a cimkek.pdf fájlt, ezt a "Downloading PDF..." bár segítségével követhetjük végig. Ha újabb címkéket szeretne generálni, akkor előtte mindenképpen frissítsen rá az oldalra.',
+      'step7-title': 'Címkék nyomtatása',
+      'step7-desc': 'A cimkek.pdf fájlt bármilyen hagyományos nyomtatóval (például amivel a számlákat is nyomtatjuk) ki lehet nyomtatni.',
       'contact': 'Kontakt: info@labellabor.com'
     }
   };

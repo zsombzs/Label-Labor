@@ -3,9 +3,15 @@ const translations = {
     en: {
       'desktop-only': 'Desktop Only',
       'desktop-warning': 'Label Labor is currently only available on desktop/laptop.<br>If using a computer, please increase the window size!',
+      'about': 'About',
+      'nav-login': 'Login',
       'what-is': 'What is Label Labor?',
+      'example-labels': 'Example Labels',
+      'contact-request': 'Request a Quote',
       'back-login': '← Back to Login',
       'login': 'Login',
+      'username': 'Username',
+      'password': 'Password',
       'all-labels': 'All generated labels: ',
       'demo-video': 'Tutorial Video',
       'user-guide': 'User Guide',
@@ -23,14 +29,52 @@ const translations = {
       'step6-desc': 'After checking the data on the labels, click the "Download PDF" button to download the labels.pdf file. You can follow this process with the "Downloading PDF..." bar. If you want to generate new labels, make sure to refresh the page first.',
       'step7-title': 'Printing the labels',
       'step7-desc': 'Printing the labels.pdf file with any standard printer (for example, the kind used for printing invoices).',
-      'contact': 'Contact: info@labellabor.com'
+      'contact-footer': 'Contact: info@labellabor.com',
+      'contact': 'Contact us',
+      
+      // About page
+      'about-title': 'Welcome to Label Labor!',
+      'about-intro': 'In most stores, creating uniform shelf labels quickly and efficiently can be a real challenge. Label Labor provides an easy solution: generate labels directly from Excel spreadsheets and download them in PDF format.',
+      'about-benefits-title': 'Benefits of using Label Labor:',
+      'about-benefit-1': 'Hundreds of labels in just minutes',
+      'about-benefit-2': 'You can save time and money on label production',
+      'about-benefit-3': 'Labels that can be printed on regular A4 paper — no need to buy expensive adhesive labels',
+      'about-benefit-4': 'You can print labels even with a regular invoice printer — no special label printer required',
+      'about-benefit-5': 'You can choose from multiple label types and customize the label format to your needs',
+      'about-benefit-6': 'Online support for bugs and modification requests even after your website is completed',
+      
+      // Contact form
+      'contact-form-title': 'Request a Personalized Quote!',
+      'contact-name': 'Full Name',
+      'contact-email': 'Email Address',
+      'contact-company': 'Company Name',
+      'contact-message': 'Message',
+      'contact-submit': 'Send Request',
+      'contact-success': 'Your request has been sent successfully!',
+    'contact-error': 'An error occurred while sending the quote request. Please try again.',
+    'contact-subtitle-1': 'Pricing and Information',
+    'contact-text-1': 'A custom dashboard and training for your company comes with a one-time fee.',
+    'contact-text-2': 'Afterwards, a monthly fee covers maintenance, bug fixes, and implementation of modification requests.',
+    'contact-subtitle-2': 'Helpful Information for us',
+    'contact-text-3': 'Please provide the following information in the "Message" field:',
+    'contact-benefit-1': 'How many different labels you want to generate on the platform',
+    'contact-benefit-2': 'Number of logos you want to use on the various labels',
+    'contact-benefit-3': 'Number of different label sizes',
+    'contact-benefit-4': 'Number of stores where you will use Label Labor',
+
     },
     hu: {
       'desktop-only': 'Desktop Only',
       'desktop-warning': 'A Label Labor jelenleg csak asztali számítógépen/laptopon érhető el.<br>Ha számítógépen használja, növelje az ablak méretét!',
+      'about': 'Bemutatkozás',
+      'nav-login': 'Bejelentkezés',
       'what-is': 'Mi az a Label Labor?',
+      'example-labels': 'Példa címkék',
+      'contact-request': 'Árajánlat',
       'back-login': '← Vissza a bejelentkezéshez',
       'login': 'Bejelentkezés',
+      'username': 'Felhasználónév',
+      'password': 'Jelszó',
       'all-labels': 'Összes generált címke: ',
       'demo-video': 'Bemutató videó',
       'user-guide': 'Használati útmutató',
@@ -48,7 +92,39 @@ const translations = {
       'step6-desc': 'A Címkén lévő adatok ellenőrzése után a "PDF letöltése" gombra kattintva le kell tölteni a cimkek.pdf fájlt, ezt a "Downloading PDF..." bár segítségével követhetjük végig. Ha újabb címkéket szeretne generálni, akkor előtte mindenképpen frissítsen rá az oldalra.',
       'step7-title': 'Címkék nyomtatása',
       'step7-desc': 'A cimkek.pdf fájlt bármilyen hagyományos nyomtatóval (például amivel a számlákat is nyomtatjuk) ki lehet nyomtatni.',
-      'contact': 'Kontakt: info@labellabor.com'
+      'contact-footer': 'Kontakt: info@labellabor.com',
+      'contact': 'Kapcsolat',
+      
+      // About page
+      'about-title': 'Üdvözöllek a Label Labor oldalán!',
+      'about-intro': 'A legtöbb boltban problémát jelent a polcsínbe való címkék gyors, költséghatékony és egységes előállítása. A Label Labor erre kínál egyszerű megoldást: néhány kattintással generálhat címkéket Excel-táblázatból, majd letöltheti őket PDF formátumban.',
+      'about-benefits-title': 'A Label Labor használatának előnyei:',
+      'about-benefit-1': 'Több 100 címke percek alatt',
+      'about-benefit-2': 'Időt és pénzt tud spórolni a címkék előállításán',
+      'about-benefit-3': 'Hagyományos A4-es lapra is nyomtatható címkék, nem kell drága öntapadós címkét vásárolni',
+      'about-benefit-4': 'Egyszerű számlanyomtatásra használt nyomtatóval is lehet címkét nyomtatni, nem szükséges speciális címkenyomtató',
+      'about-benefit-5': 'Személyre szabott címkeformátum és többféle címketípus közül választhat',
+      'about-benefit-6': 'Online support hibák és módosítási igények esetén a cége oldalának elkészülte után is',
+      
+      // Contact form
+      'contact-form-title': 'Kérjen személyre szabott árajánlatot!',
+      'contact-name': 'Név',
+      'contact-email': 'Email cím',
+      'contact-company': 'Cég neve',
+      'contact-message': 'Üzenet',
+      'contact-submit': 'Küldés',
+      'contact-success': 'Árajánlat sikeresen elküldve!',
+      'contact-error': 'Hiba történt az árajánlat küldésekor. Kérjük, próbálja újra.',
+      'contact-subtitle-1': 'Árképzés és információk',
+      'contact-text-1': 'A cégének egyedileg elkészített felület és a betanítás egyszeri díjjal jár.',
+      'contact-text-2': 'Ezt követően havi díj ellenében biztosítjuk a karbantartást, hibajavítást és módosítási kérések teljesítését.',
+      'contact-subtitle-2': 'Nekünk hasznos információk',
+      'contact-text-3': 'Kérjük adja meg az alábbi információkat az "Üzenet" mezőbe:',
+      'contact-benefit-1': 'Hány féle címkét szeretne generálni az oldalon',
+      'contact-benefit-2': 'Felhasználni kívánt logók mennyisége a különböző címkéken',
+      'contact-benefit-3': 'Különböző méretű címkék száma',
+      'contact-benefit-4': 'Boltjainak száma, ahol használná a Label Labort',
+
     }
   };
   
@@ -63,7 +139,7 @@ const translations = {
     document.querySelectorAll('[data-lang]').forEach(element => {
       const key = element.getAttribute('data-lang');
       if (translations[lang][key]) {
-        if (element.tagName === 'INPUT') {
+        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
           element.placeholder = translations[lang][key];
         } else {
           

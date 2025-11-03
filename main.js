@@ -505,6 +505,16 @@ function initScrollAnimations() {
 
   // Observe all elements with animation classes
   document.querySelectorAll('.scroll-animate, .scroll-animate-fade, .scroll-animate-left, .scroll-animate-right, .scroll-animate-scale').forEach(el => {
+    // Check if element is already in viewport on page load
+    const rect = el.getBoundingClientRect();
+    const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+
+    if (isInViewport) {
+      // Immediately add animate-in class for elements already visible
+      el.classList.add('animate-in');
+    }
+
+    // Continue observing for elements that will scroll into view later
     observer.observe(el);
   });
 }

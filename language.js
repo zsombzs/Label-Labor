@@ -128,8 +128,8 @@ const translations = {
     }
   };
   
-  // Get current language from localStorage or default to 'en'
-  let currentLang = localStorage.getItem('language') || 'en';
+  // Get current language from localStorage or default to 'hu'
+  let currentLang = localStorage.getItem('language') || 'hu';
   
   
   function changeLanguage(lang) {

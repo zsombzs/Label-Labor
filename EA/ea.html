@@ -16,27 +16,6 @@
   <div class="cim-container">
     <h1 class="focim">European Aerosols</h1>
   </div>
-  
-
-  <div id="infoModal" class="modal">
-    <div class="modal-content">
-      <h1>Használati útmutató</h1>
-      <h3>A címkekészítés folyamata:</h3>
-      <p>
-        1. A  <span class="highlight">"Sablon Excel letöltése"</span> gombra kattintva le kell tölteni az ea_excel_sablon.xlsm fájlt.
-        A fájl megnyitásával együtt engedélyezni kell a makrókat.<br><br>
-        Az exceltáblázatban a <span style="color: red;">piros</span> háttérrel rendelkező fejlécekkel ellátott oszlopokba kell az adatokat bemásolni, a <span style="color: rgb(4, 0, 255);">kék</span> fejléces oszlopokat a program fogja kitölteni.
-        Fontos, hogy a <span class="highlight">Kiszerelés</span> oszlopban <span class="highlight">szóközzel</span> el legyen választva a mennyiség és a mértékegység pl. "400 ml" vagy "1 kg".<br><br>
-        <br>Ezután egyszerre kijelöljük a <span class="highlight">C (Megnevezés), D (Kiszerelés), E (Ár) oszlopokat</span>, majd az <span class="highlight">"Adatok_Rendszerezese"</span> nevű makrót kell lefuttatni, ezzel kitölti a program a szükséges cellákat.
-        <br>Az adatok ellenőrzése után le kell menteni a fájlt.<br><br>
-        2. Az <span class="highlight">"Excel fájl feltöltése (.xlsm)"</span> gombra kattintva fel kell tölteni az előző lépésben megszerkesztett Excel fájlt.<br><br>
-        3. A címke típusának kiválasztása <span class="highlight">"EA címke"</span> vagy <span class="highlight">"HG címke"</span>.<br>
-        A címkék ellenőrzése utána a <span class="highlight">"PDF letöltése"</span> gomb megnyomásával a címkéket tartalmazó .pdf fájl letöltése.<br>
-        <br>
-      </p>
-      <button id="closeBtnBottom" class="btn">Bezárás</button>
-    </div>
-  </div>
   <div class="main-container">
     <!-- Bal oldali oszlop -->
     <div class="left-panel">
@@ -73,13 +52,11 @@
       </div>
       <div class="alcim-container">
         <h2 class="alcim">Címke generátor 1.3.1</h2>
-        <img id="infoIcon" src="assets/info.png" alt="Info ikon">
       </div>
       <div id="labels"></div>
     </div>
   </div>
   <script type="module" src="script.js"></script>
-  <script src="info.js"></script>
   <script>
     window.onload = function() {
       if (!sessionStorage.getItem("reloaded")) {

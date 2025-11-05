@@ -69,7 +69,7 @@ function loadPage(page) {
   window.scrollTo(0, 0);
 
   switch(page) {
-    case 'about':
+    case 'about us':
       loadAboutPage();
       break;
     case 'login':
@@ -78,7 +78,7 @@ function loadPage(page) {
     case 'info':
       loadInfoPage();
       break;
-    case 'examples':
+    case 'labels':
       loadExamplesPage();
       break;
     case 'contact':
@@ -109,16 +109,16 @@ function loadAboutPage() {
   pageContent.innerHTML = `
     <div class="page-wrapper">
       <div class="about-container">
-        <h2 class="page-title scroll-animate-fade" data-lang="about-title">Welcome to Label Labor!</h2>
-        <p class="about-intro scroll-animate" data-lang="about-intro">In most stores, creating uniform shelf labels quickly and efficiently can be a real challenge. Label Labor provides an easy solution: generate labels directly from Excel spreadsheets and download them in PDF format.</p>
-        <h3 class="benefits-title scroll-animate" data-lang="about-benefits-title">Benefits of using Label Labor:</h3>
+        <h2 class="page-title scroll-animate-fade animate-in" data-lang="about-title">Welcome to Label Labor!</h2>
+        <p class="about-intro scroll-animate animate-in" data-lang="about-intro">In most of the stores, creating uniform shelf labels quickly and efficiently can be a real challenge. Label Labor provides an easy solution: generate labels directly from Excel spreadsheets and download them in PDF format.</p>
+        <h3 class="benefits-title scroll-animate animate-in" data-lang="about-benefits-title">Benefits of using Label Labor:</h3>
         <ul class="benefits-list">
-          <li class="scroll-animate" data-lang="about-benefit-1">Hundreds of labels in just minutes</li>
-          <li class="scroll-animate" data-lang="about-benefit-2">You can save time and money on label production</li>
-          <li class="scroll-animate" data-lang="about-benefit-3">Labels that can be printed on regular A4 paper — no need to buy expensive adhesive labels</li>
-          <li class="scroll-animate" data-lang="about-benefit-4">You can print labels even with a regular invoice printer — no special label printer required</li>
-          <li class="scroll-animate" data-lang="about-benefit-5">You can choose from multiple label types and customize the label format to your needs</li>
-          <li class="scroll-animate" data-lang="about-benefit-6">Online support for bugs and modification requests even after the website is completed</li>
+          <li class="scroll-animate animate-in" data-lang="about-benefit-1">Hundreds of labels in just minutes</li>
+          <li class="scroll-animate animate-in" data-lang="about-benefit-2">You can save time and money on label creation/li>
+          <li class="scroll-animate animate-in" data-lang="about-benefit-3">Labels that can be printed on regular A4 paper — no need to buy expensive adhesive labels</li>
+          <li class="scroll-animate animate-in" data-lang="about-benefit-4">You can print labels even with a regular invoice printer — no special label printer required</li>
+          <li class="scroll-animate animate-in" data-lang="about-benefit-5">Personalized label formats</li>
+          <li class="scroll-animate animate-in" data-lang="about-benefit-6">Online support for introduction and usage</li>
         </ul>
       </div>
     </div>
@@ -258,7 +258,7 @@ function loadInfoPage() {
           <h2 data-lang="demo-video">Tutorial Video</h2>
           <div class="video-wrapper">
             <iframe
-              src="https://www.youtube.com/embed/yNzP4EEFOaQ"
+              src="https://www.youtube.com/embed/vc-4hYqvbsk"
               title="Label Labor demo"
               frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -271,7 +271,7 @@ function loadInfoPage() {
           <h2 class="scroll-animate-fade" data-lang="user-guide">User Guide</h2>
           <div class="steps-list">
             <div class="step-item scroll-animate-right">
-              <div class="step-number">1</div>
+              <div class="step-number">1/7</div>
               <div class="step-content">
                 <h3 data-lang="step1-title">Login</h3>
                 <p data-lang="step1-desc">Log in to the main page using the provided username and password.</p>
@@ -279,7 +279,7 @@ function loadInfoPage() {
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">2</div>
+              <div class="step-number">2/7</div>
               <div class="step-content">
                 <h3 data-lang="step2-title">Download Template Excel File</h3>
                 <p data-lang="step2-desc">Download the template Excel file by clicking the "Download Template Excel" button. After opening the Excel file, you must enable macros. In case of problems: info@labellabor.com</p>
@@ -287,15 +287,15 @@ function loadInfoPage() {
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">3</div>
+              <div class="step-number">3/7</div>
               <div class="step-content">
                 <h3 data-lang="step3-title">Fill in Template Excel Cells</h3>
-                <p data-lang="step3-desc">Copy the appropriate data into the <span style="color: red;">red</span> columns (max approx. 350 rows), ensuring there are no unnecessary rows (inside and outside cells) or line breaks. In the "Packaging" column, the quantity and unit should be separated by a space, e.g., "1 kg" or "400 ml". For piece packaging, the correct format is: "pcs". For the "Price" column, you don't need to write "Ft" or "forint", the correct format is e.g., "999". After checking the pasted data, run the macro named "Adatok_rendszerezese", which will help the program fill in the cells found in the <span style="color: #378eff;">blue</span> columns.</p>
+                <p data-lang="step3-desc">Copy the appropriate data into the <span style="color: red;">red</span> columns (max approx. 350 rows), ensuring there are no unnecessary rows (inside and outside cells) or line breaks. In the "Packaging" column, the quantity and unit should be separated by a space, e.g., "1 kg" or "400 ml". For piece packaging, the correct format is: "pcs". For the "Price" column, you don't need to write "Ft" or "forint", the correct format is e.g., "999". After checking the pasted data, run the macro named "Adatok_rendszerezese", which will help the program to fill in the cells found in the <span style="color: #378eff;">blue</span> columns.</p>
               </div>
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">4</div>
+              <div class="step-number">4/7</div>
               <div class="step-content">
                 <h3 data-lang="step4-title">Check/Modify Cell Contents</h3>
                 <p data-lang="step4-desc">The cells in the <span style="color: #378eff;">blue</span> columns can also be manually modified where necessary. After checking all the data, save the file.</p>
@@ -303,7 +303,7 @@ function loadInfoPage() {
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">5</div>
+              <div class="step-number">5/7</div>
               <div class="step-content">
                 <h3 data-lang="step5-title">Upload Excel File, Select Label Type</h3>
                 <p data-lang="step5-desc">By clicking the "Upload Excel File (.xlsm)" button, upload the previously edited Excel template file. Then, if there are multiple label types, select the appropriate one.</p>
@@ -311,7 +311,7 @@ function loadInfoPage() {
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">6</div>
+              <div class="step-number">6/7</div>
               <div class="step-content">
                 <h3 data-lang="step6-title">Check Labels, Download PDF</h3>
                 <p data-lang="step6-desc">After checking the data on the labels, click the "Download PDF" button to download the labels.pdf file. You can follow this process with the "Downloading PDF..." bar. If you want to generate new labels, make sure to refresh the page first.</p>
@@ -319,7 +319,7 @@ function loadInfoPage() {
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">7</div>
+              <div class="step-number">7/7</div>
               <div class="step-content">
                 <h3 data-lang="step7-title">Printing the labels</h3>
                 <p data-lang="step7-desc">Printing the labels.pdf file with any standard printer (for example, the kind used for printing invoices).</p>
@@ -389,10 +389,10 @@ function loadContactPage() {
             <div class="contact-info-section scroll-animate-right">
               <h3 class="contact-subtitle" data-lang="contact-subtitle-1">Pricing and Information</h3>
               <p class="contact-text" data-lang="contact-text-1">
-                A custom dashboard and training for your company comes with a one-time fee.
+                Custom-designed interface and label format for your company, with training included. Additional label formats can be provided upon request.
               </p>
               <p class="contact-text" data-lang="contact-text-2">
-                Afterwards, a monthly fee covers maintenance, bug fixes, and implementation of modification requests.
+                Afterwards, a monthly fee covers maintenance, bug fixes, and implementation of small modification requests.
               </p>
             </div>
 
@@ -522,12 +522,12 @@ function initScrollAnimations() {
 // Initialize page loading
 document.addEventListener('DOMContentLoaded', () => {
   // Check URL hash or default to about
-  const hash = window.location.hash.slice(1) || 'about';
+  const hash = window.location.hash.slice(1) || 'about us';
   loadPage(hash);
 
   // Handle hash changes
   window.addEventListener('hashchange', () => {
-    const hash = window.location.hash.slice(1) || 'about';
+    const hash = window.location.hash.slice(1) || 'about us';
     loadPage(hash);
   });
 

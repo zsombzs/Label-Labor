@@ -519,8 +519,41 @@ function initScrollAnimations() {
   });
 }
 
+// Theme toggle functionality
+function initThemeToggle() {
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
+
+  // Check for saved theme preference or default to dark mode
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+
+  if (savedTheme === 'light') {
+    body.classList.add('light-mode');
+    themeToggle.checked = false;
+  } else {
+    body.classList.remove('light-mode');
+    themeToggle.checked = true;
+  }
+
+  // Toggle theme on button click
+  themeToggle.addEventListener('change', () => {
+    if (themeToggle.checked) {
+      // Dark mode (checked = moon visible)
+      body.classList.remove('light-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      // Light mode (unchecked = sun visible)
+      body.classList.add('light-mode');
+      localStorage.setItem('theme', 'light');
+    }
+  });
+}
+
 // Initialize page loading
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize theme toggle
+  initThemeToggle();
+
   // Check URL hash or default to about
   const hash = window.location.hash.slice(1) || 'about us';
   loadPage(hash);

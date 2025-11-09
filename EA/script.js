@@ -64,11 +64,11 @@ function renderLabels(data) {
 
       const logoPath = getSelectedLogo();
   
-      const line1 = (row["Első_sor"] || "").substring(0, 20);
-      const secondLineText = (row["Második_sor"] || "").substring(0, 20);
-      const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 20);
-      const kiszereles = row["Kiszerelés"] || "";
-      const ar = row["Ár"] || "";
+      const line1 = (row["First_line"] || "").substring(0, 20);
+      const secondLineText = (row["Second_line"] || "").substring(0, 20);
+      const thirdLineText = (row["Third_line"] || "").substring(0, 20);
+      const kiszereles = row["Pack_size"] || "";
+      const ar = row["Price"] || "";
       const ftPerL = row["Ft/l"] || "";
       const ftPerKg = row["Ft/kg"] || "";
 
@@ -110,7 +110,7 @@ function renderLabels(data) {
         <div class="line2">${secondLineText}</div>
         <div class="line3">${thirdLineText}</div> 
         <div class="kiszereles">${kiszereles}</div>
-        <div class="line4">${("cikkszám: " + (row["Cikkszám"] || "")).substring(0, 24)}</div>
+        <div class="line4">${("Item number: " + (row["Item_number"] || "")).substring(0, 24)}</div>
         <div class="barcode-container">
           <svg class="barcode"></svg>
         </div>
@@ -246,7 +246,7 @@ function createPDF() {
   let element = document.getElementById("labels");
   let opt = {
     margin: 0,
-    filename: "cimkek.pdf",
+    filename: "labels.pdf",
     image: { type: 'jpeg', quality: 0.8 },
     html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' },
     jsPDF: { unit: 'mm', format: 'A4', orientation: 'portrait' },
@@ -277,8 +277,8 @@ function createPDF() {
 
 function downloadTemplate() {
     const link = document.createElement("a");
-    link.href = "ea_excel_sablon.xlsm";
-    link.download = "ea_excel_sablon.xlsm";
+    link.href = "excel_template.xlsm";
+    link.download = "excel_template.xlsm";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

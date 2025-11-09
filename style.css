@@ -139,12 +139,36 @@ body::before {
   display: flex;
   align-items: center;
   gap: 2rem;
+  flex: 1;
+}
+
+.header-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.header-stats-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-stats-text {
+  font-size: clamp(24.5px, 1.925vw, 28px);
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex: 1;
+  justify-content: flex-end;
 }
 
 .language-switcher {
@@ -1067,6 +1091,10 @@ input:focus {
     padding: 1rem;
   }
 
+  .header-center {
+    display: none;
+  }
+
   .navigation-menu {
     top: 70px;
   }
@@ -1098,6 +1126,16 @@ input:focus {
   .contact-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contact-left {
+    order: 2;
+  }
+
+  .contact-right {
+    order: 1;
   }
 
   .page-wrapper {
@@ -1114,6 +1152,10 @@ input:focus {
     font-size: 1rem;
   }
 
+  .header-container {
+    padding: 1rem;
+  }
+
   .header-container h1 {
     font-size: 1.2rem;
   }
@@ -1124,17 +1166,17 @@ input:focus {
   }
 
   .navigation-menu {
-    top: 60px;
+    top: 70px;
   }
 
   .nav-link {
-    font-size: 0.75rem;
-    height: 45px;
+    font-size: 0.7rem;
+    height: 60px;
     padding: 0 0.3rem;
   }
 
   #page-content {
-    margin-top: 120px;
+    margin-top: 140px;
     margin-bottom: 80px;
   }
 
@@ -1185,6 +1227,10 @@ input:focus {
 
 /* Tablet specific (481px - 1024px) */
 @media (min-width: 481px) and (max-width: 1024px) {
+  .header-container {
+    padding: 1rem;
+  }
+
   .header-container h1 {
     font-size: 1.8rem;
   }
@@ -1194,13 +1240,32 @@ input:focus {
     padding: 8px 14px;
   }
 
+  .navigation-menu {
+    top: 90px;
+  }
+
   .nav-link {
     font-size: 1rem;
-    height: 55px;
+    height: 65px;
   }
 
   #page-content {
-    margin-top: 150px;
+    margin-top: 160px;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contact-left {
+    order: 2;
+  }
+
+  .contact-right {
+    order: 1;
   }
 
   .page-title {

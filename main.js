@@ -1,5 +1,8 @@
 const API_URL = "https://labelgenerator-production.up.railway.app";
 
+// Global flag to track if counter animation is running
+let isCounterAnimating = false;
+
 // Custom notification function
 function showNotification(message, type = 'error') {
   const existing = document.querySelector('.custom-notification');
@@ -42,20 +45,22 @@ async function loadTotalLabelCount() {
 function updateCounterDisplay(count) {
   const counterElement = document.getElementById("totalLabelCount");
   if (counterElement) {
-    animateCounter(counterElement, 0, count, 2000);
+    animateCounter(counterElement, 0, count, 7000);
   }
 }
 
 function animateCounter(element, start, end, duration) {
+  isCounterAnimating = true;
   const range = end - start;
   const increment = range / (duration / 16); // 60 FPS
   let current = start;
-  
+
   const timer = setInterval(() => {
     current += increment;
     if (current >= end) {
       current = end;
       clearInterval(timer);
+      isCounterAnimating = false;
     }
     element.textContent = Math.floor(current).toLocaleString('hu-HU');
   }, 16);
@@ -110,13 +115,13 @@ function loadAboutPage() {
     <div class="page-wrapper">
       <div class="about-container">
         <h2 class="page-title scroll-animate-fade animate-in" data-lang="about-title">Welcome to Label Labor!</h2>
-        <p class="about-intro scroll-animate animate-in" data-lang="about-intro">In most of the stores, creating uniform shelf labels quickly and efficiently can be a real challenge. Label Labor provides an easy solution: generate labels directly from Excel spreadsheets and download them in PDF format.</p>
+        <p class="about-intro scroll-animate animate-in" data-lang="about-intro">In most of the stores, creating uniform shelf labels quickly and efficiently can be a real challenge.<br>Label Labor provides an easy solution: generate and print labels directly from a simple Excel spreadsheet.</p>
         <h3 class="benefits-title scroll-animate animate-in" data-lang="about-benefits-title">Benefits of using Label Labor:</h3>
         <ul class="benefits-list">
           <li class="scroll-animate animate-in" data-lang="about-benefit-1">Hundreds of labels in just minutes</li>
-          <li class="scroll-animate animate-in" data-lang="about-benefit-2">You can save time and money on label creation/li>
+          <li class="scroll-animate animate-in" data-lang="about-benefit-2">Saving time and money on label creation/li>
           <li class="scroll-animate animate-in" data-lang="about-benefit-3">Labels that can be printed on regular A4 paper — no need to buy expensive adhesive labels</li>
-          <li class="scroll-animate animate-in" data-lang="about-benefit-4">You can print labels even with a regular invoice printer — no special label printer required</li>
+          <li class="scroll-animate animate-in" data-lang="about-benefit-4">Printing labels even with a regular invoice printer — no special label printer required</li>
           <li class="scroll-animate animate-in" data-lang="about-benefit-5">Personalized label formats</li>
           <li class="scroll-animate animate-in" data-lang="about-benefit-6">Online support for introduction and usage</li>
         </ul>
@@ -176,17 +181,10 @@ function loadLoginPage() {
             </div>
 
             <button type="submit" class="login-button" data-lang="login">Login</button>
-            <div class="stats-container">
-              <div class="stats-card">
-                <span class="stats-text" data-lang="all-labels">All generated labels: <span class="stats-number" id="totalLabelCount">0</span></span>
-              </div>
-            </div>
           </form>
         </div>
       </div>
     `;
-
-    loadTotalLabelCount();
 
     // Attach login handler
     setTimeout(() => {
@@ -402,9 +400,9 @@ function loadContactPage() {
                 Please provide the following information in the "Message" field:
               </p>
               <ul class="contact-benefits-list">
-                <li data-lang="contact-benefit-1">How many different labels you want to generate on the platform</li>
-                <li data-lang="contact-benefit-2">Number of logos you want to use on the various labels</li>
-                <li data-lang="contact-benefit-3">Number of different label sizes</li>
+                <li data-lang="contact-benefit-1">How many different label sizes would you like to generate on the page</li>
+                <li data-lang="contact-benefit-2">Within a given label size, how many different label layouts would you like to use</li>
+                <li data-lang="contact-benefit-3">Number of logos you want to use on the various labels</li>
                 <li data-lang="contact-benefit-4">Number of stores where you will use Label Labor</li>
               </ul>
             </div>
@@ -553,6 +551,9 @@ function initThemeToggle() {
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize theme toggle
   initThemeToggle();
+
+  // Load total label count
+  loadTotalLabelCount();
 
   // Check URL hash or default to about
   const hash = window.location.hash.slice(1) || 'about us';

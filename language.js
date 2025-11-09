@@ -34,12 +34,12 @@ const translations = {
       
       // About page
       'about-title': 'Welcome to Label Labor!',
-      'about-intro': 'In most of the stores, creating uniform shelf labels quickly and efficiently can be a real challenge. Label Labor provides an easy solution: generate labels directly from Excel spreadsheets and download them in PDF format.',
+      'about-intro': 'In most of the stores, creating uniform shelf labels quickly and efficiently can be a real challenge.<br>Label Labor provides an easy solution: generate and print labels directly from a simple Excel spreadsheet.',
       'about-benefits-title': 'Benefits of using Label Labor:',
       'about-benefit-1': 'Hundreds of labels in just minutes',
-      'about-benefit-2': 'You can save time and money on label creation',
+      'about-benefit-2': 'Saving time and money on label creation',
       'about-benefit-3': 'Labels that can be printed on regular A4 paper — no need to buy expensive adhesive labels',
-      'about-benefit-4': 'You can print labels even with a regular invoice printer — no special label printer required',
+      'about-benefit-4': 'Printing labels even with a regular invoice printer — no special label printer required',
       'about-benefit-5': 'Personalized label formats',
       'about-benefit-6': 'Online support for introduction and usage',
       
@@ -57,9 +57,9 @@ const translations = {
     'contact-text-2': 'Afterwards, a monthly fee covers maintenance, bug fixes, and implementation of small modification requests.',
     'contact-subtitle-2': 'Helpful Information for us',
     'contact-text-3': 'Please provide the following information in the "Message" field:',
-    'contact-benefit-1': 'How many different labels you want to generate on the platform',
-    'contact-benefit-2': 'Number of logos you want to use on the various labels',
-    'contact-benefit-3': 'Number of different label sizes',
+    'contact-benefit-1': 'How many different label sizes would you like to generate on the page',
+    'contact-benefit-2': 'Within a given label size, how many different label layouts would you like to use',
+    'contact-benefit-3': 'Number of logos you want to use on the various labels',
     'contact-benefit-4': 'Number of stores where you will use Label Labor',
 
     },
@@ -97,7 +97,7 @@ const translations = {
       
       // About page
       'about-title': 'Üdvözöllek a Label Labor oldalán!',
-      'about-intro': 'A legtöbb boltban problémát jelent a polcsínbe való címkék gyors, költséghatékony és egységes előállítása. A Label Labor erre kínál egyszerű megoldást: néhány kattintással generálhat címkéket Excel-táblázatból, majd letöltheti őket PDF formátumban.',
+      'about-intro': 'A legtöbb boltban problémát jelent a polcsínbe való címkék gyors, költséghatékony és egységes előállítása.<br>A Label Labor erre kínál egyszerű megoldást: néhány kattintással készíthet és nyomtathat címkéket egyszerű Excel táblázatból.',
       'about-benefits-title': 'A Label Labor használatának előnyei:',
       'about-benefit-1': 'Több 100 címke percek alatt',
       'about-benefit-2': 'Időt és pénzt tud spórolni a címkék előállításán',
@@ -120,9 +120,9 @@ const translations = {
       'contact-text-2': 'Ezt követően havi díj ellenében biztosítjuk a karbantartást, hibajavítást és kisebb módosítási kérések teljesítését.',
       'contact-subtitle-2': 'Nekünk hasznos információk',
       'contact-text-3': 'Kérjük adja meg az alábbi információkat az "Üzenet" mezőbe:',
-      'contact-benefit-1': 'Hány féle címkét szeretne generálni az oldalon',
-      'contact-benefit-2': 'Felhasználni kívánt logók mennyisége a különböző címkéken',
-      'contact-benefit-3': 'Különböző méretű címkék száma',
+      'contact-benefit-1': 'Hány féle méretű címkét szeretne generálni az oldalon',
+      'contact-benefit-2': 'Egy adott címkeméreten belül hány féle elrendezésű címkét szeretne használni',
+      'contact-benefit-3': 'Felhasználni kívánt logók mennyisége a különböző címkéken',
       'contact-benefit-4': 'Boltjainak száma, ahol használná a Label Labort',
 
     }
@@ -147,7 +147,22 @@ const translations = {
             const statsNumber = element.querySelector('.stats-number');
             if (statsNumber) {
               const numberValue = statsNumber.textContent;
-              element.innerHTML = translations[lang][key] + '<span class="stats-number" id="totalLabelCount">' + numberValue + '</span>';
+              // Update text but preserve the counter element
+              const tempDiv = document.createElement('div');
+              tempDiv.innerHTML = translations[lang][key];
+              const textContent = tempDiv.textContent;
+
+              // Only update if not animating, or update text but keep number element
+              if (typeof isCounterAnimating !== 'undefined' && isCounterAnimating) {
+                // Keep the existing counter element during animation
+                element.childNodes.forEach(node => {
+                  if (node.nodeType === Node.TEXT_NODE) {
+                    node.textContent = textContent;
+                  }
+                });
+              } else {
+                element.innerHTML = translations[lang][key] + '<span class="stats-number" id="totalLabelCount">' + numberValue + '</span>';
+              }
             } else {
               element.innerHTML = translations[lang][key];
             }

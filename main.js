@@ -224,15 +224,15 @@ async function handleLogin(e) {
     if (!res.ok) {
       const errorText = await res.text();
       console.error("Server error:", errorText);
-      showNotification("Invalid username or password!", 'error');
+      showNotification(translations[currentLang]['login-error'], 'error');
       return;
     }
 
     const data = await res.json();
-    
+
     sessionStorage.setItem('currentUsername', username);
-    
-    showNotification("Login successful! Redirecting...", 'success');
+
+    showNotification(translations[currentLang]['login-success'], 'success');
     
     setTimeout(() => {
       window.location.href = data.redirect_url;
@@ -253,15 +253,26 @@ function loadInfoPage() {
     <div class="page-wrapper info-page-wrapper">
       <div class="content-grid">
         <div class="video-section scroll-animate-left">
-          <h2 data-lang="demo-video">Tutorial Video</h2>
-          <div class="video-wrapper">
-            <iframe
-              src="https://www.youtube.com/embed/vc-4hYqvbsk"
-              title="Label Labor demo"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen>
-            </iframe>
+          <h2 data-lang="demo-video">Tutorial Videos</h2>
+          <div class="videos-container">
+            <div class="video-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/6NOQLBYPUqw"
+                title="Label Labor demo"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+            </div>
+            <div class="video-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/FncnNBCnGLI"
+                title="Label Labor demo 2"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+            </div>
           </div>
         </div>
 

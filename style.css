@@ -667,6 +667,12 @@ input:focus {
   background-clip: text;
 }
 
+.videos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .video-wrapper {
   position: relative;
   padding-bottom: 56.25%;
@@ -676,8 +682,6 @@ input:focus {
   border-radius: 12px;
   box-shadow: 0 20px 60px var(--black-50);
   border: 2px solid var(--dusty-rose);
-  position: sticky;
-  top: 180px;
 }
 
 .video-wrapper iframe {
@@ -1298,8 +1302,8 @@ input:focus {
   }
 }
 
-/* Desktop responsive - közepes/nagy képernyők grid layout */
-@media (min-width: 1025px) and (max-width: 1440px) {
+/* Desktop responsive - kisebb desktop képernyők */
+@media (min-width: 1025px) and (max-width: 1199px) {
   .content-grid {
     grid-template-columns: 1fr;
     gap: 2rem;

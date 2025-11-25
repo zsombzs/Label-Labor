@@ -763,6 +763,44 @@ input:focus {
   line-height: 1.6;
 }
 
+/* Step description list styling */
+.step-content p ul {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.step-content p ul li {
+  background: var(--slate-blue-30);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border-left: 3px solid var(--cream);
+  color: var(--cream);
+  font-size: clamp(0.85rem, 0.95vw, 0.95rem);
+  line-height: 1.5;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.step-content p ul li::before {
+  content: '•';
+  position: absolute;
+  left: 1rem;
+  color: var(--cream);
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.step-content p ul li:hover {
+  background: var(--slate-blue-50);
+  transform: translateX(5px);
+  border-left-color: var(--dusty-rose);
+}
+
 /* Examples Page */
 
 .pdf-wrapper {

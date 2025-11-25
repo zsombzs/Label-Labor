@@ -16,19 +16,26 @@ const translations = {
       'demo-video': 'Tutorial Videos',
       'user-guide': 'User Guide',
       'step1-title': 'Login',
-      'step1-desc': 'Log in to the main page using the provided username and password.',
-      'step2-title': 'Download Template Excel File',
-      'step2-desc': 'Download the template Excel file by clicking the "Download Template Excel" button. After opening the Excel file, you must enable macros. In case of problems: info@labellabor.com',
-      'step3-title': 'Fill in Template Excel Cells',
-      'step3-desc': 'Copy the appropriate data into the <span style="color: red;">red</span> columns (max approx. 350 rows), ensuring there are no unnecessary rows (inside and outside cells) or line breaks. In the "Packaging" column, the quantity and unit should be separated by a space, e.g., "1 kg" or "400 ml". For piece packaging, the correct format is: "pcs". For the "Price" column, you don\'t need to write "Ft" or "forint", the correct format is e.g., "999". After checking the pasted data, run the macro named "Adatok_rendszerezese", which will help the program to fill in the cells found in the <span style="color: #378eff;">blue</span> columns.',
-      'step4-title': 'Check/Modify Cell Contents',
-      'step4-desc': 'The cells in the <span style="color: #378eff;">blue</span> columns can also be manually modified where necessary. After checking all the data, save the file.',
-      'step5-title': 'Upload Excel File, Select Label Type',
-      'step5-desc': 'By clicking the "Upload Excel File (.xlsm)" button, upload the previously edited Excel template file. Then, if there are multiple label types, select the appropriate one.',
-      'step6-title': 'Check Labels, Download PDF',
-      'step6-desc': 'After checking the data on the labels, click the "Download PDF" button to download the labels.pdf file. You can follow this process with the "Downloading PDF..." bar. If you want to generate new labels, make sure to refresh the page first.',
+      'step1-desc': 'Log in on the main page using the username and password you received.',
+
+      'step2-title': 'Download the Excel template',
+      'step2-desc': 'Click the "Download Template Excel" button, then open the file. If Excel asks for it, enable macros. If you get stuck, write to this email address: info@labellabor.com',
+
+      'step3-title': 'Filling out the template',
+      'step3-desc': 'Paste your data into the <span style="color: red;">red-marked</span> columns (up to approx. 350 rows). Please pay attention to the following:<br><br><ul><li>Make sure there are no empty or unnecessary rows, and no extra spaces.</li><li>The "Pack_size" field format should be: quantity + space + unit (e.g. "1 kg", "400 ml").</li><li>For items sold individually, the correct format is simply: "pcs".</li><li>In the "Price" field, enter only the number (e.g. "19").</li></ul><br>When everything is ready, run the "Data_Sorting" macro – this will automatically fill the <span style="color: #378eff;">blue</span> columns.',
+
+      'step4-title': 'Reviewing the data',
+      'step4-desc': 'You may also manually modify the values in the <span style="color: #378eff;">blue</span> columns if necessary. Once everything looks correct, save the file.',
+
+      'step5-title': 'Upload Excel, select label type',
+      'step5-desc': 'Click the "Upload Excel File (.xlsm)" button and select your completed template. After uploading the file, choose the appropriate label type.',
+
+      'step6-title': 'Check labels and download PDF',
+      'step6-desc': 'Review the information displayed on the labels, then click the "Download PDF" button. If you want to generate new labels afterward, refresh the page before starting the process.',
+
       'step7-title': 'Printing the labels',
-      'step7-desc': 'Printing the labels.pdf file with any standard printer (for example, the kind used for printing invoices).',
+      'step7-desc': 'You can print the downloaded labels.pdf document with any standard printer — just like any invoice or regular document.',
+
       'contact-footer': 'Contact: info@labellabor.com',
       'contact': 'Contact us',
       
@@ -80,20 +87,28 @@ const translations = {
       'all-labels': 'Összes generált címke: ',
       'demo-video': 'Bemutató videók',
       'user-guide': 'Használati útmutató',
+
       'step1-title': 'Bejelentkezés',
-      'step1-desc': 'A kapott felhasználónévvel (username) és jelszóval (password) jelentkezzen be a főoldalon.',
-      'step2-title': 'Sablon excel fájl letöltése',
-      'step2-desc': 'Töltse le a sablon excel fájlt a "Sablon Excel letöltése" gombra kattintva. Az excel megnyitása után engedélyezze a makrókat. Probléma esetén: info@labellabor.com',
-      'step3-title': 'Sablon Excel celláinak kitöltése',
-      'step3-desc': 'A <span style="color: red;">piros</span> oszlopokba kell bemásolni a megfelelő adatokat (max kb. 350 sor) úgy, hogy a bemásolt adatoknál ne legyenek felesleges sorok (cellákon belül és kívül) és sorközök. A "Kiszerelés" oszlopban a mennyiség és a mértékegység legyen szóközzel elválasztva, pl. "1 kg" vagy "400 ml". Darabos kiszerelés esetén a helyes formátum: "db". Az "Ár" oszlopnál nem kell odaírni, hogy "Ft" vagy "forint", a helyes formátum pl. "999". A bemásolt adatok leellenőrzése után le kell futtatni az "Adatok_rendszerezese" nevű makrót, amely segítségével a program ki fogja tölteni a <span style="color: #378eff;">kék</span> oszlopokban található cellákat.',
-      'step4-title': 'Cellák tartalmának ellenőrzése/módosítása',
-      'step4-desc': 'A <span style="color: #378eff;">kék</span> oszlopokban található cellákat is lehet kézzel módosítani, ahol szükséges. Az összes adat leellenőrzése után le kell menteni a fájlt.',
-      'step5-title': 'Excel fájl feltöltése, címketípus kiválasztása',
-      'step5-desc': 'Az "Excel fájl feltöltése (.xlsm)" gombra kattintva fel kell tölteni az előbb megszerkesztett excel sablon fájlt. Ezután ha több féle címketípus van, akkor ki kell választani a megfelelőt.',
-      'step6-title': 'Címkék ellenőrzése, PDF letöltése',
-      'step6-desc': 'A Címkén lévő adatok ellenőrzése után a "PDF letöltése" gombra kattintva le kell tölteni a cimkek.pdf fájlt, ezt a "Downloading PDF..." bár segítségével követhetjük végig. Ha újabb címkéket szeretne generálni, akkor előtte mindenképpen frissítsen rá az oldalra.',
+      'step1-desc': 'Lépjen be a főoldalon a kapott felhasználónévvel és jelszóval.',
+
+      'step2-title': 'Sablon excel letöltése',
+      'step2-desc': 'Kattintson a "Sablon Excel letöltése" gombra, majd nyissa meg a fájlt. Ha az Excel kéri, engedélyezze a makrókat. Ha elakadna, írjon erre az email címre: info@labellabor.com',
+
+      'step3-title': 'A sablon kitöltése',
+      'step3-desc': 'A <span style="color: red;">pirossal jelölt</span> oszlopokba másolja be a saját adatait (legfeljebb kb. 350 sor). Ügyeljen az alábbiakra:<br><br><ul><li>Ne maradjanak üres vagy felesleges sorok, illetve szóközök.</li><li>A "Kiszerelés" mező formátuma: mennyiség + szóköz + mértékegység (pl. "1 kg", "400 ml").</li><li>Darabos termék esetén a helyes formátum: "db".</li><li>Az "Ár" mezőbe csak a számot írja (pl. "999"), a "Ft" megjelölést nem kell hozzáadni.</li></ul><br>Ha mindennel készen van, futtassa az "Adatok_rendszerezese" makrót – ez automatikusan kitölti a <span style="color: #378eff;">kék</span> oszlopokat.',
+
+      'step4-title': 'Adatok ellenőrzése',
+      'step4-desc': 'A <span style="color: #378eff;">kék</span> oszlopokban lévő értékeket is módosíthatja kézzel, ha szükséges. Ha mindent rendben talál, mentse el a fájlt.',
+
+      'step5-title': 'Excel feltöltése, címketípus kiválasztása',
+      'step5-desc': 'Kattintson az "Excel fájl feltöltése (.xlsm)" gombra, és válassza ki a kitöltött sablont. A fájl feltöltése után válassza ki a megfelelő címketípust.',
+
+      'step6-title': 'Címkék ellenőrzése és PDF letöltése',
+      'step6-desc': 'Ellenőrizze a címkéken megjelenő adatokat, majd kattintson a "PDF letöltése" gombra. Ha új címkéket szeretne generálni, frissítsen rá az oldalra a folyamat előtt.',
+
       'step7-title': 'Címkék nyomtatása',
-      'step7-desc': 'A cimkek.pdf fájlt bármilyen hagyományos nyomtatóval (például amivel a számlákat is nyomtatjuk) ki lehet nyomtatni.',
+      'step7-desc': 'A letöltött cimkek.pdf dokumentumot bármilyen hagyományos nyomtatóval kinyomtathatja – ugyanúgy, mint egy számlát vagy más dokumentumot.',
+
       'contact-footer': 'Kontakt: info@labellabor.com',
       'contact': 'Kapcsolat',
       

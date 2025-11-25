@@ -282,56 +282,56 @@ function loadInfoPage() {
             <div class="step-item scroll-animate-right">
               <div class="step-number">1/7</div>
               <div class="step-content">
-                <h3 data-lang="step1-title">Login</h3>
-                <p data-lang="step1-desc">Log in to the main page using the provided username and password.</p>
+                <h3 data-lang="step1-title"></h3>
+                <p data-lang="step1-desc"></p>
               </div>
             </div>
 
             <div class="step-item scroll-animate-right">
               <div class="step-number">2/7</div>
               <div class="step-content">
-                <h3 data-lang="step2-title">Download Template Excel File</h3>
-                <p data-lang="step2-desc">Download the template Excel file by clicking the "Download Template Excel" button. After opening the Excel file, you must enable macros. In case of problems: info@labellabor.com</p>
+                <h3 data-lang="step2-title"></h3>
+                <p data-lang="step2-desc"></p>
               </div>
             </div>
 
             <div class="step-item scroll-animate-right">
               <div class="step-number">3/7</div>
               <div class="step-content">
-                <h3 data-lang="step3-title">Fill in Template Excel Cells</h3>
-                <p data-lang="step3-desc">Copy the appropriate data into the <span style="color: red;">red</span> columns (max approx. 350 rows), ensuring there are no unnecessary rows (inside and outside cells) or line breaks. In the "Packaging" column, the quantity and unit should be separated by a space, e.g., "1 kg" or "400 ml". For piece packaging, the correct format is: "pcs". For the "Price" column, you don't need to write "Ft" or "forint", the correct format is e.g., "999". After checking the pasted data, run the macro named "Adatok_rendszerezese", which will help the program to fill in the cells found in the <span style="color: #378eff;">blue</span> columns.</p>
+                <h3 data-lang="step3-title"></h3>
+                <p data-lang="step3-desc"></p>
               </div>
             </div>
 
             <div class="step-item scroll-animate-right">
               <div class="step-number">4/7</div>
               <div class="step-content">
-                <h3 data-lang="step4-title">Check/Modify Cell Contents</h3>
-                <p data-lang="step4-desc">The cells in the <span style="color: #378eff;">blue</span> columns can also be manually modified where necessary. After checking all the data, save the file.</p>
+                <h3 data-lang="step4-title"></h3>
+                <p data-lang="step4-desc"></p>
               </div>
             </div>
 
             <div class="step-item scroll-animate-right">
               <div class="step-number">5/7</div>
               <div class="step-content">
-                <h3 data-lang="step5-title">Upload Excel File, Select Label Type</h3>
-                <p data-lang="step5-desc">By clicking the "Upload Excel File (.xlsm)" button, upload the previously edited Excel template file. Then, if there are multiple label types, select the appropriate one.</p>
+                <h3 data-lang="step5-title"></h3>
+                <p data-lang="step5-desc"></p>
               </div>
             </div>
 
             <div class="step-item scroll-animate-right">
               <div class="step-number">6/7</div>
               <div class="step-content">
-                <h3 data-lang="step6-title">Check Labels, Download PDF</h3>
-                <p data-lang="step6-desc">After checking the data on the labels, click the "Download PDF" button to download the labels.pdf file. You can follow this process with the "Downloading PDF..." bar. If you want to generate new labels, make sure to refresh the page first.</p>
+                <h3 data-lang="step6-title"></h3>
+                <p data-lang="step6-desc"></p>
               </div>
             </div>
 
             <div class="step-item scroll-animate-right">
               <div class="step-number">7/7</div>
               <div class="step-content">
-                <h3 data-lang="step7-title">Printing the labels</h3>
-                <p data-lang="step7-desc">Printing the labels.pdf file with any standard printer (for example, the kind used for printing invoices).</p>
+                <h3 data-lang="step7-title"></h3>
+                <p data-lang="step7-desc"></p>
               </div>
             </div>
           </div>

@@ -103,11 +103,14 @@ body {
   color: var(--cream);
   overflow-x: hidden;
   position: relative;
+  -webkit-overflow-scrolling: touch;
 }
 
 html {
   background: var(--deep-dark);
   overflow-x: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 body::before {
@@ -446,11 +449,10 @@ body::before {
 #page-content {
   margin-top: 160px;
   margin-bottom: 100px;
-  height: calc(100vh - 260px);
-  min-height: 600px;
+  min-height: calc(100vh - 260px);
   position: relative;
   z-index: 1;
-  overflow-y: auto;
+  overflow-y: visible;
   overflow-x: hidden;
 }
 
@@ -458,7 +460,7 @@ body::before {
   max-width: 100%;
   margin: 0 auto;
   padding: 1rem;
-  height: 100%;
+  min-height: 100%;
 }
 
 .page-title {
@@ -1351,7 +1353,10 @@ input:focus {
 
   #page-content {
     margin-top: 150px;
+    margin-bottom: 80px;
+    min-height: auto;
     padding: 0 0.25rem;
+    overflow-y: visible;
   }
 
   .content-grid {
@@ -1638,6 +1643,22 @@ input:focus {
   .page-wrapper {
     padding: 1.5rem 0.5rem;
   }
+
+  /* PDF viewer mobile optimization */
+  .pdf-wrapper {
+    height: auto;
+    min-height: calc(100vh - 230px);
+  }
+
+  .pdf-container {
+    min-height: calc(100vh - 230px);
+    height: auto;
+  }
+
+  .pdf-container iframe {
+    height: calc(100vh - 230px);
+    min-height: 500px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1675,8 +1696,8 @@ input:focus {
   #page-content {
     margin-top: 135px;
     margin-bottom: 70px;
-    height: calc(100vh - 205px);
-    min-height: 500px;
+    min-height: auto;
+    overflow-y: visible;
   }
 
   .page-wrapper {
@@ -1913,6 +1934,22 @@ input:focus {
     font-size: 1.15rem;
     padding: 1.25rem 1rem;
   }
+
+  /* PDF viewer small mobile optimization */
+  .pdf-wrapper {
+    height: auto;
+    min-height: calc(100vh - 205px);
+  }
+
+  .pdf-container {
+    min-height: calc(100vh - 205px);
+    height: auto;
+  }
+
+  .pdf-container iframe {
+    height: calc(100vh - 205px);
+    min-height: 450px;
+  }
 }
 
 /* Tablet specific (481px - 1024px) */
@@ -1942,8 +1979,8 @@ input:focus {
   #page-content {
     margin-top: 155px;
     margin-bottom: 80px;
-    height: calc(100vh - 235px);
-    min-height: 550px;
+    min-height: auto;
+    overflow-y: visible;
   }
 
   .page-wrapper {
@@ -2173,6 +2210,22 @@ input:focus {
 
   .custom-notification.show {
     right: 15px;
+  }
+
+  /* PDF viewer tablet optimization */
+  .pdf-wrapper {
+    height: auto;
+    min-height: calc(100vh - 235px);
+  }
+
+  .pdf-container {
+    min-height: calc(100vh - 235px);
+    height: auto;
+  }
+
+  .pdf-container iframe {
+    height: calc(100vh - 235px);
+    min-height: 550px;
   }
 }
 

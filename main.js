@@ -32,7 +32,14 @@ function showNotification(message, type = 'error') {
 // Összes címkeszám betöltése
 async function loadTotalLabelCount() {
   try {
-    const response = await fetch(`${API_URL}/api/total-label-count`);
+    const response = await fetch(`${API_URL}/api/total-label-count`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+      // Add timeout and priority to make it faster
+      priority: 'high'
+    });
     if (response.ok) {
       const data = await response.json();
       updateCounterDisplay(data.total_count);
@@ -562,6 +569,12 @@ function initThemeToggle() {
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize theme toggle
   initThemeToggle();
+
+  // Set counter to 0 immediately for better UX
+  const counterElement = document.getElementById("totalLabelCount");
+  if (counterElement) {
+    counterElement.textContent = '0';
+  }
 
   // Load total label count
   loadTotalLabelCount();

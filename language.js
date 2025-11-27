@@ -70,6 +70,8 @@ const translations = {
     'contact-benefit-2': 'Within a given label size, how many different label layouts would you like to use',
     'contact-benefit-3': 'Number of logos you want to use on the various labels',
     'contact-benefit-4': 'Number of stores where you will use Label Labor',
+    'form-location-hint': 'The quote request form can be found at the bottom of the page. Please fill it out according to the instructions provided.',
+    'scroll-to-form': 'Go to Form',
 
     },
     hu: {
@@ -143,6 +145,8 @@ const translations = {
       'contact-benefit-2': 'Egy adott címkeméreten belül hány féle elrendezésű címkét szeretne használni',
       'contact-benefit-3': 'Felhasználni kívánt logók mennyisége a különböző címkéken',
       'contact-benefit-4': 'Boltjainak száma, ahol használná a Label Labort',
+      'form-location-hint': 'Az űrlap az oldal alján található. Kérjük, megadott útmutató alapján töltse ki.',
+      'scroll-to-form': 'Ugrás az űrlaphoz',
 
     }
   };

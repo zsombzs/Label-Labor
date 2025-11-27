@@ -121,8 +121,11 @@ function loadAboutPage() {
   pageContent.innerHTML = `
     <div class="page-wrapper">
       <div class="about-container">
-        <h2 class="page-title scroll-animate-fade animate-in" data-lang="about-title">Welcome to Label Labor!</h2>
-        <p class="about-intro scroll-animate animate-in" data-lang="about-intro">In most of the stores, creating uniform shelf labels quickly and efficiently can be a real challenge.<br>Label Labor provides an easy solution: generate and print labels directly from a simple Excel spreadsheet.</p>
+        <div class="about-intro-box scroll-animate animate-in">
+          <h2 class="page-title" data-lang="about-title">Welcome to Label Labor!</h2>
+          <div class="intro-separator"></div>
+          <p class="about-intro" data-lang="about-intro">In most of the stores, creating uniform shelf labels quickly and efficiently can be a real challenge.<br>Label Labor provides an easy solution: generate and print labels directly from a simple Excel spreadsheet.</p>
+        </div>
         <h3 class="benefits-title scroll-animate animate-in" data-lang="about-benefits-title">Benefits of using Label Labor:</h3>
         <ul class="benefits-list">
           <li class="scroll-animate animate-in" data-lang="about-benefit-1">Hundreds of labels in just minutes</li>
@@ -374,6 +377,11 @@ function loadContactPage() {
       <div class="contact-container">
         <h2 class="page-title scroll-animate-fade" data-lang="contact-form-title">Request a Personalized Quote!</h2>
 
+        <div class="form-location-hint-container">
+          <p class="form-location-hint" data-lang="form-location-hint">The quote request form can be found at the bottom of the page.</p>
+          <button class="scroll-to-form-btn" data-lang="scroll-to-form" onclick="scrollToContactForm()">Go to Form</button>
+        </div>
+
         <div class="contact-grid">
           <div class="contact-left scroll-animate-left">
             <form id="contactForm" class="contact-form">
@@ -440,6 +448,13 @@ function loadContactPage() {
 
   if (typeof changeLanguage === 'function') {
     changeLanguage(currentLang);
+  }
+}
+
+function scrollToContactForm() {
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
@@ -565,10 +580,88 @@ function initThemeToggle() {
   });
 }
 
+// Mobile menu functionality
+function initMobileMenu() {
+  const hamburger = document.querySelector('.hamburger-menu');
+  const overlay = document.querySelector('.mobile-menu-overlay');
+  const closeBtn = document.querySelector('.mobile-menu-close');
+  const mobileLinks = document.querySelectorAll('.mobile-menu-link');
+
+  if (!hamburger || !overlay) return;
+
+  // Open menu
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    overlay.classList.toggle('active');
+    document.body.style.overflow = overlay.classList.contains('active') ? 'hidden' : '';
+  });
+
+  // Close menu
+  closeBtn?.addEventListener('click', () => {
+    hamburger.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  });
+
+  // Close on overlay click
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      hamburger.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+
+  // Handle mobile menu clicks
+  mobileLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const page = link.getAttribute('href').slice(1);
+
+      // Close menu
+      hamburger.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+
+      // Navigate
+      window.location.hash = page;
+    });
+  });
+}
+
+// Update current page title in mobile nav
+function updateCurrentPageTitle(page) {
+  const currentPageTitle = document.querySelector('.current-page-title');
+  const mobileLinks = document.querySelectorAll('.mobile-menu-link');
+
+  if (currentPageTitle) {
+    // Find the corresponding link and get its text
+    const activeLink = document.querySelector(`.mobile-menu-link[href="#${page}"]`);
+    if (activeLink) {
+      const langKey = activeLink.getAttribute('data-lang');
+      if (langKey && translations[currentLang] && translations[currentLang][langKey]) {
+        currentPageTitle.textContent = translations[currentLang][langKey];
+        currentPageTitle.setAttribute('data-lang', langKey);
+      }
+    }
+  }
+
+  // Update active state
+  mobileLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === `#${page}`) {
+      link.classList.add('active');
+    }
+  });
+}
+
 // Initialize page loading
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize theme toggle
   initThemeToggle();
+
+  // Initialize mobile menu
+  initMobileMenu();
 
   // Set counter to 0 immediately for better UX
   const counterElement = document.getElementById("totalLabelCount");
@@ -582,11 +675,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check URL hash or default to about
   const hash = window.location.hash.slice(1) || 'about us';
   loadPage(hash);
+  updateCurrentPageTitle(hash);
 
   // Handle hash changes
   window.addEventListener('hashchange', () => {
     const hash = window.location.hash.slice(1) || 'about us';
     loadPage(hash);
+    updateCurrentPageTitle(hash);
   });
 
   // Handle nav clicks

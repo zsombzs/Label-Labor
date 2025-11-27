@@ -98,10 +98,16 @@ body.light-mode {
 body {
   font-family: 'Calibri', 'Segoe UI', sans-serif;
   background: linear-gradient(135deg, var(--deep-dark) 0%, var(--dark-navy) 100%);
+  background-attachment: fixed;
   min-height: 100vh;
   color: var(--cream);
   overflow-x: hidden;
   position: relative;
+}
+
+html {
+  background: var(--deep-dark);
+  overflow-x: hidden;
 }
 
 body::before {
@@ -133,6 +139,7 @@ body::before {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 90px;
 }
 
 .header-left {
@@ -215,7 +222,7 @@ body::before {
   background-clip: text;
 }
 
-/* Navigation Menu */
+/* Navigation Menu - Desktop */
 .navigation-menu {
   position: fixed;
   top: 90px;
@@ -225,6 +232,158 @@ body::before {
   backdrop-filter: blur(10px);
   border-bottom: 2px solid var(--dusty-rose);
   z-index: 99;
+}
+
+/* Mobile Navigation */
+.mobile-navigation {
+  display: none;
+  position: fixed;
+  top: 90px;
+  left: 0;
+  right: 0;
+  background: var(--dark-purple);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--dusty-rose);
+  z-index: 99;
+  padding: 1rem 2rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.current-page-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cream);
+  flex: 1;
+}
+
+.hamburger-menu {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 101;
+}
+
+.hamburger-line {
+  width: 28px;
+  height: 3px;
+  background: var(--cream);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu:hover .hamburger-line {
+  background: var(--dusty-rose);
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg) translate(8px, -8px);
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-menu-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.mobile-menu-content {
+  position: absolute;
+  top: 0;
+  right: -100%;
+  width: 80%;
+  max-width: 350px;
+  height: 100%;
+  background: var(--deep-dark-95);
+  backdrop-filter: blur(20px);
+  box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+  transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.mobile-menu-overlay.active .mobile-menu-content {
+  right: 0;
+}
+
+.mobile-menu-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 3rem;
+  color: var(--cream);
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  line-height: 1;
+}
+
+.mobile-menu-close:hover {
+  color: var(--dusty-rose);
+  transform: rotate(90deg);
+}
+
+.mobile-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 4rem 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mobile-menu-list li {
+  border-bottom: 1px solid var(--dusty-rose-20);
+}
+
+.mobile-menu-link {
+  display: block;
+  padding: 1.5rem 1rem;
+  color: var(--cream);
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.mobile-menu-link:hover,
+.mobile-menu-link.active {
+  background: var(--dusty-rose-10);
+  border-left-color: var(--dusty-rose);
+  color: var(--dusty-rose);
+  transform: translateX(5px);
 }
 
 .nav-list {
@@ -287,15 +446,19 @@ body::before {
 #page-content {
   margin-top: 160px;
   margin-bottom: 100px;
-  min-height: calc(100vh - 260px);
+  height: calc(100vh - 260px);
+  min-height: 600px;
   position: relative;
   z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .page-wrapper {
   max-width: 100%;
   margin: 0 auto;
   padding: 1rem;
+  height: 100%;
 }
 
 .page-title {
@@ -312,34 +475,61 @@ body::before {
 
 /* About Page */
 .about-container {
-  background: transparent;      /* Nincs háttér */
-  border: none;                 /* Nincs szegély */
-  padding: 2rem;
-  padding: 2rem;
+  background: transparent;
+  border: none;
+  padding: 1.5rem;
   animation: slideIn 0.8s ease-out;
+}
+
+.about-intro-box {
+  background: var(--dark-navy-60);
+  backdrop-filter: blur(15px);
+  border: 2px solid var(--dusty-rose);
+  border-radius: 12px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.about-intro-box .page-title {
+  margin-bottom: 0;
+  padding-bottom: 1.25rem;
+}
+
+.intro-separator {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--dusty-rose), transparent);
+  margin: 0 auto 1.25rem;
+  width: 80%;
+  opacity: 0.6;
 }
 
 .about-intro {
   font-size: clamp(1rem, 1.2vw, 1.2rem);
-  color: var(--dusty-rose);
-  margin-bottom: 2rem;
+  color: var(--cream);
+  margin-bottom: 0;
   line-height: 1.8;
   text-align: center;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .benefits-title {
   font-size: clamp(1.4rem, 1.8vw, 1.8rem);
   font-weight: 600;
   color: var(--cream);
-  margin-bottom: 1.5rem;
-  margin-top: 2rem;
+  margin-bottom: 1.25rem;
+  margin-top: 0.5rem;
 }
 
 .benefits-list {
   list-style: none;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 1.25rem;
+  padding: 0;
+  margin: 0;
 }
 
 .benefits-list li {
@@ -349,8 +539,10 @@ body::before {
   border-left: 4px solid var(--dusty-rose);
   color: var(--cream);
   font-size: clamp(0.9rem, 1vw, 1rem);
-  line-height: 1.6;
+  line-height: 1.7;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
 .benefits-list li:hover {
@@ -830,6 +1022,11 @@ input:focus {
   animation: slideIn 0.8s ease-out;
 }
 
+/* Form location hint - hidden on desktop */
+.form-location-hint-container {
+  display: none;
+}
+
 .contact-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1125,34 +1322,36 @@ input:focus {
 
 /* Media queries - Tablet/Mobile */
 @media (max-width: 1024px) {
-  .header-container h1 {
-    font-size: 1.5rem;
-  }
-
   .header-container {
     padding: 1rem;
+    height: 80px;
+  }
+
+  .header-container h1 {
+    font-size: 1.5rem;
   }
 
   .header-center {
     display: none;
   }
 
+  /* Hide desktop navigation, show mobile */
   .navigation-menu {
-    top: 70px;
+    display: none;
   }
 
-  .nav-list {
-    flex-wrap: wrap;
+  .mobile-navigation {
+    display: flex;
+    top: 80px;
   }
 
-  .nav-link {
-    font-size: 0.9rem;
-    height: 50px;
-    padding: 0 0.5rem;
+  .mobile-menu-overlay {
+    display: block;
   }
 
   #page-content {
-    margin-top: 140px;
+    margin-top: 150px;
+    padding: 0 0.25rem;
   }
 
   .content-grid {
@@ -1165,9 +1364,211 @@ input:focus {
     top: auto !important;
   }
 
+  /* Info/Demo page mobile optimization */
+  .video-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .video-section h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .videos-container {
+    gap: 1.5rem;
+  }
+
+  .video-wrapper {
+    border-radius: 10px;
+    border-width: 2px;
+  }
+
+  /* About page mobile optimization */
+  .about-intro-box {
+    background: var(--dark-navy-60);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--dusty-rose);
+    border-radius: 12px;
+    padding: 1.25rem 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    max-width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .about-intro-box .page-title {
+    margin-bottom: 0;
+    padding-bottom: 1rem;
+    font-size: 1.75rem;
+  }
+
+  .intro-separator {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--dusty-rose), transparent);
+    margin: 0 auto 1rem;
+    width: 70%;
+    opacity: 0.6;
+  }
+
+  .about-intro {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    margin-bottom: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+
+  .benefits-title {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+    padding: 0;
+    text-align: left;
+    padding-left: 1rem;
+  }
+
+  .benefits-list {
+    gap: 0;
+    padding: 0;
+    margin: 0;
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .benefits-list li {
+    font-size: 1.05rem;
+    padding: 1.15rem 1.15rem 1.15rem 2.75rem;
+    line-height: 1.8;
+    min-height: auto;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--dusty-rose-20);
+    position: relative;
+    display: block;
+    transition: all 0.2s ease;
+  }
+
+  .benefits-list li:last-child {
+    border-bottom: none;
+  }
+
+  .benefits-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--dusty-rose);
+    font-size: 1.35rem;
+    font-weight: bold;
+  }
+
+  .benefits-list li:hover {
+    background: var(--dusty-rose-10);
+    transform: translateX(0);
+    padding-left: 3rem;
+  }
+
+  /* Info page mobile optimization */
+  .steps-list {
+    gap: 1.5rem;
+    padding: 0 0.25rem;
+  }
+
+  .step-item {
+    padding: 1.5rem 1rem;
+    gap: 1.25rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .step-number {
+    width: 55px;
+    height: 55px;
+    font-size: 1.2rem;
+    align-self: center;
+  }
+
+  .step-content {
+    width: 100%;
+  }
+
+  .step-content h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    text-align: center;
+  }
+
+  .step-content p {
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+
+  .step-content p ul {
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+
+  .step-content p ul li {
+    font-size: 0.95rem;
+    padding: 1rem 1rem 1rem 2.5rem;
+    line-height: 1.7;
+  }
+
+  /* Contact page mobile optimization */
+  /* Form location hint - visible on mobile/tablet */
+  .form-location-hint-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1.25rem;
+    background: var(--dark-navy-60);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--dusty-rose);
+    border-radius: 12px;
+  }
+
+  .form-location-hint {
+    color: var(--cream);
+    font-size: 1rem;
+    line-height: 1.6;
+    text-align: center;
+    margin: 0;
+  }
+
+  .scroll-to-form-btn {
+    background: linear-gradient(135deg, var(--dusty-rose), var(--slate-blue));
+    color: var(--cream);
+    border: 2px solid var(--cream);
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 56px;
+    font-family: 'Calibri', 'Segoe UI', sans-serif;
+  }
+
+  .scroll-to-form-btn:hover {
+    background: linear-gradient(135deg, var(--slate-blue), var(--dusty-rose));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+  }
+
+  .scroll-to-form-btn:active {
+    transform: translateY(0);
+  }
+
   .contact-grid {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 2.5rem;
     display: flex;
     flex-direction: column;
   }
@@ -1180,8 +1581,62 @@ input:focus {
     order: 1;
   }
 
-  .page-wrapper {
+  .contact-form {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    font-size: 1.05rem;
     padding: 1rem;
+    min-height: 48px; /* Better touch target */
+  }
+
+  .form-group textarea {
+    min-height: 140px;
+  }
+
+  .contact-submit-btn {
+    padding: 1.25rem 2rem;
+    font-size: 1.05rem;
+    min-height: 56px; /* Better touch target */
+  }
+
+  .contact-subtitle {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .contact-text {
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .contact-info-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem 1rem;
+    background: var(--slate-blue-20);
+    border-radius: 12px;
+    border-left: 4px solid var(--dusty-rose);
+  }
+
+  .contact-benefits-list {
+    gap: 0.75rem;
+  }
+
+  .contact-benefits-list li {
+    font-size: 0.95rem;
+    padding: 1rem;
+    line-height: 1.7;
+  }
+
+  .page-wrapper {
+    padding: 1.5rem 0.5rem;
   }
 }
 
@@ -1195,68 +1650,251 @@ input:focus {
   }
 
   .header-container {
-    padding: 1rem;
+    padding: 0.75rem 1rem;
+    height: 70px;
   }
 
   .header-container h1 {
-    font-size: 1.2rem;
-  }
-
-  .lang-btn {
-    font-size: 1.2rem;
-    padding: 6px 12px;
-  }
-
-  .navigation-menu {
-    top: 70px;
-  }
-
-  .nav-link {
-    font-size: 0.7rem;
-    height: 60px;
-    padding: 0 0.3rem;
-  }
-
-  #page-content {
-    margin-top: 140px;
-    margin-bottom: 80px;
-  }
-
-  .page-title {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .about-intro {
-    font-size: 0.95rem;
-  }
-
-  .benefits-title {
     font-size: 1.3rem;
   }
 
-  .benefits-list li {
-    font-size: 0.9rem;
-    padding: 1rem;
+  .lang-btn {
+    font-size: 1.1rem;
+    padding: 6px 10px;
   }
 
+  .current-page-title {
+    font-size: 1rem;
+  }
+
+  .mobile-navigation {
+    padding: 0.75rem 1rem;
+    top: 70px;
+  }
+
+  #page-content {
+    margin-top: 135px;
+    margin-bottom: 70px;
+    height: calc(100vh - 205px);
+    min-height: 500px;
+  }
+
+  .page-wrapper {
+    padding: 1.25rem 0.5rem;
+  }
+
+  .page-title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Info/Demo page mobile (small screens) */
+  .video-section {
+    margin-bottom: 2.25rem;
+  }
+
+  .video-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.3rem;
+  }
+
+  .videos-container {
+    gap: 1.3rem;
+  }
+
+  /* About page mobile (small screens) */
+  .about-intro-box {
+    background: var(--dark-navy-60);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--dusty-rose);
+    border-radius: 12px;
+    padding: 1.25rem 0.85rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    max-width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .about-intro-box .page-title {
+    margin-bottom: 0;
+    padding-bottom: 0.9rem;
+    font-size: 1.6rem;
+  }
+
+  .intro-separator {
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, var(--dusty-rose), transparent);
+    margin: 0 auto 0.9rem;
+    width: 65%;
+    opacity: 0.6;
+  }
+
+  .about-intro {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    margin-bottom: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+
+  .benefits-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+    padding: 0;
+    text-align: left;
+    padding-left: 0.5rem;
+  }
+
+  .benefits-list {
+    gap: 0;
+    padding: 0;
+    margin: 0;
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .benefits-list li {
+    font-size: 1rem;
+    padding: 1rem 1rem 1rem 2.5rem;
+    line-height: 1.8;
+    min-height: auto;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--dusty-rose-20);
+    position: relative;
+    display: block;
+    transition: all 0.2s ease;
+  }
+
+  .benefits-list li:last-child {
+    border-bottom: none;
+  }
+
+  .benefits-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--dusty-rose);
+    font-size: 1.3rem;
+    font-weight: bold;
+  }
+
+  .benefits-list li:hover {
+    background: var(--dusty-rose-10);
+    transform: translateX(0);
+    padding-left: 2.8rem;
+  }
+
+  /* Info page - steps (small screens) */
+  .steps-list {
+    gap: 1.3rem;
+    padding: 0 0.1rem;
+  }
+
+  .step-item {
+    padding: 1.3rem 0.9rem;
+    gap: 1rem;
+    flex-direction: column;
+  }
+
+  .step-number {
+    width: 50px;
+    height: 50px;
+    font-size: 1.15rem;
+    align-self: center;
+  }
+
+  .step-content h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.65rem;
+    text-align: center;
+  }
+
+  .step-content p {
+    font-size: 0.97rem;
+    line-height: 1.75;
+  }
+
+  .step-content p ul {
+    gap: 0.9rem;
+    margin: 1.1rem 0;
+  }
+
+  .step-content p ul li {
+    font-size: 0.92rem;
+    padding: 0.95rem 0.9rem 0.95rem 2.3rem;
+    line-height: 1.7;
+  }
+
+  /* Contact page (small screens) */
   .contact-form {
-    padding: 1.5rem;
+    padding: 1.5rem 1.1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.4rem;
   }
 
   .form-group input,
   .form-group textarea {
     font-size: 1rem;
+    padding: 0.95rem;
+    min-height: 48px;
   }
 
+  .form-group textarea {
+    min-height: 130px;
+  }
+
+  .contact-submit-btn {
+    padding: 1.15rem 1.75rem;
+    font-size: 1rem;
+    min-height: 52px;
+  }
+
+  .contact-subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .contact-text {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin-bottom: 0.9rem;
+  }
+
+  .contact-info-section {
+    margin-bottom: 1.75rem;
+    padding: 1.3rem 0.9rem;
+  }
+
+  .contact-benefits-list {
+    gap: 0.65rem;
+  }
+
+  .contact-benefits-list li {
+    font-size: 0.92rem;
+    padding: 0.95rem;
+    line-height: 1.7;
+  }
+
+  /* Footer */
   .footer-container {
     padding: 0.75rem 1rem;
   }
 
   .contacts {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 
+  /* Notifications */
   .custom-notification {
     width: 90%;
     max-width: 320px;
@@ -1264,6 +1902,16 @@ input:focus {
 
   .custom-notification.show {
     right: 5%;
+  }
+
+  .notification-message {
+    font-size: 0.9rem;
+  }
+
+  /* Mobile menu */
+  .mobile-menu-link {
+    font-size: 1.15rem;
+    padding: 1.25rem 1rem;
   }
 }
 
@@ -1278,26 +1926,181 @@ input:focus {
   }
 
   .lang-btn {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     padding: 8px 14px;
   }
 
-  .navigation-menu {
-    top: 90px;
+  .current-page-title {
+    font-size: 1.15rem;
   }
 
-  .nav-link {
-    font-size: 1rem;
-    height: 65px;
+  .mobile-navigation {
+    padding: 1rem 1.5rem;
+    top: 80px;
   }
 
   #page-content {
-    margin-top: 160px;
+    margin-top: 155px;
+    margin-bottom: 80px;
+    height: calc(100vh - 235px);
+    min-height: 550px;
   }
 
+  .page-wrapper {
+    padding: 2rem 0.75rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    margin-bottom: 1.75rem;
+  }
+
+  /* Info/Demo page - Tablet */
+  .video-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .video-section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .videos-container {
+    gap: 1.75rem;
+  }
+
+  /* About page - Tablet */
+  .about-intro-box {
+    background: var(--dark-navy-60);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--dusty-rose);
+    border-radius: 12px;
+    padding: 1.5rem 1.25rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    max-width: 96%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .about-intro-box .page-title {
+    margin-bottom: 0;
+    padding-bottom: 1.15rem;
+    font-size: 1.85rem;
+  }
+
+  .intro-separator {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--dusty-rose), transparent);
+    margin: 0 auto 1.15rem;
+    width: 75%;
+    opacity: 0.6;
+  }
+
+  .about-intro {
+    font-size: 1.15rem;
+    line-height: 1.9;
+    margin-bottom: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+
+  .benefits-title {
+    font-size: 1.7rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+    padding: 0;
+    text-align: left;
+    padding-left: 1rem;
+  }
+
+  .benefits-list {
+    gap: 0;
+    padding: 0;
+    margin: 0;
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .benefits-list li {
+    font-size: 1.1rem;
+    padding: 1.25rem 1.25rem 1.25rem 3rem;
+    line-height: 1.85;
+    min-height: auto;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--dusty-rose-20);
+    position: relative;
+    display: block;
+    transition: all 0.2s ease;
+  }
+
+  .benefits-list li:last-child {
+    border-bottom: none;
+  }
+
+  .benefits-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--dusty-rose);
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .benefits-list li:hover {
+    background: var(--dusty-rose-10);
+    transform: translateX(0);
+    padding-left: 3.3rem;
+  }
+
+  /* Info page - Tablet */
+  .steps-list {
+    gap: 1.5rem;
+    padding: 0 0.25rem;
+  }
+
+  .step-item {
+    padding: 1.75rem 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .step-number {
+    width: 60px;
+    height: 60px;
+    font-size: 1.3rem;
+  }
+
+  .step-content h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .step-content p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  .step-content p ul {
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+
+  .step-content p ul li {
+    font-size: 1rem;
+    padding: 1.1rem 1rem 1.1rem 2.75rem;
+    line-height: 1.75;
+  }
+
+  /* Contact page - Tablet */
   .contact-grid {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 2.5rem;
     display: flex;
     flex-direction: column;
   }
@@ -1310,25 +2113,58 @@ input:focus {
     order: 1;
   }
 
-  .page-title {
-    font-size: 2rem;
-  }
-
-  .about-intro {
-    font-size: 1.1rem;
-  }
-
-  .benefits-title {
-    font-size: 1.6rem;
-  }
-
-  .benefits-list li {
-    font-size: 1rem;
-    padding: 1.25rem;
-  }
-
   .contact-form {
-    padding: 2rem;
+    padding: 2rem 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.6rem;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    font-size: 1.1rem;
+    padding: 1.1rem;
+    min-height: 50px;
+  }
+
+  .form-group textarea {
+    min-height: 150px;
+  }
+
+  .contact-submit-btn {
+    padding: 1.3rem 2.5rem;
+    font-size: 1.1rem;
+    min-height: 58px;
+  }
+
+  .contact-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .contact-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .contact-info-section {
+    margin-bottom: 2rem;
+    padding: 1.75rem 1.25rem;
+    background: var(--slate-blue-20);
+    border-radius: 12px;
+    border-left: 4px solid var(--dusty-rose);
+  }
+
+  .contact-benefits-list {
+    gap: 0.85rem;
+  }
+
+  .contact-benefits-list li {
+    font-size: 1rem;
+    padding: 1.1rem;
+    line-height: 1.75;
   }
 
   .custom-notification {

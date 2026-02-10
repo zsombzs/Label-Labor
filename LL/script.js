@@ -9,7 +9,7 @@ function getUsername() {
 
 function getSelectedLogo() {
   const selectedType = document.querySelector('input[name="labelType"]:checked').value;
-  return selectedType === "A" ? "assets/icon.png" : "assets/kek.png";
+  return selectedType === "A" ? "assets/piros.png" : "assets/kek.png";
 }
 
 document.querySelectorAll('input[name="labelType"]').forEach(radio => {
@@ -28,27 +28,61 @@ document.getElementById("excelFile").addEventListener("change", function(e) {
 
 function handleFile(e) {
   let file = e.target.files[0];
+  if (!file) {
+    console.error("Nincs kiválasztott fájl");
+    return;
+  }
+
+  console.log(`📁 Fájl betöltése: ${file.name} (${file.type})`);
   let reader = new FileReader();
 
-  reader.onload = function(event) {
-    let data = new Uint8Array(event.target.result);
-    let workbook = XLSX.read(data, { type: 'array' });
-    let sheet = workbook.Sheets[workbook.SheetNames[0]];
-    let json = XLSX.utils.sheet_to_json(sheet);
+  reader.onerror = function(error) {
+    console.error("❌ Fájl olvasási hiba:", error);
+    alert("Hiba történt a fájl beolvasása során!");
+  };
 
-    // Ellenőrizzük, hogy az Excel már tartalmazza-e a feldolgozott oszlopokat (makró által)
-    if (json.length > 0 && json[0].hasOwnProperty("Első_sor")) {
-      // RÉGI MÓDSZER: az Excel már tartalmazza a szortírozott adatokat (makróval feldolgozva)
-      console.log("Excel már feldolgozott adatokat tartalmaz - régi módszer használata");
-      validatedData = json; // Cache-eljük logo-váltáshoz
-      renderLabels(json);
-    } else {
-      // ÚJ MÓDSZER: agent validáció (nyers adatok - Megnevezés oszloppal)
-      console.log("Nyers adatok - agent validáció használata");
-      validateWithAgent(json, (correctedData) => {
-        validatedData = correctedData; // Eltároljuk, hogy logo-váltáskor ne validáljuk újra
-        renderLabels(correctedData);
-      });
+  reader.onload = function(event) {
+    try {
+      console.log("📊 Excel feldolgozása...");
+      let data = new Uint8Array(event.target.result);
+      let workbook = XLSX.read(data, { type: 'array' });
+
+      if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+        console.error("❌ Az Excel fájl nem tartalmaz lapokat!");
+        alert("Az Excel fájl üres vagy hibás!");
+        return;
+      }
+
+      console.log(`✓ Excel lapok: ${workbook.SheetNames.join(", ")}`);
+      let sheet = workbook.Sheets[workbook.SheetNames[0]];
+      let json = XLSX.utils.sheet_to_json(sheet);
+
+      console.log(`✓ ${json.length} sor beolvasva`);
+      if (json.length === 0) {
+        console.error("❌ Az Excel fájl üres!");
+        alert("Az Excel fájl nem tartalmaz adatokat!");
+        return;
+      }
+
+      console.log("📋 Első sor oszlopai:", Object.keys(json[0]));
+
+      // Ellenőrizzük, hogy az Excel már tartalmazza-e a feldolgozott oszlopokat (makró által)
+      if (json.length > 0 && json[0].hasOwnProperty("Első_sor")) {
+        // RÉGI MÓDSZER: az Excel már tartalmazza a szortírozott adatokat (makróval feldolgozva)
+        console.log("✅ Excel már feldolgozott adatokat tartalmaz - régi módszer használata");
+        validatedData = json; // Cache-eljük logo-váltáshoz
+        renderLabels(json);
+      } else {
+        // ÚJ MÓDSZER: agent validáció (nyers adatok - Megnevezés oszloppal)
+        console.log("🤖 Nyers adatok - agent validáció használata");
+        validateWithAgent(json, (correctedData) => {
+          validatedData = correctedData; // Eltároljuk, hogy logo-váltáskor ne validáljuk újra
+          renderLabels(correctedData);
+        });
+      }
+    } catch (error) {
+      console.error("❌ Excel feldolgozási hiba:", error);
+      alert(`Hiba történt az Excel feldolgozása során: ${error.message}`);
     }
   };
   reader.readAsArrayBuffer(file);
@@ -457,7 +491,7 @@ function createPDF() {
   let element = document.getElementById("labels");
   let opt = {
     margin: 0,
-    filename: "ll_cimkek.pdf",
+    filename: "cimkek.pdf",
     image: { type: 'jpeg', quality: 0.8 },
     html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' },
     jsPDF: { unit: 'mm', format: 'A4', orientation: 'portrait' },
@@ -488,8 +522,8 @@ function createPDF() {
 
 function downloadTemplate() {
     const link = document.createElement("a");
-    link.href = "ll_excel_sablon.xlsm";
-    link.download = "ll_excel_sablon.xlsm";
+    link.href = "excel_sablon.xlsx";
+    link.download = "excel_sablon.xlsx";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

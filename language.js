@@ -13,28 +13,28 @@ const translations = {
       'username': 'Username',
       'password': 'Password',
       'all-labels': 'All generated labels: ',
-      'demo-video': 'Tutorial Videos',
+      'demo-video': 'Tutorial Video',
       'user-guide': 'User Guide',
       'step1-title': 'Login',
       'step1-desc': 'Log in on the main page using the username and password you received.',
 
       'step2-title': 'Download the Excel template',
-      'step2-desc': 'Click the "Download Template Excel" button, then open the file. If Excel asks for it, enable macros. If you get stuck, write to this email address: info@labellabor.com',
+      'step2-desc': 'Click the "Download Template Excel" button, then open the file.',
 
       'step3-title': 'Filling out the template',
-      'step3-desc': 'Paste your data into the <span style="color: red;">red-marked</span> columns (up to approx. 350 rows). Please pay attention to the following:<br><br><ul><li>Make sure there are no empty or unnecessary rows, and no extra spaces.</li><li>The "Pack_size" field format should be: quantity + space + unit (e.g. "1 kg", "400 ml").</li><li>For items sold individually, the correct format is simply: "pcs".</li><li>In the "Price" field, enter only the number (e.g. "19").</li></ul><br>When everything is ready, run the "Data_Sorting" macro – this will automatically fill the <span style="color: #378eff;">blue</span> columns.',
+      'step3-desc': 'Paste your data into the <span style="color: red;">red-marked</span> columns (up to approx. 400 rows). Please pay attention to the following:<br><br><ul><li>Make sure there are no empty or unnecessary rows, and no extra spaces.</li><li>The "Pack_size" field format should be: quantity + space + unit (e.g. "1 kg", "400 ml").</li><li>For items sold individually, the correct format is simply: "pcs".</li><li>In the "Price" field, enter only the number (e.g. "19").</li></ul>',
 
-      'step4-title': 'Reviewing the data',
-      'step4-desc': 'You may also manually modify the values in the <span style="color: #378eff;">blue</span> columns if necessary. Once everything looks correct, save the file.',
+      'step4-title': 'Upload Excel file',
+      'step4-desc': 'Click the "Upload Excel File (.xlsx)" button and select your completed template.',
 
-      'step5-title': 'Upload Excel, select label type',
-      'step5-desc': 'Click the "Upload Excel File (.xlsm)" button and select your completed template. After uploading the file, choose the appropriate label type.',
+      'step5-title': 'Data validation and correction',
+      'step5-desc': 'The system validates the uploaded data and notifies the user where errors are found.<br><br><div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;"><div><span style="display:inline-block;width:14px;height:14px;background:#378eff;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Blue</strong> background — editable field</div><div><span style="display:inline-block;width:14px;height:14px;background:#4caf50;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Green</strong> background — marked as ready</div><div><span style="display:inline-flex;align-items:center;justify-content:center;background:#007ea7;color:#fff;border-radius:4px;width:20px;height:20px;font-size:12px;vertical-align:middle;margin-right:4px;">✓</span> Press to toggle between the two states</div></div>Minor errors are automatically corrected by the system, but you can also manually edit the values of <span style="color:#378eff;">blue</span> background fields if needed.<br><br><strong>Important:</strong> After validation, make sure all fields have a <span style="color:green;">green</span> background, meaning they are marked as ready.',
 
-      'step6-title': 'Check labels and download PDF',
-      'step6-desc': 'Review the information displayed on the labels, then click the "Download PDF" button. If you want to generate new labels afterward, refresh the page before starting the process.',
+      'step6-title': 'Check labels and select label type',
+      'step6-desc': 'Review the information displayed on the labels, then select the appropriate label type.',
 
-      'step7-title': 'Printing the labels',
-      'step7-desc': 'You can print the downloaded labels.pdf document with any standard printer — just like any invoice or regular document.',
+      'step7-title': 'Download and print labels',
+      'step7-desc': 'Click the "Download PDF" button. If you want to generate new labels, refresh the page before starting the process. You can print the downloaded labels.pdf document with any standard printer — just like any invoice or regular document.',
 
       'contact-footer': 'Contact: info@labellabor.com',
       'contact': 'Contact us',
@@ -87,29 +87,29 @@ const translations = {
       'username': 'Felhasználónév',
       'password': 'Jelszó',
       'all-labels': 'Összes generált címke: ',
-      'demo-video': 'Bemutató videók',
+      'demo-video': 'Bemutató videó',
       'user-guide': 'Használati útmutató',
 
       'step1-title': 'Bejelentkezés',
       'step1-desc': 'Lépjen be a főoldalon a kapott felhasználónévvel és jelszóval.',
 
       'step2-title': 'Sablon excel letöltése',
-      'step2-desc': 'Kattintson a "Sablon Excel letöltése" gombra, majd nyissa meg a fájlt. Ha az Excel kéri, engedélyezze a makrókat. Ha elakadna, írjon erre az email címre: info@labellabor.com',
+      'step2-desc': 'Kattintson a "Sablon Excel letöltése" gombra, majd nyissa meg a fájlt.',
 
-      'step3-title': 'A sablon kitöltése',
-      'step3-desc': 'A <span style="color: red;">pirossal jelölt</span> oszlopokba másolja be a saját adatait (legfeljebb kb. 350 sor). Ügyeljen az alábbiakra:<br><br><ul><li>Ne maradjanak üres vagy felesleges sorok, illetve szóközök.</li><li>A "Kiszerelés" mező formátuma: mennyiség + szóköz + mértékegység (pl. "1 kg", "400 ml").</li><li>Darabos termék esetén a helyes formátum: "db".</li><li>Az "Ár" mezőbe csak a számot írja (pl. "999"), a "Ft" megjelölést nem kell hozzáadni.</li></ul><br>Ha mindennel készen van, futtassa az "Adatok_rendszerezese" makrót – ez automatikusan kitölti a <span style="color: #378eff;">kék</span> oszlopokat.',
+      'step3-title': 'A sablon excel kitöltése',
+      'step3-desc': 'A <span style="color: red;">pirossal jelölt</span> oszlopokba másolja be a saját adatait (legfeljebb kb. 400 sor). Ügyeljen az alábbiakra:<br><br><ul><li>Ne maradjanak üres vagy felesleges sorok, illetve szóközök.</li><li>A "Kiszerelés" mező formátuma: mennyiség + szóköz + mértékegység (pl. "1 kg", "400 ml").</li><li>Darabos termék esetén a helyes formátum: "db".</li><li>Az "Ár" mezőbe csak a számot írja (pl. "999"), a "Ft" megjelölést nem kell hozzáadni.</li></ul>',
 
-      'step4-title': 'Adatok ellenőrzése',
-      'step4-desc': 'A <span style="color: #378eff;">kék</span> oszlopokban lévő értékeket is módosíthatja kézzel, ha szükséges. Ha mindent rendben talál, mentse el a fájlt.',
+      'step4-title': 'Excel fájl feltöltése',
+      'step4-desc': 'Kattintson az "Excel fájl feltöltése (.xlsx)" gombra, és válassza ki a kitöltött sablont.',
 
-      'step5-title': 'Excel feltöltése, címketípus kiválasztása',
-      'step5-desc': 'Kattintson az "Excel fájl feltöltése (.xlsm)" gombra, és válassza ki a kitöltött sablont. A fájl feltöltése után válassza ki a megfelelő címketípust.',
+      'step5-title': 'Adatok ellenőrzése, javítása',
+      'step5-desc': 'A rendszer ellenőrzi a feltöltött adatokat, és ahol hibát talál, jelzi a felhasználónak.<br><br><div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;"><div><span style="display:inline-block;width:14px;height:14px;background:#378eff;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Kék</strong> hátterű mező — szerkeszthető</div><div><span style="display:inline-block;width:14px;height:14px;background:#4caf50;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Zöld</strong> hátterű mező — késznek jelölve</div><div><span style="display:inline-flex;align-items:center;justify-content:center;background:#007ea7;color:#fff;border-radius:4px;width:20px;height:20px;font-size:12px;vertical-align:middle;margin-right:4px;">✓</span> Ikon megnyomásával válthat a két állapot között</div></div>A kisebb hibákat a rendszer automatikusan kijavítja, de szükség esetén a <span style="color:#378eff;">kék</span> hátterű mezők értékét manuálisan is módosíthatja.<br><br><strong>Fontos:</strong> Az ellenőrzés végeztével győződjön meg arról, hogy minden mező <span style="color:green;">zöld</span> hátterű, vagyis késznek van jelölve.',
 
-      'step6-title': 'Címkék ellenőrzése és PDF letöltése',
-      'step6-desc': 'Ellenőrizze a címkéken megjelenő adatokat, majd kattintson a "PDF letöltése" gombra. Ha új címkéket szeretne generálni, frissítsen rá az oldalra a folyamat előtt.',
+      'step6-title': 'Címkék ellenőrzése és címketípus választása',
+      'step6-desc': 'Ellenőrizze a címkéken megjelenő adatokat, majd válassza ki a megfelelő címketípust.',
 
-      'step7-title': 'Címkék nyomtatása',
-      'step7-desc': 'A letöltött cimkek.pdf dokumentumot bármilyen hagyományos nyomtatóval kinyomtathatja – ugyanúgy, mint egy számlát vagy más dokumentumot.',
+      'step7-title': 'Címkék letöltése és nyomtatása',
+      'step7-desc': 'Kattintson a "PDF letöltése" gombra. Ha új címkéket szeretne generálni, frissítsen rá az oldalra a folyamat megkezdése előtt. A letöltött cimkek.pdf dokumentumot bármilyen hagyományos nyomtatóval kinyomtathatja – ugyanúgy, mint egy számlát vagy más dokumentumot.',
 
       'contact-footer': 'Kontakt: info@labellabor.com',
       'contact': 'Kapcsolat',

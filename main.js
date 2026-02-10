@@ -267,14 +267,14 @@ function loadInfoPage() {
           <div class="videos-container">
             <div class="video-wrapper">
               <iframe
-                src="https://www.youtube.com/embed/6NOQLBYPUqw"
+                src="https://www.youtube.com/embed/C6Dae-JsmxM"
                 title="Label Labor demo"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen>
               </iframe>
             </div>
-            <div class="video-wrapper">
+            <!-- <div class="video-wrapper">
               <iframe
                 src="https://www.youtube.com/embed/FncnNBCnGLI"
                 title="Label Labor demo 2"
@@ -282,7 +282,7 @@ function loadInfoPage() {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen>
               </iframe>
-            </div>
+            </div> -->
           </div>
         </div>
 

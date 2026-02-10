@@ -308,10 +308,10 @@ body {
   box-sizing: border-box;
 }
 .logo {
-  width: 41px;
+  width: 45px;
   position: absolute;
-  top: 11px;
-  right: 8px;
+  top: 6px;
+  right: 6px;
 }
 .line1 {
   font-weight: bold;
@@ -424,4 +424,216 @@ body {
   height: auto;
   font-family: Calibri, sans-serif;
   font-weight: bold;
+}
+
+/* =============================================================================
+   BETÖLTÉSI ANIMÁCIÓ
+   ============================================================================= */
+
+.loading-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.loading-overlay.active {
+  display: flex;
+}
+
+.loading-content {
+  text-align: center;
+  color: #ccdbdc;
+}
+
+.spinner {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 30px;
+  border: 8px solid rgba(154, 209, 212, 0.3);
+  border-top: 8px solid #9ad1d4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #9ad1d4;
+  margin-bottom: 10px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loading-subtext {
+  font-size: 16px;
+  color: #ccdbdc;
+  opacity: 0.8;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* =============================================================================
+   VALIDÁCIÓ MODAL
+   ============================================================================= */
+
+.validation-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.validation-overlay.active {
+  display: flex;
+}
+
+.validation-modal {
+  background: #003249;
+  border: 4px solid #01161e;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: #ccdbdc;
+  font-family: Arial, sans-serif;
+}
+
+.validation-modal h2 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  color: #f6bd60;
+  text-align: center;
+}
+
+.validation-modal .summary {
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.issue-card {
+  background: #005878;
+  border: 2px solid #007ea7;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.issue-card .product-name {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 8px;
+  color: #f6bd60;
+}
+
+.issue-item {
+  margin-bottom: 10px;
+  padding: 8px;
+  background: #003249;
+  border-radius: 6px;
+}
+
+.issue-item .field-label {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.issue-item .error-text {
+  color: #ff8080;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.issue-item .fix-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.issue-item input[type="text"] {
+  flex: 1;
+  padding: 6px 10px;
+  border: 2px solid #007ea7;
+  border-radius: 4px;
+  background: #ccdbdc;
+  color: #003249;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.issue-item .accept-btn {
+  background: #007ea7;
+  color: #ccdbdc;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.issue-item .accept-btn:hover {
+  background: #80ced7;
+  color: #003249;
+}
+
+.validation-modal .modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.validation-modal .apply-btn {
+  background: #f6bd60;
+  color: #003249;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.validation-modal .apply-btn:hover {
+  background: #ffd180;
+}
+
+.validation-modal .skip-btn {
+  background: transparent;
+  color: #ccdbdc;
+  border: 2px solid #ccdbdc;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.validation-modal .skip-btn:hover {
+  background: rgba(204, 219, 220, 0.15);
 }

@@ -56,6 +56,26 @@
       <div id="labels"></div>
     </div>
   </div>
+  <!-- Betöltési animáció -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div class="loading-text">Címkegenerálás folyamatban...</div>
+      <div class="loading-subtext">Kérem várjon, a rendszer elemzi a termékadatokat</div>
+    </div>
+  </div>
+  <!-- Validáció modal - az agent eredménye itt jelenik meg -->
+  <div class="validation-overlay" id="validationOverlay">
+    <div class="validation-modal">
+      <h2>⚠️ Adatellenőrzés</h2>
+      <div class="summary" id="validationSummary"></div>
+      <div id="issuesList"></div>
+      <div class="modal-buttons">
+        <button class="apply-btn" id="applyFixesBtn">✓ Javítások alkalmazása</button>
+        <button class="skip-btn" id="skipValidationBtn">Kihagyás</button>
+      </div>
+    </div>
+  </div>
   <script type="module" src="script.js"></script>
   <script>
     window.onload = function() {

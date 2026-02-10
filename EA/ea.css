@@ -425,3 +425,225 @@ body {
   font-family: Calibri, sans-serif;
   font-weight: bold;
 }
+/* =============================================================================
+   BETÖLTÉSI ANIMÁCIÓ
+   ============================================================================= */
+
+.loading-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.loading-overlay.active {
+  display: flex;
+}
+
+.loading-content {
+  text-align: center;
+  color: #ccdbdc;
+}
+
+.spinner {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 30px;
+  border: 8px solid rgba(154, 209, 212, 0.3);
+  border-top: 8px solid #9ad1d4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #9ad1d4;
+  margin-bottom: 10px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loading-subtext {
+  font-size: 16px;
+  color: #ccdbdc;
+  opacity: 0.8;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* =============================================================================
+   VALIDÁCIÓ MODAL
+   ============================================================================= */
+
+.validation-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.validation-overlay.active {
+  display: flex;
+}
+
+.validation-modal {
+  background: #003249;
+  border: 4px solid #01161e;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: #ccdbdc;
+  font-family: Arial, sans-serif;
+}
+
+.validation-modal h2 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  color: #f6bd60;
+  text-align: center;
+}
+
+.validation-modal .summary {
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.issue-card {
+  background: rgba(0, 50, 73, 0.5);
+  border: 2px solid #007ea7;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.product-name {
+  font-weight: bold;
+  color: #9ad1d4;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.issue-item {
+  background: rgba(1, 22, 30, 0.7);
+  border-left: 3px solid #f6bd60;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border-radius: 4px;
+}
+
+.field-label {
+  font-size: 12px;
+  color: #9ad1d4;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.error-text {
+  font-size: 13px;
+  color: #f6bd60;
+  margin-bottom: 8px;
+}
+
+.fix-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.fix-row input {
+  flex: 1;
+  padding: 8px;
+  background: #01161e;
+  border: 2px solid #007ea7;
+  border-radius: 4px;
+  color: #ccdbdc;
+  font-size: 13px;
+}
+
+.fix-row input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.accept-btn {
+  padding: 8px 16px;
+  background: #007ea7;
+  color: #ccdbdc;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.accept-btn:hover:not(:disabled) {
+  background: #005f7f;
+}
+
+.accept-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.apply-btn {
+  padding: 12px 24px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.apply-btn:hover {
+  background: #45a049;
+}
+
+.skip-btn {
+  padding: 12px 24px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.skip-btn:hover {
+  background: #da190b;
+}

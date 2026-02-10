@@ -1,4 +1,5 @@
 import os
+import sys
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -6,6 +7,10 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 import bcrypt
 import uvicorn
+
+# Az agent mappát hozzáadjuk a Python keresési úthoz
+sys.path.append(os.path.join(os.path.dirname(__file__), "agent"))
+from validator_agent import process_and_validate
 
 load_dotenv()
 
@@ -38,6 +43,34 @@ class LoginRequest(BaseModel):
 class LabelCountUpdate(BaseModel):
     username: str
     count: int
+
+class LabelProcessRequest(BaseModel):
+    rows: list[dict]
+    max_chars_per_line: int = 22  # Default: 22 (LL), EA uses 20
+
+@app.post("/api/process-labels")
+def process_labels(req: LabelProcessRequest):
+    try:
+        result = process_and_validate(req.rows, max_chars_per_line=req.max_chars_per_line)
+
+        # Debug: Log what we're sending back
+        if result.get("issues"):
+            print(f"\n🔍 DEBUG - Returning {len(result['issues'])} issues to frontend:")
+            for issue in result['issues'][:2]:  # Show first 2 issues
+                print(f"  Issue row {issue['row_index']}:")
+                for hiba in issue['hibak'][:2]:  # Show first 2 errors per issue
+                    print(f"    - {hiba['oszlop']}: javitott='{hiba.get('javitott', 'NINCS')}', eredeti='{hiba.get('eredeti', '')}'")
+
+        return result
+    except Exception as e:
+        print(f"Process labels error: {e}")
+        raise HTTPException(status_code=500, detail="Szerverhiba a feldolgozás során")
+
+
+@app.options("/api/process-labels")
+def process_labels_options():
+    return {"message": "OK"}
+
 
 @app.options("/api/login")
 def login_options():

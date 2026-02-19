@@ -81,11 +81,12 @@ class LabelCountUpdate(BaseModel):
 class LabelProcessRequest(BaseModel):
     rows: list[dict]
     max_chars_per_line: int = 22  # Default: 22 (LL), EA uses 20
+    extract_kiszereles: bool = False  # Ha True, a megnevezés végéről kinyeri a kiszerelést
 
 @app.post("/api/process-labels")
 def process_labels(req: LabelProcessRequest):
     try:
-        result = process_and_validate(req.rows, max_chars_per_line=req.max_chars_per_line)
+        result = process_and_validate(req.rows, max_chars_per_line=req.max_chars_per_line, extract_kiszereles=req.extract_kiszereles)
 
         # Debug: Log what we're sending back
         if result.get("issues"):

@@ -1,6 +1,7 @@
 const API_URL = "https://labelgenerator-production.up.railway.app";
+/* const API_URL = "http://localhost:8000"; */
 
-const COMPANY_USERNAME = 'EA_HU';
+const COMPANY_USERNAME = 'DITALL';
 let validatedData = null; // Validált adatok tárolása (logo-váltásnál ne fussanak újra)
 
 function getUsername() {
@@ -9,7 +10,10 @@ function getUsername() {
 
 function getSelectedLogo() {
   const selectedType = document.querySelector('input[name="labelType"]:checked').value;
-  return selectedType === "A" ? "assets/ea.png" : "assets/hg.png";
+  return {
+    src: selectedType === "A" ? "assets/ditall_logo.png" : "assets/ditall_logo2.png",
+    cssClass: selectedType === "A" ? "logo-a" : "logo-b"
+  };
 }
 
 document.querySelectorAll('input[name="labelType"]').forEach(radio => {
@@ -36,20 +40,12 @@ function handleFile(e) {
     let sheet = workbook.Sheets[workbook.SheetNames[0]];
     let json = XLSX.utils.sheet_to_json(sheet);
 
-    // Ellenőrizzük, hogy az Excel már tartalmazza-e a feldolgozott oszlopokat (makró által)
-    if (json.length > 0 && json[0].hasOwnProperty("Első_sor")) {
-      // RÉGI MÓDSZER: az Excel már tartalmazza a szortírozott adatokat (makróval feldolgozva)
-      console.log("Excel már feldolgozott adatokat tartalmaz - régi módszer használata");
-      validatedData = json; // Cache-eljük logo-váltáshoz
-      renderLabels(json);
-    } else {
-      // ÚJ MÓDSZER: agent validáció (nyers adatok - Megnevezés oszloppal)
-      console.log("Nyers adatok - agent validáció használata");
-      validateWithAgent(json, (correctedData) => {
-        validatedData = correctedData; // Eltároljuk, hogy logo-váltáskor ne validáljuk újra
-        renderLabels(correctedData);
-      });
-    }
+    // Agent validáció (nyers adatok - Megnevezés oszloppal)
+    console.log("Agent validáció használata");
+    validateWithAgent(json, (correctedData) => {
+      validatedData = correctedData;
+      renderLabels(correctedData);
+    });
   };
   reader.readAsArrayBuffer(file);
 }
@@ -65,11 +61,10 @@ async function validateWithAgent(data, onComplete) {
 
   try {
     // Elküldjük a nyers adatokat → backend elvégzi a makró munkáját
-    // EA: 20 karakter/sor (LL: 22 karakter/sor)
     const response = await fetch(`${API_URL}/api/process-labels`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rows: data, max_chars_per_line: 20 })
+      body: JSON.stringify({ rows: data, max_chars_per_line: 18 })
     });
 
     if (!response.ok) {
@@ -261,21 +256,21 @@ function renderLabels(data) {
     const container = document.getElementById("labels");
     container.innerHTML = "";
     let pageDiv = null;
-    
+
     totalLabelsGenerated = data.length; // Eltároljuk hány címkét generáltunk
-  
+
     data.forEach((row, index) => {
       if (index % 21 === 0) {
         pageDiv = document.createElement("div");
         pageDiv.className = "page";
         container.appendChild(pageDiv);
       }
-  
+
       const div = document.createElement("div");
       div.className = "label";
 
-      const logoPath = getSelectedLogo();
-  
+      const logo = getSelectedLogo();
+
       const line1 = (row["Első_sor"] || "").substring(0, 20);
       const secondLineText = (row["Második_sor"] || "").substring(0, 20);
       const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 20);
@@ -317,10 +312,10 @@ function renderLabels(data) {
       }
 
       div.innerHTML = `
-        <img src="${logoPath}" class="logo">
+        <img src="${logo.src}" class="logo ${logo.cssClass}">
         <div class="line1">${line1}</div>
         <div class="line2">${secondLineText}</div>
-        <div class="line3">${thirdLineText}</div> 
+        <div class="line3">${thirdLineText}</div>
         <div class="kiszereles">${kiszereles}</div>
         <div class="line4">${("cikkszám: " + (row["Cikkszám"] || "")).substring(0, 24)}</div>
         <div class="barcode-container">
@@ -337,9 +332,9 @@ function renderLabels(data) {
             </div>
         </div>
       `;
-  
+
       pageDiv.appendChild(div);
-      
+
       const barcodeSVG = div.querySelector(".barcode");
       const eanCode = row["EAN-13"];
       if (eanCode) {
@@ -359,11 +354,11 @@ function renderLabels(data) {
       }
     });
 }
-  
+
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#downloadBtn").addEventListener("click", generatePDF);
   document.querySelector("#sablonBtn").addEventListener("click", downloadTemplate);
-  
+
   // Betöltjük a cég címkeszámát, ha van username
   loadCompanyLabelCount();
 });
@@ -371,7 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function updateLabelCount(count) {
   const username = getUsername();
   if (!username) return;
-  
+
   try {
     const response = await fetch(`${API_URL}/api/update-label-count`, {
       method: "POST",
@@ -380,7 +375,7 @@ async function updateLabelCount(count) {
       },
       body: JSON.stringify({ username, count }),
     });
-    
+
     if (response.ok) {
       const data = await response.json();
       console.log(`Címkeszám frissítve: ${data.new_count}`);
@@ -401,7 +396,7 @@ function updateDisplayedCount(count) {
 async function loadCompanyLabelCount() {
   const username = getUsername();
   if (!username) return;
-  
+
   try {
     const response = await fetch(`${API_URL}/api/company-label-count/${username}`);
     if (response.ok) {
@@ -436,7 +431,7 @@ function generatePDF() {
       clearInterval(timer);
 
       createPDF();
-      
+
       // Frissítjük a címkeszámot
       updateLabelCount(totalLabelsGenerated);
 
@@ -463,7 +458,7 @@ function createPDF() {
   let element = document.getElementById("labels");
   let opt = {
     margin: 0,
-    filename: "ea_cimkek.pdf",
+    filename: "ditall_cimkek.pdf",
     image: { type: 'jpeg', quality: 0.8 },
     html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' },
     jsPDF: { unit: 'mm', format: 'A4', orientation: 'portrait' },
@@ -476,16 +471,16 @@ function createPDF() {
     .get('pdf')
     .then(function(pdf) {
       const totalPages = pdf.internal.getNumberOfPages();
-      
+
       for (let i = 1; i <= totalPages; i++) {
         pdf.setPage(i);
         pdf.setFontSize(10);
         pdf.setTextColor(100, 100, 100);
-        
+
         const pageText = `${i} / ${totalPages}`;
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
-        
+
         pdf.text(pageText, pageWidth / 2, pageHeight - 3, { align: 'center' });
       }
     })
@@ -494,8 +489,8 @@ function createPDF() {
 
 function downloadTemplate() {
     const link = document.createElement("a");
-    link.href = "ea_excel_sablon.xlsm";
-    link.download = "ea_excel_sablon.xlsm";
+    link.href = "ditall_sablon.xlsx";
+    link.download = "ditall_sablon.xlsx";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

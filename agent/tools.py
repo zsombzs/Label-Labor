@@ -312,7 +312,42 @@ def calculate_unit_price(pack: str, price) -> tuple:
 # FŐ FELDOLGOZÓ - egy sort dolgoz fel
 # =============================================================================
 
-def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22) -> dict:
+def extract_kiszereles_from_name(name: str) -> tuple[str, str]:
+    """
+    Ha a megnevezés végén kiszerelés-jellegű szöveg van (pl. "festék 500 ml"),
+    kinyeri azt és visszaadja a tisztított nevet + kiszerelést.
+    Visszaad: (tisztított_név, kiszerelés) — ha nincs találat: (eredeti_név, "")
+    """
+    if not name:
+        return name, ""
+
+    # Minta: szám + mértékegység a végén (pl. "500 ml", "1 kg", "400g", "2.5 l", "1,5l")
+    all_units = []
+    for synonyms in UNIT_MAP.values():
+        all_units.extend(synonyms)
+    units_pattern = "|".join(re.escape(u) for u in sorted(all_units, key=len, reverse=True))
+
+    pattern = rf'\s+([\d.,]+)\s*({units_pattern})\s*$'
+    match = re.search(pattern, name, re.IGNORECASE)
+    if match:
+        cleaned_name = name[:match.start()].strip()
+        qty = match.group(1)
+        unit_raw = match.group(2)
+
+        # Normalizáljuk az egységet
+        normalized_unit = unit_raw
+        for standard, synonyms in UNIT_MAP.items():
+            if unit_raw.lower() in [s.lower() for s in synonyms]:
+                normalized_unit = standard
+                break
+
+        kiszereles = f"{qty} {normalized_unit}"
+        return cleaned_name, kiszereles
+
+    return name, ""
+
+
+def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, extract_kiszereles: bool = False) -> dict:
     """
     Egy Excel sort validál és normalizál.
     Visszaad: {processed: {...}, hibak: [...], excel_sor: N}
@@ -320,6 +355,12 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22) -> 
     name = str(raw_row.get("Megnevezés", "")).strip()
     pack = str(raw_row.get("Kiszerelés", "")).strip()
     price = raw_row.get("Ár", "")
+
+    # Ha extract_kiszereles aktív és a Kiszerelés üres, próbáljuk kinyerni a névből
+    if extract_kiszereles and not pack:
+        name, extracted_pack = extract_kiszereles_from_name(name)
+        if extracted_pack:
+            pack = extracted_pack
     ean = str(raw_row.get("EAN-13", "")).strip()
     cikk = str(raw_row.get("Cikkszám", "")).strip()
 
@@ -356,8 +397,9 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22) -> 
     if ean_hiba:
         hibak.append(ean_hiba)
 
-    # 5. Névfeldarabolás (normalizált adatokkal) - használjuk a paraméterezett max_chars-t
-    line1, line2, line3, name_overflow = split_name(name, max_chars=max_chars_per_line)
+    # 5. Névfeldarabolás - nagybetűs nevek szélesebbek, kevesebb karakter fér ki
+    effective_max_chars = max_chars_per_line if name.isupper() else max_chars_per_line + 2
+    line1, line2, line3, name_overflow = split_name(name, max_chars=effective_max_chars)
 
     if name_overflow:
         hibak.extend([

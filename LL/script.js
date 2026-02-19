@@ -102,7 +102,7 @@ async function validateWithAgent(data, onComplete) {
     const response = await fetch(`${API_URL}/api/process-labels`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rows: data })
+      body: JSON.stringify({ rows: data, max_chars_per_line: 18 })
     });
 
     if (!response.ok) {
@@ -309,9 +309,9 @@ function renderLabels(data) {
 
       const logoPath = getSelectedLogo();
   
-      const line1 = (row["Első_sor"] || "").substring(0, 22);
-      const secondLineText = (row["Második_sor"] || "").substring(0, 22);
-      const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 22);
+      const line1 = (row["Első_sor"] || "").substring(0, 20);
+      const secondLineText = (row["Második_sor"] || "").substring(0, 20);
+      const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 20);
       const kiszereles = row["Kiszerelés"] || "";
       const ar = row["Ár"] || "";
       const ftPerL = row["Ft/l"] || "";
@@ -376,14 +376,19 @@ function renderLabels(data) {
       const barcodeSVG = div.querySelector(".barcode");
       const eanCode = row["EAN-13"];
       if (eanCode) {
-        JsBarcode(barcodeSVG, eanCode.toString(), {
-          format: "EAN13",
-          lineColor: "#000",
-          width: 1,
-          height: 20,
-          displayValue: true,
-          fontSize: 14,
-        });
+        try {
+          JsBarcode(barcodeSVG, eanCode.toString(), {
+            format: "EAN13",
+            lineColor: "#000",
+            width: 1,
+            height: 20,
+            displayValue: true,
+            fontSize: 14,
+          });
+        } catch (e) {
+          console.warn(`Hibás vonalkód (${eanCode}), kihagyva`);
+          barcodeSVG.remove();
+        }
       }
     });
 }

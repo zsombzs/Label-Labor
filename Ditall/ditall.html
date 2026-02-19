@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Label Labor</title>
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <link rel="shortcut icon" type="image/png" href="assets/icon.png">
+  <link rel="apple-touch-icon" href="assets/icon.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvg/dist/browser/canvg.min.js"></script>
+  <link rel="stylesheet" href="ditall.css" />
+</head>
+<body>
+  <div class="cim-container">
+    <h1 class="focim">Ditáll 2002 Kft. címkéi</h1>
+  </div>
+  <div class="main-container">
+    <!-- Bal oldali oszlop -->
+    <div class="left-panel">
+      <div class="controls1">
+        <button class="btn" id="sablonBtn">1. Sablon Excel letöltése</button>
+      </div>
+      <div class="controls2">
+        <label for="excelFile" class="btn">2. Excel fájl feltöltése (.xlsx)</label>
+        <input type="file" id="excelFile" accept=".xlsx">
+      </div>
+      <div class="controls3">
+        <button class="btn" id="downloadBtn">3. PDF letöltése</button>
+      </div>
+      <div class="label-type">
+        <label class="circle-radio">
+          <input type="radio" name="labelType" value="A" checked>
+          <span></span>A címke
+        </label>
+        <label class="circle-radio">
+          <input type="radio" name="labelType" value="B">
+          <span></span>B címke
+        </label>
+      </div>
+      <div class="downloading-bar">
+      <div id="progressContainer">
+        <div id="progressBar"></div>
+      </div>
+    </div>
+    </div>
+    <!-- Jobb oldali oszlop -->
+    <div class="right-panel">
+      <div class="company-stats-container">
+        <span class="company-stats-text">Generált címkék száma: <span class="company-stats-number" id="companyLabelCount">0</span></span>
+      </div>
+      <div class="alcim-container">
+        <h2 class="alcim">Címke generátor 1.0.0 (beta)</h2>
+      </div>
+      <div id="labels"></div>
+    </div>
+  </div>
+  <!-- Betöltési animáció -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div class="loading-text">Címkegenerálás folyamatban...</div>
+      <div class="loading-subtext">Kérem várjon, a rendszer elemzi a termékadatokat</div>
+    </div>
+  </div>
+  <!-- Validáció modal - az agent eredménye itt jelenik meg -->
+  <div class="validation-overlay" id="validationOverlay">
+    <div class="validation-modal">
+      <h2>⚠️ Adatellenőrzés</h2>
+      <div class="summary" id="validationSummary"></div>
+      <div id="issuesList"></div>
+      <div class="modal-buttons">
+        <button class="apply-btn" id="applyFixesBtn">✓ Javítások alkalmazása</button>
+        <button class="skip-btn" id="skipValidationBtn">Kihagyás</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="script.js"></script>
+  <script>
+    window.onload = function() {
+      if (!sessionStorage.getItem("reloaded")) {
+        sessionStorage.setItem("reloaded", "true");
+        location.reload();
+      }
+    };
+  </script>
+</body>
+</html>

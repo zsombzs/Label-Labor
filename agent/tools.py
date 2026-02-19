@@ -67,8 +67,8 @@ def validate_cikkszam(cikk: str) -> dict | None:
 
 # Elfogadott mértékegységek és szinonimáik
 UNIT_MAP = {
-    "ml": ["ml", "mL", "ML", "milliliter", "millilitre", "milliliteres", "milliiter"],
-    "l":  ["l", "L", "liter", "litre", "litres", "literes", "liters"],
+    "ml": ["ml", "mL", "ML", "milliliter", "millilitre", "milliliteres", "milliiter", "mili", "milli"],
+    "l":  ["l", "L", "liter", "litre", "litres", "literes", "liters", "lit"],
     "g":  ["g", "G", "gr", "gramm", "gram", "grams"],
     "kg": ["kg", "KG", "Kg", "kG", "kilogramm", "kilogram", "kilograms", "kilo"],
     "db": ["db", "DB", "Db", "dB", "darab", "piece", "pieces", "pcs"],
@@ -321,7 +321,15 @@ def extract_kiszereles_from_name(name: str) -> tuple[str, str]:
     if not name:
         return name, ""
 
-    # Minta: szám + mértékegység a végén (pl. "500 ml", "1 kg", "400g", "2.5 l", "1,5l")
+    # 1. Különleges eset: "db" és szinonimái a végén (szám nélkül is elfogadott)
+    db_synonyms_pattern = "|".join(re.escape(s) for s in UNIT_MAP["db"])
+    db_pattern = rf'\s+({db_synonyms_pattern})\s*$'
+    db_match = re.search(db_pattern, name, re.IGNORECASE)
+    if db_match:
+        cleaned_name = name[:db_match.start()].strip()
+        return cleaned_name, "db"
+
+    # 2. Szám + mértékegység a végén (pl. "500 ml", "1 kg", "400g", "2.5 l", "1,5l", "500mili")
     all_units = []
     for synonyms in UNIT_MAP.values():
         all_units.extend(synonyms)

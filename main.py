@@ -83,6 +83,9 @@ class LabelProcessRequest(BaseModel):
     max_chars_per_line: int = 22  # Default: 22 (LL), EA uses 20
     extract_kiszereles: bool = False  # Ha True, a megnevezés végéről kinyeri a kiszerelést
 
+class CompanySearchRequest(BaseModel):
+    company_name: str
+
 @app.post("/api/process-labels")
 def process_labels(req: LabelProcessRequest):
     try:
@@ -104,6 +107,23 @@ def process_labels(req: LabelProcessRequest):
 
 @app.options("/api/process-labels")
 def process_labels_options():
+    return {"message": "OK"}
+
+
+@app.post("/api/search-company")
+def search_company_endpoint(req: CompanySearchRequest):
+    try:
+        from web_search import search_company_products
+        result = search_company_products(req.company_name)
+        return result
+    except Exception as e:
+        print(f"Search company error: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Szerverhiba a keresés során")
+
+@app.options("/api/search-company")
+def search_company_options():
     return {"message": "OK"}
 
 

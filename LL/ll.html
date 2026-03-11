@@ -32,12 +32,28 @@
       <div class="label-type">
         <label class="circle-radio">
           <input type="radio" name="labelType" value="A" checked>
-          <span></span>piros címke
+          <span></span>AI logo
         </label>
         <label class="circle-radio">
           <input type="radio" name="labelType" value="B">
-          <span></span>kék címke
+          <span></span>manual logo
         </label>
+        <label class="circle-radio">
+          <input type="radio" name="labelType" value="C">
+          <span></span>nincs logo
+        </label>
+      </div>
+      <div class="company-search-section">
+        <div class="search-header">Minta címkék generálása</div>
+        <div class="search-subtitle">Adjon meg egy cégnevet, és az agent az internetről keres termékadatokat és logót</div>
+        <div class="search-row">
+          <input type="text" id="companyNameInput"
+                 placeholder="Cég neve (pl. Poli-Farbe)"
+                 class="company-search-input">
+          <button class="search-btn" id="searchCompanyBtn">Keresés</button>
+        </div>
+        <div class="search-status" id="searchStatus"></div>
+        <div class="search-links" id="searchLinks"></div>
       </div>
       <div class="downloading-bar">
       <div id="progressContainer">

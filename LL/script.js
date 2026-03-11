@@ -1,7 +1,9 @@
-const API_URL = "https://labelgenerator-production.up.railway.app";
+const API_URL = "http://localhost:8000";
+/* const API_URL = "https://labelgenerator-production.up.railway.app"; */
 
 const COMPANY_USERNAME = 'L_L';
 let validatedData = null; // Validált adatok tárolása (logo-váltásnál ne fussanak újra)
+let companyLogoBase64 = null; // Keresett cég logoja (base64 data URL)
 
 function getUsername() {
   return COMPANY_USERNAME;
@@ -9,7 +11,22 @@ function getUsername() {
 
 function getSelectedLogo() {
   const selectedType = document.querySelector('input[name="labelType"]:checked').value;
-  return selectedType === "A" ? "assets/piros.png" : "assets/kek.png";
+  if (selectedType === "A") {
+    // AI logo: keresett cég logója (ha van), egyébként piros.png
+    return {
+      src: companyLogoBase64 || "assets/piros.png",
+      cssClass: "logo-a"
+    };
+  } else if (selectedType === "B") {
+    // Manual logo: mindig a kek.png
+    return {
+      src: "assets/festekservice.png",
+      cssClass: "logo-b"
+    };
+  } else {
+    // Nincs logo
+    return null;
+  }
 }
 
 document.querySelectorAll('input[name="labelType"]').forEach(radio => {
@@ -55,7 +72,9 @@ function handleFile(e) {
 
       console.log(`✓ Excel lapok: ${workbook.SheetNames.join(", ")}`);
       let sheet = workbook.Sheets[workbook.SheetNames[0]];
-      let json = XLSX.utils.sheet_to_json(sheet);
+      let json = XLSX.utils.sheet_to_json(sheet, { defval: "", blankrows: true });
+      // Záró teljesen üres sorok eltávolítása
+      while (json.length > 0 && Object.values(json[json.length - 1]).every(v => v === "")) json.pop();
 
       console.log(`✓ ${json.length} sor beolvasva`);
       if (json.length === 0) {
@@ -166,9 +185,6 @@ function showValidationModal(validationResult, onComplete) {
       item.className = "issue-item";
       const inputId = `fix_${issue.row_index}_${hibaIdx}`;
 
-      // Auto-javított hibáknál zölden mutatjuk (már alkalmazva)
-      const isAutoFixed = hiba.auto_javitott === true;
-
       item.innerHTML = `
         <div class="field-label">${issue.excel_sor}. sor, ${hiba.oszlop} oszlop</div>
         <div class="error-text">${hiba.hiba}</div>
@@ -176,8 +192,7 @@ function showValidationModal(validationResult, onComplete) {
           <input type="text"
             value="${hiba.javitott || hiba.eredeti}"
             id="${inputId}"
-            placeholder="Javított érték..."
-            ${isAutoFixed ? 'disabled style="border-color: #4caf50"' : ''}>
+            placeholder="Javított érték...">
           <button class="accept-btn"
             id="btn_${inputId}"
             onclick="acceptFix(${issue.row_index}, '${hiba.oszlop}', '${inputId}')">
@@ -185,11 +200,6 @@ function showValidationModal(validationResult, onComplete) {
           </button>
         </div>
       `;
-
-      if (isAutoFixed) {
-        item.style.backgroundColor = "rgba(76, 175, 80, 0.2)";
-        item.dataset.accepted = "true"; // Auto-fix is már elfogadott, de togglelhető
-      }
 
       // Auto-acceptance on blur (when user clicks out of input)
       const input = item.querySelector(`#${inputId}`);
@@ -307,8 +317,8 @@ function renderLabels(data) {
       const div = document.createElement("div");
       div.className = "label";
 
-      const logoPath = getSelectedLogo();
-  
+      const logo = getSelectedLogo();
+
       const line1 = (row["Első_sor"] || "").substring(0, 20);
       const secondLineText = (row["Második_sor"] || "").substring(0, 20);
       const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 20);
@@ -350,7 +360,7 @@ function renderLabels(data) {
       }
 
       div.innerHTML = `
-        <img src="${logoPath}" class="logo">
+        ${logo ? `<img src="${logo.src}" class="${logo.cssClass}">` : ""}
         <div class="line1">${line1}</div>
         <div class="line2">${secondLineText}</div>
         <div class="line3">${thirdLineText}</div> 
@@ -396,7 +406,8 @@ function renderLabels(data) {
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#downloadBtn").addEventListener("click", generatePDF);
   document.querySelector("#sablonBtn").addEventListener("click", downloadTemplate);
-  
+  document.querySelector("#searchCompanyBtn").addEventListener("click", searchCompany);
+
   // Betöltjük a cég címkeszámát, ha van username
   loadCompanyLabelCount();
 });
@@ -532,4 +543,109 @@ function downloadTemplate() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+// =============================================================================
+// CÉG KERESÉS - termékek keresése az interneten
+// =============================================================================
+
+async function searchCompany() {
+  const input = document.getElementById("companyNameInput");
+  const statusEl = document.getElementById("searchStatus");
+  const companyName = input.value.trim();
+
+  if (!companyName) {
+    statusEl.textContent = "Kérem adja meg a cég nevét!";
+    statusEl.style.color = "#ff8080";
+    return;
+  }
+
+  // Loading state
+  statusEl.textContent = "Keresés folyamatban... (ez akár 15-20 másodpercig is tarthat)";
+  statusEl.style.color = "#f6bd60";
+  document.getElementById("searchCompanyBtn").disabled = true;
+
+  const loadingOverlay = document.getElementById("loadingOverlay");
+  loadingOverlay.classList.add("active");
+
+  try {
+    const response = await fetch(`${API_URL}/api/search-company`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ company_name: companyName })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    loadingOverlay.classList.remove("active");
+
+    if (!result.products || result.products.length === 0) {
+      statusEl.textContent = "Nem találtunk termékeket. Próbáljon más cégnevet!";
+      statusEl.style.color = "#ff8080";
+      document.getElementById("searchCompanyBtn").disabled = false;
+      return;
+    }
+
+    // Logo beállítása (ha van)
+    if (result.logo_base64) {
+      companyLogoBase64 = result.logo_base64;
+      statusEl.textContent = `${result.products.length} termék és logó találva!`;
+    } else {
+      companyLogoBase64 = null;
+      statusEl.textContent = `${result.products.length} termék találva (logó nem található).`;
+    }
+    statusEl.style.color = "#4caf50";
+
+    // Forrás linkek megjelenítése
+    const linksEl = document.getElementById("searchLinks");
+    linksEl.innerHTML = "";
+    const titleEl = document.createElement("div");
+    titleEl.className = "search-links-title";
+    titleEl.textContent = "Forrás linkek:";
+    linksEl.appendChild(titleEl);
+
+    if (result.logo_url) {
+      const item = document.createElement("div");
+      item.className = "search-link-item";
+      item.innerHTML = `<span class="search-link-badge logo-badge">logó</span><a href="${result.logo_url}" target="_blank" rel="noopener">${result.logo_url}</a>`;
+      linksEl.appendChild(item);
+    }
+    (result.source_urls || []).forEach(url => {
+      const item = document.createElement("div");
+      item.className = "search-link-item";
+      item.innerHTML = `<span class="search-link-badge">forrás</span><a href="${url}" target="_blank" rel="noopener">${url}</a>`;
+      linksEl.appendChild(item);
+    });
+
+    // Minta cikkszámok és EAN-13 kódok (max 6 termékhez)
+    const mintaCikkszamok = ["100001", "100002", "100003", "100004", "100005", "100006"];
+    const mintaEAN13 = ["8711347001576", "8711347000012", "8711347000050", "8711347000067", "8711347000111", "8711347000135"];
+
+    // Átalakítás az agent által várt formátumra
+    const rows = result.products.map((p, i) => ({
+      "Megnevezés": p["Megnevezés"] || "",
+      "Kiszerelés": p["Kiszerelés"] || "",
+      "Ár": p["Ár"] || "",
+      "EAN-13": mintaEAN13[i] || "",
+      "Cikkszám": mintaCikkszamok[i] || ""
+    }));
+
+    // Meglévő validációs pipeline-ba tápláljuk
+    validateWithAgent(rows, (correctedData) => {
+      validatedData = correctedData;
+      renderLabels(correctedData);
+    });
+
+  } catch (err) {
+    console.error("Cég keresési hiba:", err);
+    loadingOverlay.classList.remove("active");
+    statusEl.textContent = "Hiba történt a keresés során. Próbálja újra!";
+    statusEl.style.color = "#ff8080";
+  } finally {
+    document.getElementById("searchCompanyBtn").disabled = false;
+  }
 }

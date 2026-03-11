@@ -34,7 +34,9 @@ function handleFile(e) {
     let data = new Uint8Array(event.target.result);
     let workbook = XLSX.read(data, { type: 'array' });
     let sheet = workbook.Sheets[workbook.SheetNames[0]];
-    let json = XLSX.utils.sheet_to_json(sheet);
+    let json = XLSX.utils.sheet_to_json(sheet, { defval: "", blankrows: true });
+    // Záró teljesen üres sorok eltávolítása
+    while (json.length > 0 && Object.values(json[json.length - 1]).every(v => v === "")) json.pop();
 
     // Ellenőrizzük, hogy az Excel már tartalmazza-e a feldolgozott oszlopokat (makró által)
     if (json.length > 0 && json[0].hasOwnProperty("Első_sor")) {
@@ -133,9 +135,6 @@ function showValidationModal(validationResult, onComplete) {
       item.className = "issue-item";
       const inputId = `fix_${issue.row_index}_${hibaIdx}`;
 
-      // Auto-javított hibáknál zölden mutatjuk (már alkalmazva)
-      const isAutoFixed = hiba.auto_javitott === true;
-
       item.innerHTML = `
         <div class="field-label">${issue.excel_sor}. sor, ${hiba.oszlop} oszlop</div>
         <div class="error-text">${hiba.hiba}</div>
@@ -143,8 +142,7 @@ function showValidationModal(validationResult, onComplete) {
           <input type="text"
             value="${hiba.javitott || hiba.eredeti}"
             id="${inputId}"
-            placeholder="Javított érték..."
-            ${isAutoFixed ? 'disabled style="border-color: #4caf50"' : ''}>
+            placeholder="Javított érték...">
           <button class="accept-btn"
             id="btn_${inputId}"
             onclick="acceptFix(${issue.row_index}, '${hiba.oszlop}', '${inputId}')">
@@ -152,11 +150,6 @@ function showValidationModal(validationResult, onComplete) {
           </button>
         </div>
       `;
-
-      if (isAutoFixed) {
-        item.style.backgroundColor = "rgba(76, 175, 80, 0.2)";
-        item.dataset.accepted = "true"; // Auto-fix is már elfogadott, de togglelhető
-      }
 
       // Auto-acceptance on blur (when user clicks out of input)
       const input = item.querySelector(`#${inputId}`);

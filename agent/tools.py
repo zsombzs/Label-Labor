@@ -228,12 +228,7 @@ def validate_ean13(ean: str) -> dict | None:
     ean = str(ean).strip()
 
     if not ean:
-        return {
-            "oszlop": "EAN-13",
-            "hiba": "Hiányzó EAN-13 kód - vonalkód nem generálható",
-            "eredeti": "",
-            "javitott": ""
-        }
+        return None
 
     if not ean.isdigit():
         return {
@@ -363,6 +358,22 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, ext
     name = str(raw_row.get("Megnevezés", "")).strip()
     pack = str(raw_row.get("Kiszerelés", "")).strip()
     price = raw_row.get("Ár", "")
+
+    # Teljesen üres sor → üres címke, nincs hiba
+    price_str = str(price).strip() if price not in ("", None) else ""
+    ean_check = str(raw_row.get("EAN-13", "")).strip()
+    cikk_check = str(raw_row.get("Cikkszám", "")).strip()
+    if not name and not pack and not price_str and not ean_check and not cikk_check:
+        return {
+            "processed": {
+                "Első_sor": "", "Második_sor": "", "Harmadik_sor": "",
+                "Kiszerelés": "", "Ár": "", "Ft/l": "", "Ft/kg": "",
+                "EAN-13": "", "Cikkszám": "",
+            },
+            "hibak": [],
+            "excel_sor": row_index + 2,
+            "termek": "",
+        }
 
     # Ha extract_kiszereles aktív és a Kiszerelés üres, próbáljuk kinyerni a névből
     if extract_kiszereles and not pack:

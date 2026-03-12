@@ -29,6 +29,9 @@ def enhance_errors_with_ai_suggestions(issues: list[dict], processed_rows: list[
             # Ha már van értelmes javítás és auto-javított, kihagyjuk
             if hiba.get("javitott") and hiba.get("auto_javitott"):
                 continue
+            # EAN-13 hibát soha nem küldünk az AI-nak – a felhasználó javítja manuálisan
+            if hiba.get("oszlop") == "EAN-13":
+                continue
 
             # Kontextus: teljes termékadat
             context = {
@@ -149,6 +152,10 @@ FONTOS:
             for issue in issues:
                 if issue["row_index"] == row_idx:
                     if hiba_idx < len(issue["hibak"]):
+                        # EAN-13 mezőt soha nem írjuk felül AI javaslattal
+                        if issue["hibak"][hiba_idx].get("oszlop") == "EAN-13":
+                            print(f"  ⚠ EAN-13 AI javaslat visszautasítva: sor {row_idx}, hiba {hiba_idx}")
+                            break
                         # Frissítjük a javaslatot
                         issue["hibak"][hiba_idx]["javitott"] = javitott
                         applied_count += 1

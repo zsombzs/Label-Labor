@@ -149,6 +149,15 @@ body {
   font-weight: bold;
   font-size: calc(16px + 0.5vw);
   background-color: #007ea7;
+  padding-bottom: 8%;
+}
+
+.controls4 {
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  font-size: calc(16px + 0.5vw);
+  background-color: #007ea7;
   padding-bottom: 5.5%;
   border-bottom: 4px solid #01161e;
 }
@@ -399,11 +408,15 @@ body {
 .alcim-container {
   display: flex;
   justify-content: center;
+  align-items: center;
   text-align: center;
   gap: 10px;
   margin-bottom: 4%;
   padding-top: 2%;
   padding-bottom: 2%;
+  padding-left: 5%;
+  padding-right: 5%;
+  box-sizing: border-box;
   font-weight: bold;
   font-size: calc(16px + 0.2vw);
   background-color: #007ea7;
@@ -803,4 +816,267 @@ body {
 
 .validation-modal .skip-btn:hover {
   background: rgba(204, 219, 220, 0.15);
+}
+
+/* =============================================================================
+   ADATOK ELŐNÉZETE GOMB (bal panel)
+   ============================================================================= */
+
+.table-preview-section {
+  display: flex;
+  justify-content: center;
+  background-color: #007ea7;
+  padding: 3% 6%;
+  border-top: 2px solid #ccdbdc;
+  border-bottom: 2px solid #ccdbdc;
+}
+
+.table-preview-btn {
+  background: #003249;
+  color: #ccdbdc;
+  border: 2px solid #ccdbdc;
+  border-radius: 6px;
+  padding: 10px 22px;
+  font-size: calc(14px + 0.2vw);
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.table-preview-btn:hover {
+  background: #005878;
+}
+
+/* =============================================================================
+   ADATOK ELŐNÉZETE MODAL
+   ============================================================================= */
+
+.data-table-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1500;
+  justify-content: center;
+  align-items: center;
+}
+
+.data-table-overlay.active {
+  display: flex;
+}
+
+.data-table-modal {
+  background: #003249;
+  border: 4px solid #01161e;
+  border-radius: 12px;
+  padding: 24px;
+  width: 95vw;
+  max-width: 1200px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #ccdbdc;
+  font-family: Arial, sans-serif;
+}
+
+.data-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.data-table-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #f6bd60;
+}
+
+.data-table-close-btn {
+  background: transparent;
+  color: #ccdbdc;
+  border: 2px solid #ccdbdc;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.data-table-close-btn:hover {
+  background: rgba(204, 219, 220, 0.15);
+}
+
+.data-table-scroll {
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  border: 2px solid #007ea7;
+  border-radius: 6px;
+}
+
+.data-preview-table {
+  border-collapse: collapse;
+  width: auto;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.data-preview-table th {
+  background: #005878;
+  color: #f6bd60;
+  font-weight: bold;
+  padding: 8px 10px;
+  text-align: left;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-right: 1px solid #007ea7;
+  border-bottom: 2px solid #007ea7;
+}
+
+.data-preview-table th.col-readonly {
+  color: #9ad1d4;
+  font-style: italic;
+}
+
+.data-preview-table td {
+  padding: 4px 6px;
+  border-right: 1px solid #005878;
+  border-bottom: 1px solid #005878;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.data-preview-table tr:nth-child(even) td {
+  background: rgba(0, 88, 120, 0.2);
+}
+
+.table-cell-input {
+  width: auto;
+  min-width: 60px;
+  padding: 4px 6px;
+  border: 1px solid #007ea7;
+  border-radius: 3px;
+  background: #ccdbdc;
+  color: #003249;
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.table-cell-input:focus {
+  outline: none;
+  border-color: #f6bd60;
+}
+
+.cell-readonly {
+  background: rgba(0, 50, 73, 0.4);
+  color: #9ad1d4;
+  font-style: italic;
+  white-space: nowrap;
+  padding: 4px 8px;
+}
+
+.data-table-footer {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.data-table-save-btn {
+  background: #f6bd60;
+  color: #003249;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 32px;
+  font-weight: bold;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.data-table-save-btn:hover {
+  background: #ffd180;
+}
+
+/* Custom Alert Modal */
+.custom-alert-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.custom-alert-overlay.active {
+  display: flex;
+}
+.custom-alert-modal {
+  background: #005878;
+  border: 2px solid #9ad1d4;
+  border-radius: 10px;
+  min-width: 380px;
+  max-width: 560px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  font-family: Arial, sans-serif;
+}
+.custom-alert-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px 18px;
+  border-bottom: 1px solid #9ad1d4;
+}
+.custom-alert-title {
+  color: #9ad1d4;
+  font-weight: bold;
+  font-size: 16px;
+}
+.custom-alert-close {
+  background: none;
+  border: none;
+  color: #9ad1d4;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+.custom-alert-close:hover {
+  color: #f6bd60;
+}
+.custom-alert-message {
+  padding: 22px 24px 18px 24px;
+  color: #ccdbdc;
+  font-size: 15px;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  text-align: center;
+}
+.custom-alert-footer {
+  display: flex;
+  justify-content: center;
+  padding: 10px 18px 18px 18px;
+}
+.custom-alert-ok {
+  background: #f6bd60;
+  color: #003249;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 28px;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.custom-alert-ok:hover {
+  background: #ffd180;
 }

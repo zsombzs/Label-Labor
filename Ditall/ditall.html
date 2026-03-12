@@ -27,6 +27,9 @@
         <input type="file" id="excelFile" accept=".xlsx">
       </div>
       <div class="controls3">
+        <button class="btn" id="tablePreviewBtn">Adatok megtekintése</button>
+      </div>
+      <div class="controls4">
         <button class="btn" id="downloadBtn">3. PDF letöltése</button>
       </div>
       <div class="label-type">
@@ -71,11 +74,43 @@
       <div class="summary" id="validationSummary"></div>
       <div id="issuesList"></div>
       <div class="modal-buttons">
-        <button class="apply-btn" id="applyFixesBtn">✓ Javítások alkalmazása</button>
+<button class="apply-btn" id="applyFixesBtn">✓ Javítások alkalmazása</button>
         <button class="skip-btn" id="skipValidationBtn">Kihagyás</button>
       </div>
     </div>
   </div>
+  <!-- Adatok előnézete modal -->
+  <div class="data-table-overlay" id="dataTableOverlay">
+    <div class="data-table-modal">
+      <div class="data-table-header">
+        <h2>Adatok előnézete</h2>
+        <button class="data-table-close-btn" id="dataTableCloseBtn">✕</button>
+      </div>
+      <div class="data-table-scroll">
+        <table class="data-preview-table" id="dataPreviewTable">
+          <thead id="dataTableHead"></thead>
+          <tbody id="dataTableBody"></tbody>
+        </table>
+      </div>
+      <div class="data-table-footer">
+        <button class="data-table-save-btn" id="dataTableSaveBtn">Mentés és generálás</button>
+      </div>
+    </div>
+  </div>
+  <!-- Custom alert modal -->
+  <div class="custom-alert-overlay" id="customAlertOverlay">
+    <div class="custom-alert-modal">
+      <div class="custom-alert-header">
+        <span class="custom-alert-title" id="customAlertTitle">Figyelmeztetés</span>
+        <button class="custom-alert-close" id="customAlertClose">✕</button>
+      </div>
+      <div class="custom-alert-message" id="customAlertMessage"></div>
+      <div class="custom-alert-footer">
+        <button class="custom-alert-ok" id="customAlertOk">Bezárás</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="script.js"></script>
   <script>
     window.onload = function() {

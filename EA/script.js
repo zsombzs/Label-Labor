@@ -2,6 +2,7 @@ const API_URL = "https://labelgenerator-production.up.railway.app";
 
 const COMPANY_USERNAME = 'EA_HU';
 let validatedData = null; // Validált adatok tárolása (logo-váltásnál ne fussanak újra)
+let rawData = null; // Nyers Excel adatok (táblázat előnézethez)
 
 function getUsername() {
   return COMPANY_USERNAME;
@@ -37,6 +38,7 @@ function handleFile(e) {
     let json = XLSX.utils.sheet_to_json(sheet, { defval: "", blankrows: true });
     // Záró teljesen üres sorok eltávolítása
     while (json.length > 0 && Object.values(json[json.length - 1]).every(v => v === "")) json.pop();
+    rawData = json.map(r => ({ ...r })); // Nyers adatok mentése előnézethez
 
     // Ellenőrizzük, hogy az Excel már tartalmazza-e a feldolgozott oszlopokat (makró által)
     if (json.length > 0 && json[0].hasOwnProperty("Első_sor")) {
@@ -356,7 +358,19 @@ function renderLabels(data) {
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#downloadBtn").addEventListener("click", generatePDF);
   document.querySelector("#sablonBtn").addEventListener("click", downloadTemplate);
-  
+  document.getElementById("tablePreviewBtn").addEventListener("click", openDataTable);
+document.getElementById("dataTableCloseBtn").addEventListener("click", closeDataTable);
+  document.getElementById("dataTableSaveBtn").addEventListener("click", saveAndGenerate);
+
+  // Cella változás figyelése – újraszámítja a függő értékeket
+  document.getElementById("dataTableBody").addEventListener("change", (e) => {
+    const input = e.target;
+    if (!input.classList.contains("table-cell-input")) return;
+    const rowIndex = parseInt(input.dataset.row);
+    const colKey = input.dataset.col;
+    handleCellChange(rowIndex, colKey, input.value.trim(), input);
+  });
+
   // Betöltjük a cég címkeszámát, ha van username
   loadCompanyLabelCount();
 });
@@ -493,3 +507,248 @@ function downloadTemplate() {
     link.click();
     document.body.removeChild(link);
 }
+// =============================================================================
+// ADATOK ELŐNÉZETE - szerkeszthető táblázat
+// =============================================================================
+
+const TABLE_COLUMNS = [
+  { key: "Cikkszám",     editable: true  },
+  { key: "EAN-13",       editable: true  },
+  { key: "Megnevezés",   editable: false },
+  { key: "Kiszerelés",   editable: true  },
+  { key: "Ár",           editable: true  },
+  { key: "Első_sor",     editable: true  },
+  { key: "Második_sor",  editable: true  },
+  { key: "Harmadik_sor", editable: true  },
+  { key: "ml",           editable: false },
+  { key: "l",            editable: false },
+  { key: "kg",           editable: false },
+  { key: "g",            editable: false },
+  { key: "Ft/l",         editable: false },
+  { key: "Ft/kg",        editable: false },
+  { key: "db",           editable: false },
+];
+
+function getTableCellValue(colKey, rowIndex) {
+  const pRow = validatedData ? validatedData[rowIndex] : null;
+  const rRow = rawData ? rawData[rowIndex] : null;
+
+  if (colKey === "Megnevezés") {
+    if (rRow && rRow["Megnevezés"]) return String(rRow["Megnevezés"]);
+    if (pRow) {
+      return [pRow["Első_sor"] || "", pRow["Második_sor"] || "", pRow["Harmadik_sor"] || ""]
+        .join(" ").trim();
+    }
+    return "";
+  }
+
+  if (["ml", "l", "kg", "g", "db"].includes(colKey)) {
+    if (pRow && pRow[colKey] !== undefined && pRow[colKey] !== "") return String(pRow[colKey]);
+    if (rRow && rRow[colKey] !== undefined && rRow[colKey] !== "") return String(rRow[colKey]);
+    const kiszereles = (pRow && pRow["Kiszerelés"]) || (rRow && rRow["Kiszerelés"]) || "";
+    return parseKiszereles(kiszereles)[colKey] || "";
+  }
+
+  if (colKey === "Ft/l" || colKey === "Ft/kg") {
+    if (pRow && pRow[colKey] !== undefined && pRow[colKey] !== "") return String(pRow[colKey]);
+    if (rRow && rRow[colKey] !== undefined && rRow[colKey] !== "") return String(rRow[colKey]);
+    const kiszereles = (pRow && pRow["Kiszerelés"]) || (rRow && rRow["Kiszerelés"]) || "";
+    const ar = (pRow && pRow["Ár"]) || (rRow && rRow["Ár"]) || "";
+    const { ftl, ftkg } = recalculateUnitPrice(kiszereles, ar);
+    return colKey === "Ft/l" ? ftl : ftkg;
+  }
+
+  if (pRow && pRow[colKey] !== undefined && pRow[colKey] !== "") return String(pRow[colKey]);
+  if (rRow && rRow[colKey] !== undefined && rRow[colKey] !== "") return String(rRow[colKey]);
+  return "";
+}
+
+function escapeAttr(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function openDataTable() {
+  if (!validatedData || validatedData.length === 0) {
+    showAlert("Nincs megjeleníthető adat. Töltse fel az Excel fájlt először!");
+    return;
+  }
+
+  const thead = document.getElementById("dataTableHead");
+  const tbody = document.getElementById("dataTableBody");
+
+  thead.innerHTML = "<tr>" + TABLE_COLUMNS.map(col =>
+    `<th class="${col.editable ? "" : "col-readonly"}">${col.key}</th>`
+  ).join("") + "</tr>";
+
+  tbody.innerHTML = "";
+  validatedData.forEach((row, rowIndex) => {
+    const tr = document.createElement("tr");
+    TABLE_COLUMNS.forEach(col => {
+      const td = document.createElement("td");
+      const val = getTableCellValue(col.key, rowIndex);
+      if (col.editable) {
+        td.innerHTML = `<input type="text" class="table-cell-input" data-row="${rowIndex}" data-col="${col.key}" value="${escapeAttr(val)}">`;
+      } else {
+        td.className = "cell-readonly";
+        td.dataset.row = rowIndex;
+        td.dataset.col = col.key;
+        td.textContent = val;
+      }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById("dataTableOverlay").classList.add("active");
+}
+
+function closeDataTable() {
+  document.getElementById("dataTableOverlay").classList.remove("active");
+}
+
+function saveAndGenerate() {
+  if (!validatedData) return;
+
+  // Beolvassuk az aktuális táblázat értékeit a validatedData-ba
+  document.querySelectorAll("#dataTableBody .table-cell-input").forEach(input => {
+    const rowIdx = parseInt(input.dataset.row);
+    const colKey = input.dataset.col;
+    if (validatedData[rowIdx] !== undefined) {
+      validatedData[rowIdx][colKey] = input.value.trim();
+    }
+  });
+
+  // Összerakjuk a nyers adatokat az agent számára (Megnevezés = összerakott sorok)
+  const rawForValidation = validatedData.map(row => ({
+    "Megnevezés": [row["Első_sor"] || "", row["Második_sor"] || "", row["Harmadik_sor"] || ""]
+      .filter(s => s).join(" ").trim(),
+    "Kiszerelés": row["Kiszerelés"] || "",
+    "Ár": row["Ár"] || "",
+    "EAN-13": row["EAN-13"] || "",
+    "Cikkszám": row["Cikkszám"] || "",
+  }));
+
+  closeDataTable();
+
+  validateWithAgent(rawForValidation, (correctedData) => {
+    validatedData = correctedData;
+    renderLabels(correctedData);
+  });
+}
+
+// =============================================================================
+// TÁBLÁZAT CELLA ÚJRASZÁMÍTÁS
+// =============================================================================
+
+// EAN-13 formátum és check digit validáció
+function validateEan13(ean) {
+  if (!ean || ean === "") return true;
+  const str = String(ean).replace(/\s/g, "");
+  if (!/^\d{13}$/.test(str)) return false;
+  let sum = 0;
+  for (let i = 0; i < 12; i++) {
+    sum += parseInt(str[i]) * (i % 2 === 0 ? 1 : 3);
+  }
+  return (10 - (sum % 10)) % 10 === parseInt(str[12]);
+}
+
+// Kiszerelés szövegéből ml / l / kg / g / db értékek kiszámítása
+function parseKiszereles(kiszereles) {
+  const result = { ml: "", l: "", kg: "", g: "", db: "" };
+  if (!kiszereles) return result;
+  const str = String(kiszereles).trim().toLowerCase();
+  if (str === "db") { result.db = "db"; return result; }
+  const numMatch = str.match(/([\d.,]+)/);
+  if (!numMatch) return result;
+  const qty = parseFloat(numMatch[1].replace(",", "."));
+  if (isNaN(qty) || qty <= 0) return result;
+  const unit = str.replace(/[\d.,\s]/g, "").trim();
+  if (unit === "ml") {
+    result.ml = String(qty);
+    result.l = String(parseFloat((qty / 1000).toFixed(3)));
+  } else if (unit === "l") {
+    result.l = String(qty);
+    result.ml = String(Math.round(qty * 1000));
+  } else if (unit === "g") {
+    result.g = String(qty);
+    result.kg = String(parseFloat((qty / 1000).toFixed(3)));
+  } else if (unit === "kg") {
+    result.kg = String(qty);
+    result.g = String(Math.round(qty * 1000));
+  } else if (unit === "db") {
+    result.db = String(qty);
+  }
+  return result;
+}
+
+// Egy cella értékének frissítése a táblázatban (input vagy readonly td)
+function updateTableCell(rowIndex, colKey, value) {
+  const input = document.querySelector(
+    `#dataTableBody input[data-row="${rowIndex}"][data-col="${colKey}"]`
+  );
+  if (input) { input.value = value; return; }
+  const td = document.querySelector(
+    `#dataTableBody td[data-row="${rowIndex}"][data-col="${colKey}"]`
+  );
+  if (td) td.textContent = value;
+}
+
+// Cella módosítás kezelése: EAN-13 validáció + függő mezők újraszámítása
+function handleCellChange(rowIndex, colKey, newValue, inputEl) {
+  if (!validatedData || validatedData[rowIndex] === undefined) return;
+  validatedData[rowIndex][colKey] = newValue;
+
+  if (colKey === "EAN-13") {
+    inputEl.style.borderColor = validateEan13(newValue) ? "" : "#e53935";
+    return;
+  }
+
+  if (colKey === "Kiszerelés") {
+    const parsed = parseKiszereles(newValue);
+    ["ml", "l", "kg", "g", "db"].forEach(k => {
+      validatedData[rowIndex][k] = parsed[k];
+      updateTableCell(rowIndex, k, parsed[k]);
+    });
+    const { ftl, ftkg } = recalculateUnitPrice(newValue, validatedData[rowIndex]["Ár"]);
+    validatedData[rowIndex]["Ft/l"] = ftl;
+    validatedData[rowIndex]["Ft/kg"] = ftkg;
+    updateTableCell(rowIndex, "Ft/l", ftl);
+    updateTableCell(rowIndex, "Ft/kg", ftkg);
+    return;
+  }
+
+  if (colKey === "Ár") {
+    const { ftl, ftkg } = recalculateUnitPrice(validatedData[rowIndex]["Kiszerelés"], newValue);
+    validatedData[rowIndex]["Ft/l"] = ftl;
+    validatedData[rowIndex]["Ft/kg"] = ftkg;
+    updateTableCell(rowIndex, "Ft/l", ftl);
+    updateTableCell(rowIndex, "Ft/kg", ftkg);
+    return;
+  }
+}
+
+// =============================================================================
+// CUSTOM ALERT MODAL
+// =============================================================================
+
+function showAlert(message, title) {
+  document.getElementById("customAlertTitle").textContent = title || "Figyelmeztetés";
+  document.getElementById("customAlertMessage").textContent = message;
+  document.getElementById("customAlertOverlay").classList.add("active");
+}
+
+function closeAlert() {
+  document.getElementById("customAlertOverlay").classList.remove("active");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("customAlertClose").addEventListener("click", closeAlert);
+  document.getElementById("customAlertOk").addEventListener("click", closeAlert);
+  document.getElementById("customAlertOverlay").addEventListener("click", function (e) {
+    if (e.target === this) closeAlert();
+  });
+});

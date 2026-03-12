@@ -133,7 +133,7 @@ def normalize_kiszerelesek(pack: str) -> tuple[str, dict | None]:
     # Egység kinyerése (ami marad a szám után)
     unit_raw = re.sub(r'[\d.,\s]', '', pack).strip()
 
-    # Ha db-szinonima + szám → hiba (db-nél nincs szám)
+    # Ha db-szinonima + szám → hiba (db-nél nincs szám, mindig csak "db")
     db_synonyms = [s.lower() for s in UNIT_MAP["db"]]
     if unit_raw.lower() in db_synonyms:
         return "db", {

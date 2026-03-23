@@ -20,7 +20,13 @@
     <!-- Bal oldali oszlop -->
     <div class="left-panel">
       <div class="controls1">
-        <button class="btn" id="sablonBtn">1. Sablon Excel letöltése</button>
+        <div class="sablon-dropdown">
+          <button class="btn sablon-trigger">1. Sablon Excel letöltése</button>
+          <div class="sablon-menu">
+            <button class="btn sablon-menu-btn" id="sablonBtnNew">ÚJ (.xlsx)</button>
+            <button class="btn sablon-menu-btn" id="sablonBtnOld">RÉGI (.xlsm)</button>
+          </div>
+        </div>
       </div>
       <div class="controls2">
         <label for="excelFile" class="btn">2. Excel fájl feltöltése (.xlsx, .xlsm)</label>

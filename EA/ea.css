@@ -138,6 +138,57 @@ body {
   border-top: 4px solid #01161e;
 }
 
+.sablon-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.sablon-trigger {
+  width: 100%;
+}
+
+.sablon-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.sablon-dropdown:hover .sablon-menu {
+  opacity: 1;
+  pointer-events: all;
+}
+
+@keyframes sablon-pulse {
+  0%, 100% { background: #003249; }
+  50% { background: #005878; }
+}
+
+.sablon-menu-btn {
+  flex: 1;
+  background: #003249;
+  border-top: none;
+  animation: sablon-pulse 0.9s ease-in-out infinite;
+}
+
+.sablon-menu-btn:first-child {
+  border-right: 1px solid #d6d6d6;
+}
+
+.sablon-menu:hover .sablon-menu-btn {
+  animation: none;
+  background: #003249;
+}
+
+.sablon-menu-btn:hover {
+  background: #80ced7 !important;
+}
+
 .controls2 {
   display: flex;
   justify-content: center;
@@ -308,8 +359,9 @@ body {
   transform-origin: top center;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: repeat(3, 62.7mm);
+  grid-template-columns: repeat(3, 62.67mm);
   grid-template-rows: repeat(7, 39.7mm);
+  gap: 1mm;
   padding: 1mm;
   margin: 0;
   background-color: white;
@@ -328,7 +380,7 @@ body {
 }
 
 .label {
-  width: 62.7mm;
+  width: 62.67mm;
   height: 39.7mm;
   border: 1px solid #000000;
   padding: 1mm;

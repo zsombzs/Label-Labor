@@ -366,6 +366,12 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, ext
     Visszaad: {processed: {...}, hibak: [...], excel_sor: N}
     """
     name = str(raw_row.get("Megnevezés", "")).strip()
+    # Fallback: ha az oszlopnév xlsm-ben eltér (pl. trailing space, vagy más elnevezés)
+    if not name:
+        for k, v in raw_row.items():
+            if "megnevez" in str(k).strip().lower() and str(v).strip():
+                name = str(v).strip()
+                break
     pack = str(raw_row.get("Kiszerelés", "")).strip()
     price = raw_row.get("Ár", "")
 

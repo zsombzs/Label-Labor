@@ -64,6 +64,12 @@ function handleFile(file) {
     let workbook = XLSX.read(data, { type: 'array' });
     let sheet = workbook.Sheets[workbook.SheetNames[0]];
     let json = XLSX.utils.sheet_to_json(sheet, { defval: "", blankrows: true });
+    // Oszlopfejlécek normalizálása (trim) – xlsm-ben lehetnek trailing space-es nevek
+    json = json.map(row => {
+      const normalized = {};
+      for (const [k, v] of Object.entries(row)) normalized[k.trim()] = v;
+      return normalized;
+    });
     // Záró teljesen üres sorok eltávolítása
     while (json.length > 0 && Object.values(json[json.length - 1]).every(v => v === "")) json.pop();
     rawData = json.map(r => ({ ...r })); // Nyers adatok mentése előnézethez
@@ -385,7 +391,15 @@ function renderLabels(data) {
   
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#downloadBtn").addEventListener("click", generatePDF);
-  document.querySelector("#sablonBtn").addEventListener("click", downloadTemplate);
+  document.getElementById("sablonBtnOld").addEventListener("click", downloadTemplate);
+  document.getElementById("sablonBtnNew").addEventListener("click", () => {
+    const link = document.createElement("a");
+    link.href = "new_ea_sablon.xlsx";
+    link.download = "new_ea_sablon.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
   document.getElementById("tablePreviewBtn").addEventListener("click", openDataTable);
 document.getElementById("dataTableCloseBtn").addEventListener("click", closeDataTable);
   document.getElementById("dataTableSaveBtn").addEventListener("click", saveAndGenerate);
@@ -520,8 +534,12 @@ function createPDF() {
         const pageText = `${i} / ${totalPages}`;
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
-        
-        pdf.text(pageText, pageWidth / 2, pageHeight - 3, { align: 'center' });
+
+        if (i === 1) {
+          pdf.text(pageText, pageWidth / 2, pageHeight - 3, { align: 'center' });
+        } else {
+          pdf.text(pageText, pageWidth / 2, 6, { align: 'center' });
+        }
       }
     })
     .save();

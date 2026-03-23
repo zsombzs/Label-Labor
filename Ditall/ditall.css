@@ -52,6 +52,14 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.left-panel.drag-over {
+  background-color: #2d2d2d;
+  border-right-color: #E8961E;
+  outline: 3px dashed #E8961E;
+  outline-offset: -6px;
 }
 
 .label-type {

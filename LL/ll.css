@@ -52,6 +52,14 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.left-panel.drag-over {
+  background-color: #005878;
+  border-right-color: #f6bd60;
+  outline: 3px dashed #f6bd60;
+  outline-offset: -6px;
 }
 
 .label-type {
@@ -490,8 +498,23 @@ body {
 .logo-b {
   width: 65px;
   position: absolute;
-  top: 9px;
+  top: 7px;
   right: 7px;
+}
+
+/* Akciós cimkéhez kisebb logo */
+.logo-a-sm {
+  width: 42px;
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+
+.logo-b-sm {
+  width: 42px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
 }
 .line1 {
   font-weight: bold;
@@ -534,6 +557,15 @@ body {
   position: absolute;
   top: 55px;
   right: 11px;
+}
+
+/* Akciós cimkéhez: kisebb kiszerelés, price-box-orig bal széle fölé igazítva (~20% kisebb) */
+.kiszereles-sm {
+  font-size: 9pt;
+  top: auto;
+  right: auto;
+  bottom: 22mm;
+  left: calc(62.7mm - 3mm - 100px);
 }
 
 .price-box1,
@@ -604,6 +636,138 @@ body {
   height: auto;
   font-family: Calibri, sans-serif;
   font-weight: bold;
+}
+
+/* =============================================================================
+   AKCIÓS CIMKE
+   ============================================================================= */
+
+/* Eredeti ár + kedvezmény % box — price-box-sale felett (~20% kisebb) */
+.price-box-orig {
+  display: flex;
+  align-items: stretch;
+  position: absolute;
+  background-color: #fff;
+  box-sizing: border-box;
+  border: 0.5px solid black;
+  width: 100px;
+  height: 28px;
+  bottom: calc(4mm + 36px + 1px);
+  right: 3mm;
+  overflow: hidden;
+}
+
+.price-box-orig .pct {
+  flex: 0 0 33%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 10pt;
+  color: #c62828;
+  border-right: 0.5px solid #bbb;
+  font-family: Calibri, sans-serif;
+  white-space: nowrap;
+  letter-spacing: -0.3px;
+}
+
+.price-box-orig .original-price {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 9.5pt;
+  font-weight: bold;
+  font-family: Calibri, sans-serif;
+  padding: 0 3px;
+  position: relative;
+  white-space: nowrap;
+}
+
+/* Áthúzás az eredeti áron */
+.price-box-orig .original-price::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 3px;
+  top: 50%;
+  border-top: 1.5px solid rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+/* Akciós ár box — barcode szintjén, price-box1-gyel megegyező pozíció */
+.price-box-sale {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: absolute;
+  background-color: #fff;
+  box-sizing: border-box;
+  border: 0.5px solid black;
+  width: 100px;
+  height: 36px;
+  padding: 0 2px;
+  font-weight: bold;
+  bottom: 4mm;
+  right: 3mm;
+}
+
+.price-box-sale .amount {
+  flex: 1;
+  font-size: 15pt;
+  text-align: right;
+  flex-shrink: 0;
+  min-width: 60px;
+  font-family: Calibri, sans-serif;
+}
+
+.price-box-sale .unit {
+  text-align: right;
+  white-space: nowrap;
+  font-size: 15pt;
+  font-family: Calibri, sans-serif;
+}
+
+/* Cikkszám + kiszerelés sor a vonalkód felett */
+.sale-info-row {
+  position: absolute;
+  bottom: calc(4mm + 36px + 1px);
+  left: 0;
+  width: calc(100% - 3mm - 100px);
+  height: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.sale-cikk {
+  font-family: Calibri, sans-serif;
+  font-size: 9pt;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.sale-kiszeres {
+  font-family: Calibri, sans-serif;
+  font-size: 10pt;
+  font-weight: bold;
+  text-align: right;
+  line-height: 1;
+}
+
+/* Egységár szöveg — price-box-orig felett, jobb széléhez igazítva */
+.sale-unit-price {
+  font-family: Calibri, sans-serif;
+  font-size: 7.5pt;
+  font-weight: bold;
+  position: absolute;
+  bottom: 22mm;
+  right: 3mm;
+  text-align: right;
+  line-height: 1;
 }
 
 /* =============================================================================

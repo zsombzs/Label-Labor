@@ -52,6 +52,14 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.left-panel.drag-over {
+  background-color: #5c4535;
+  border-right-color: #E8A530;
+  outline: 3px dashed #E8A530;
+  outline-offset: -6px;
 }
 
 .btn {

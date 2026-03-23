@@ -9,11 +9,15 @@ import re
 # NÉVFELDARABOLÁS (max 22 karakter soronként)
 # =============================================================================
 
-def split_name(name: str, max_chars: int = 22) -> tuple[str, str, str, bool]:
+def split_name(name: str, max_chars: int = 22, max_chars_line3: int | None = None) -> tuple[str, str, str, bool]:
     """Szavanként tördeli a nevet 3 sorra, max 22 karakter/sor.
+    max_chars_line3: ha meg van adva, a 3. sorra külön limit vonatkozik.
     Visszatér: (sor1, sor2, sor3, volt_túlcsordulás)"""
     if not name:
         return "", "", "", False
+
+    line3_limit = max_chars_line3 if max_chars_line3 is not None else max_chars
+    limits = [max_chars, max_chars, line3_limit]
 
     words = str(name).strip().split()
     lines = ["", "", ""]
@@ -25,20 +29,26 @@ def split_name(name: str, max_chars: int = 22) -> tuple[str, str, str, bool]:
             overflow = True
             continue
 
+        limit = limits[current_line]
         if lines[current_line] == "":
             lines[current_line] = word
-            if len(word) > max_chars:
+            if len(word) > limit:
                 overflow = True
-        elif len(lines[current_line] + " " + word) <= max_chars:
+        elif len(lines[current_line] + " " + word) <= limit:
             lines[current_line] = lines[current_line] + " " + word
         else:
             current_line += 1
             if current_line >= 3:
                 overflow = True
                 continue
+            limit = limits[current_line]
             lines[current_line] = word
-            if len(word) > max_chars:
+            if len(word) > limit:
                 overflow = True
+
+    # 3. sor utólagos ellenőrzése a saját limitjével
+    if len(lines[2]) > line3_limit:
+        overflow = True
 
     return lines[0], lines[1], lines[2], overflow
 
@@ -359,6 +369,15 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, ext
     pack = str(raw_row.get("Kiszerelés", "")).strip()
     price = raw_row.get("Ár", "")
 
+    akcio_price = raw_row.get("Akciós_ár", "")
+
+    # Ha csak Akciós_ár van kitöltve → kezelése mint sima Ár
+    price_str_check = str(price).strip() if price not in ("", None) else ""
+    akcio_str_check = str(akcio_price).strip() if akcio_price not in ("", None) else ""
+    if not price_str_check and akcio_str_check:
+        price = akcio_price
+        akcio_price = ""
+
     # Teljesen üres sor → üres címke, nincs hiba
     price_str = str(price).strip() if price not in ("", None) else ""
     ean_check = str(raw_row.get("EAN-13", "")).strip()
@@ -367,7 +386,7 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, ext
         return {
             "processed": {
                 "Első_sor": "", "Második_sor": "", "Harmadik_sor": "",
-                "Kiszerelés": "", "Ár": "", "Ft/l": "", "Ft/kg": "",
+                "Kiszerelés": "", "Ár": "", "Akciós_ár": "", "Ft/l": "", "Ft/kg": "",
                 "EAN-13": "", "Cikkszám": "",
             },
             "hibak": [],
@@ -411,6 +430,22 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, ext
         })
         normalized_price = str(normalized_price)[:5]
 
+    # 3b. Akciós_ár normalizálás (ugyanazok a szabályok mint az Ár-nál)
+    normalized_akcio, akcio_hiba = normalize_ar(akcio_price)
+    if akcio_hiba:
+        akcio_hiba["oszlop"] = "Akciós_ár"
+        hibak.append(akcio_hiba)
+
+    if normalized_akcio and len(str(normalized_akcio)) > 5:
+        hibak.append({
+            "oszlop": "Akciós_ár",
+            "hiba": f"Túl hosszú akciós ár: '{normalized_akcio}' (maximum 5 karakter)",
+            "eredeti": normalized_akcio,
+            "javitott": str(normalized_akcio)[:5],
+            "auto_javitott": True
+        })
+        normalized_akcio = str(normalized_akcio)[:5]
+
     # 4. EAN-13 validálás
     ean_hiba = validate_ean13(ean)
     if ean_hiba:
@@ -451,6 +486,7 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, ext
         "Harmadik_sor": line3,
         "Kiszerelés": normalized_pack,
         "Ár": normalized_price,
+        "Akciós_ár": normalized_akcio,
         "Ft/l": ft_per_l if ft_per_l else "",
         "Ft/kg": ft_per_kg if ft_per_kg else "",
         "EAN-13": ean,

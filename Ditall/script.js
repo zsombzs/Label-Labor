@@ -27,12 +27,40 @@ document.querySelectorAll('input[name="labelType"]').forEach(radio => {
 });
 
 document.getElementById("excelFile").addEventListener("change", function(e) {
-  validatedData = null; // Új fájl → reset validált adatok
-  handleFile(e);
+  validatedData = null;
+  handleFile(e.target.files[0]);
 }, false);
 
-function handleFile(e) {
-  let file = e.target.files[0];
+// Drag & drop a bal panelen
+(function() {
+  const panel = document.querySelector('.left-panel');
+  panel.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    panel.classList.add('drag-over');
+  });
+  panel.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!panel.contains(e.relatedTarget)) panel.classList.remove('drag-over');
+  });
+  panel.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    panel.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    const fname = file.name.toLowerCase();
+    if (!fname.endsWith('.xlsx') && !fname.endsWith('.xlsm')) {
+      showAlert('Csak .xlsx vagy .xlsm fájl feltöltése támogatott!');
+      return;
+    }
+    validatedData = null;
+    handleFile(file);
+  });
+})();
+
+function handleFile(file) {
   let reader = new FileReader();
 
   reader.onload = function(event) {

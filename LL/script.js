@@ -1,5 +1,5 @@
-const API_URL = "http://localhost:8000";
-/* const API_URL = "https://labelgenerator-production.up.railway.app"; */
+/* const API_URL = "http://localhost:8000"; */
+const API_URL = "https://labelgenerator-production.up.railway.app";
 
 const COMPANY_USERNAME = 'L_L';
 let validatedData = null; // Validált adatok tárolása (logo-váltásnál ne fussanak újra)

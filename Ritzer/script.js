@@ -1,10 +1,9 @@
-const API_URL = "http://localhost:8000";
-/* const API_URL = "https://labelgenerator-production.up.railway.app"; */
+const API_URL = "https://labelgenerator-production.up.railway.app";
+/* const API_URL = "http://localhost:8000"; */
 
-const COMPANY_USERNAME = 'L_L';
-let validatedData = null; // Validált adatok tárolása (logo-váltásnál ne fussanak újra)
-let companyLogoBase64 = null; // Keresett cég logoja (base64 data URL)
-let rawData = null; // Nyers Excel adatok (táblázat előnézethez)
+const COMPANY_USERNAME = 'RITZER';
+let validatedData = null;
+let rawData = null;
 
 function getUsername() {
   return COMPANY_USERNAME;
@@ -12,28 +11,15 @@ function getUsername() {
 
 function getSelectedLogo() {
   const selectedType = document.querySelector('input[name="labelType"]:checked').value;
-  if (selectedType === "A") {
-    // AI logo: keresett cég logója (ha van), egyébként piros.png
-    return {
-      src: companyLogoBase64 || "assets/4.png",
-      cssClass: "logo-a"
-    };
-  } else if (selectedType === "B") {
-    // Manual logo: mindig a kek.png
-    return {
-      src: "assets/3.png",
-      cssClass: "logo-b"
-    };
-  } else {
-    // Nincs logo
-    return null;
-  }
+  return {
+    src: selectedType === "A" ? "assets/ritzer.png" : "assets/ritzer_logo2.png",
+    cssClass: selectedType === "A" ? "logo-a" : "logo-b"
+  };
 }
 
 document.querySelectorAll('input[name="labelType"]').forEach(radio => {
   radio.addEventListener('change', () => {
     if (validatedData) {
-      // Ha már validált adatok vannak, csak újra renderelünk
       renderLabels(validatedData);
     }
   });
@@ -63,9 +49,8 @@ document.getElementById("excelFile").addEventListener("change", function(e) {
     panel.classList.remove('drag-over');
     const file = e.dataTransfer.files[0];
     if (!file) return;
-    const fname = file.name.toLowerCase();
-    if (!fname.endsWith('.xlsx') && !fname.endsWith('.xlsm')) {
-      showAlert('Csak .xlsx vagy .xlsm fájl feltöltése támogatott!');
+    if (!file.name.toLowerCase().endsWith('.xlsx')) {
+      showAlert('Csak .xlsx fájl feltöltése támogatott!');
       return;
     }
     validatedData = null;
@@ -74,80 +59,34 @@ document.getElementById("excelFile").addEventListener("change", function(e) {
 })();
 
 function handleFile(file) {
-  if (!file) {
-    console.error("Nincs kiválasztott fájl");
-    return;
-  }
-
-  console.log(`📁 Fájl betöltése: ${file.name} (${file.type})`);
   let reader = new FileReader();
 
-  reader.onerror = function(error) {
-    console.error("❌ Fájl olvasási hiba:", error);
-    showAlert("Hiba történt a fájl beolvasása során!");
-  };
-
   reader.onload = function(event) {
-    try {
-      console.log("📊 Excel feldolgozása...");
-      let data = new Uint8Array(event.target.result);
-      let workbook = XLSX.read(data, { type: 'array' });
+    let data = new Uint8Array(event.target.result);
+    let workbook = XLSX.read(data, { type: 'array' });
+    let sheet = workbook.Sheets[workbook.SheetNames[0]];
+    let json = XLSX.utils.sheet_to_json(sheet, { defval: "", blankrows: true });
+    while (json.length > 0 && Object.values(json[json.length - 1]).every(v => v === "")) json.pop();
+    rawData = json.map(r => ({ ...r }));
 
-      if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
-        console.error("❌ Az Excel fájl nem tartalmaz lapokat!");
-        showAlert("Az Excel fájl üres vagy hibás!");
-        return;
-      }
-
-      console.log(`✓ Excel lapok: ${workbook.SheetNames.join(", ")}`);
-      let sheet = workbook.Sheets[workbook.SheetNames[0]];
-      let json = XLSX.utils.sheet_to_json(sheet, { defval: "", blankrows: true });
-      // Záró teljesen üres sorok eltávolítása
-      while (json.length > 0 && Object.values(json[json.length - 1]).every(v => v === "")) json.pop();
-      rawData = json.map(r => ({ ...r })); // Nyers adatok mentése előnézethez
-
-      console.log(`✓ ${json.length} sor beolvasva`);
-      if (json.length === 0) {
-        console.error("❌ Az Excel fájl üres!");
-        showAlert("Az Excel fájl nem tartalmaz adatokat!");
-        return;
-      }
-
-      console.log("📋 Első sor oszlopai:", Object.keys(json[0]));
-
-      // Ellenőrizzük, hogy az Excel már tartalmazza-e a feldolgozott oszlopokat (makró által)
-      if (json.length > 0 && json[0].hasOwnProperty("Első_sor")) {
-        // RÉGI MÓDSZER: az Excel már tartalmazza a szortírozott adatokat (makróval feldolgozva)
-        console.log("✅ Excel már feldolgozott adatokat tartalmaz - régi módszer használata");
-        validatedData = json;
-        renderLabels(json);
-      } else {
-        // ÚJ MÓDSZER: agent validáció (nyers adatok - Megnevezés oszloppal)
-        console.log("🤖 Nyers adatok - agent validáció használata");
-        validateWithAgent(json, (correctedData) => {
-          validatedData = correctedData;
-          renderLabels(correctedData);
-        });
-      }
-    } catch (error) {
-      console.error("❌ Excel feldolgozási hiba:", error);
-      showAlert(`Hiba történt az Excel feldolgozása során: ${error.message}`);
-    }
+    console.log("Agent validáció használata");
+    validateWithAgent(json, (correctedData) => {
+      validatedData = correctedData;
+      renderLabels(correctedData);
+    });
   };
   reader.readAsArrayBuffer(file);
 }
 
 // =============================================================================
-// BACKEND FELDOLGOZÁS - makró logika + EAN validáció
+// BACKEND FELDOLGOZÁS - agent validáció + EAN validáció
 // =============================================================================
 
 async function validateWithAgent(data, onComplete) {
-  // Betöltési animáció megjelenítése
   const loadingOverlay = document.getElementById("loadingOverlay");
   loadingOverlay.classList.add("active");
 
   try {
-    // Elküldjük a nyers adatokat → backend elvégzi a makró munkáját
     const response = await fetch(`${API_URL}/api/process-labels`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -155,7 +94,6 @@ async function validateWithAgent(data, onComplete) {
     });
 
     if (!response.ok) {
-      // Ha a backend nem elérhető, simán renderelünk az eredeti adatokkal
       console.warn("Backend nem elérhető, feldolgozás kihagyva");
       loadingOverlay.classList.remove("active");
       onComplete(data);
@@ -163,15 +101,11 @@ async function validateWithAgent(data, onComplete) {
     }
 
     const result = await response.json();
-
-    // Animáció elrejtése
     loadingOverlay.classList.remove("active");
 
-    // Ha vannak hibák → popup
     if (result.osszes_hiba > 0) {
       showValidationModal(result, onComplete);
     } else {
-      // Minden rendben → renderel a feldolgozott adatokkal
       onComplete(result.processed_rows);
     }
 
@@ -187,7 +121,6 @@ function showValidationModal(validationResult, onComplete) {
   const summary = document.getElementById("validationSummary");
   const issuesList = document.getElementById("issuesList");
 
-  // Debug: Log what we received
   console.log("🔍 DEBUG - Frontend received validation result:");
   if (validationResult.issues && validationResult.issues.length > 0) {
     const firstIssue = validationResult.issues[0];
@@ -204,7 +137,6 @@ function showValidationModal(validationResult, onComplete) {
 
   issuesList.innerHTML = "";
 
-  // Soronként jelenítjük meg a hibákat (Excel sor sorrendben)
   validationResult.issues.forEach(issue => {
     const card = document.createElement("div");
     card.className = "issue-card";
@@ -231,13 +163,11 @@ function showValidationModal(validationResult, onComplete) {
         </div>
       `;
 
-      // Auto-acceptance on blur (when user clicks out of input)
       const input = item.querySelector(`#${inputId}`);
       if (input) {
         const originalValue = hiba.javitott || hiba.eredeti;
         input.addEventListener('blur', () => {
           const currentValue = input.value.trim();
-          // Only auto-accept if value changed and field is not already accepted (disabled)
           if (!input.disabled && currentValue !== originalValue) {
             window.acceptFix(issue.row_index, hiba.oszlop, inputId);
           }
@@ -250,9 +180,7 @@ function showValidationModal(validationResult, onComplete) {
     issuesList.appendChild(card);
   });
 
-  // A feldolgozott adatokat tároljuk (már normalizálva vannak)
   overlay._data = JSON.parse(JSON.stringify(validationResult.processed_rows));
-
   overlay.classList.add("active");
 
   document.getElementById("applyFixesBtn").onclick = () => {
@@ -284,14 +212,11 @@ function recalculateUnitPrice(kiszereles, ar) {
   return { ftl: "", ftkg: "" };
 }
 
-// Javítás elfogadása - toggle: első kattintás elfogad (zöld), második visszavonja (kék)
-// window-ra kell tenni mert type="module" script globális scope-ból nem érhető el inline onclick-ből
 window.acceptFix = function acceptFix(rowIndex, oszlop, inputId) {
   const overlay = document.getElementById("validationOverlay");
   const input = document.getElementById(inputId);
   const item = input.closest(".issue-item");
 
-  // Toggle: ha már el van fogadva, visszavonjuk
   if (item && item.dataset.accepted === "true") {
     item.dataset.accepted = "false";
     input.disabled = false;
@@ -301,10 +226,10 @@ window.acceptFix = function acceptFix(rowIndex, oszlop, inputId) {
   }
 
   const newValue = input.value.trim();
+
   if (overlay._data && overlay._data[rowIndex]) {
     overlay._data[rowIndex][oszlop] = newValue;
 
-    // Ha Ár vagy Kiszerelés változott → újraszámoljuk az egységárat
     if (oszlop === "Ár" || oszlop === "Kiszerelés") {
       const row = overlay._data[rowIndex];
       const { ftl, ftkg } = recalculateUnitPrice(row["Kiszerelés"], row["Ár"]);
@@ -321,6 +246,14 @@ window.acceptFix = function acceptFix(rowIndex, oszlop, inputId) {
   }
 }
 
+function padCikkszam(val) {
+  if (val === null || val === undefined) return "";
+  const str = String(val).trim();
+  if (!str) return "";
+  if (/^\d+$/.test(str)) return str.padStart(5, "0");
+  return str; // nem numerikus → eredeti formátum
+}
+
 function formatPrice(price) {
   if (price === null || price === undefined || price === "") return "";
   const num = parseInt(price, 10);
@@ -329,113 +262,6 @@ function formatPrice(price) {
 }
 
 let totalLabelsGenerated = 0;
-
-function buildNormalLabel(div, row, logo) {
-  const line1 = (row["Első_sor"] || "").substring(0, 20);
-  const secondLineText = (row["Második_sor"] || "").substring(0, 20);
-  const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 20);
-  const kiszereles = row["Kiszerelés"] || "";
-  const ar = row["Ár"] || "";
-  const ftPerL = row["Ft/l"] || "";
-  const ftPerKg = row["Ft/kg"] || "";
-
-  let price = "";
-  let pricePerUnit = "";
-  let unitLabel = "";
-  if (/db$/i.test(kiszereles)) {
-    unitLabel = "Ft/db";
-    if (ar !== "") { pricePerUnit = formatPrice(ar); price = formatPrice(ar); }
-  } else {
-    if (ar !== "") {
-      price = formatPrice(ar);
-      if (ftPerL !== "") { pricePerUnit = formatPrice(ftPerL); unitLabel = "Ft/l"; }
-      else if (ftPerKg !== "") { pricePerUnit = formatPrice(ftPerKg); unitLabel = "Ft/kg"; }
-    } else {
-      if (kiszereles.match(/ml|l/i)) unitLabel = "Ft/l";
-      else if (kiszereles.match(/g|kg/i)) unitLabel = "Ft/kg";
-    }
-  }
-
-  div.innerHTML = `
-    ${logo ? `<img src="${logo.src}" class="${logo.cssClass}">` : ""}
-    <div class="line1">${line1}</div>
-    <div class="line2">${secondLineText}</div>
-    <div class="line3">${thirdLineText}</div>
-    <div class="kiszereles">${kiszereles}</div>
-    <div class="line4">${("cikkszám: " + (row["Cikkszám"] || "")).substring(0, 24)}</div>
-    <div class="barcode-container">
-      <svg class="barcode"></svg>
-    </div>
-    <div class="bottom">
-      <div class="price-box1">
-        <span class="amount">${price}</span>
-        <span class="unit">,- Ft</span>
-      </div>
-      <div class="price-box2">
-        <span class="amount">${pricePerUnit}</span>
-        <span class="unit">${unitLabel ? ",- " + unitLabel : ""}</span>
-      </div>
-    </div>
-  `;
-}
-
-function buildSaleLabel(div, row, logo) {
-  div.classList.add("label-sale");
-
-  const line1 = (row["Első_sor"] || "").substring(0, 20);
-  const secondLineText = (row["Második_sor"] || "").substring(0, 20);
-  const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 20);
-  const kiszereles = row["Kiszerelés"] || "";
-  const ar = row["Ár"] || "";
-  const akciosAr = row["Akciós_ár"] || "";
-
-  // Kedvezmény % kiszámítása (- jellel)
-  const origNum = parseFloat(String(ar).replace(",", "."));
-  const saleNum = parseFloat(String(akciosAr).replace(",", "."));
-  let discountPct = "";
-  if (!isNaN(origNum) && !isNaN(saleNum) && origNum > 0 && saleNum < origNum) {
-    discountPct = "-" + Math.round((origNum - saleNum) / origNum * 100) + "%";
-  }
-
-  // Egységár az akciós árból
-  let saleUnitPrice = "";
-  let saleUnitLabel = "";
-  if (/db$/i.test(kiszereles)) {
-    saleUnitLabel = "Ft/db";
-    saleUnitPrice = formatPrice(akciosAr);
-  } else {
-    const { ftl, ftkg } = recalculateUnitPrice(kiszereles, akciosAr);
-    if (ftl) { saleUnitPrice = formatPrice(ftl); saleUnitLabel = "Ft/l"; }
-    else if (ftkg) { saleUnitPrice = formatPrice(ftkg); saleUnitLabel = "Ft/kg"; }
-  }
-
-  const logoClass = logo
-    ? (logo.cssClass === "logo-a" ? "logo-a-sm" : "logo-b-sm")
-    : null;
-
-  div.innerHTML = `
-    ${logo ? `<img src="${logo.src}" class="${logoClass}">` : ""}
-    <div class="line1">${line1}</div>
-    <div class="line2">${secondLineText}</div>
-    <div class="line3">${thirdLineText}</div>
-    <div class="barcode-container">
-      <svg class="barcode"></svg>
-    </div>
-    <div class="sale-info-row">
-      <span class="sale-cikk">${(row["Cikkszám"] || "").substring(0, 12)}</span>
-      <span class="sale-kiszeres">${kiszereles}</span>
-    </div>
-    <div class="price-box-orig">
-      <span class="original-price">${formatPrice(ar)},- Ft</span>
-      <span class="pct">${discountPct}</span>
-    </div>
-    <div class="price-box-sale">
-      <span class="amount">${formatPrice(akciosAr)}</span>
-      <span class="unit">,- Ft</span>
-    </div>
-    ${saleUnitLabel ? `<div class="sale-unit-price">${saleUnitPrice ? saleUnitPrice + ",-&nbsp;" : ""}${saleUnitLabel}</div>` : ""}
-  `;
-}
 
 function renderLabels(data) {
   const container = document.getElementById("labels");
@@ -453,28 +279,66 @@ function renderLabels(data) {
 
     const div = document.createElement("div");
     div.className = "label";
+
     const logo = getSelectedLogo();
 
-    const rowAr = row["Ár"] || "";
-    const rowArNum = parseFloat(String(rowAr).replace(",", "."));
-    const akciosAr = row["Akciós_ár"] || "";
-    const akciosArNum = parseFloat(String(akciosAr).replace(",", "."));
-    const arIsValid = rowAr !== "" && !isNaN(rowArNum) && rowArNum > 0;
-    const akciosIsValid = akciosAr !== "" && !isNaN(akciosArNum) && akciosArNum > 0;
+    const line1 = (row["Első_sor"] || "").substring(0, 20);
+    const secondLineText = (row["Második_sor"] || "").substring(0, 20);
+    const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 20);
+    const kiszereles = row["Kiszerelés"] || "";
+    const ar = row["Ár"] || "";
+    const ftPerL = row["Ft/l"] || "";
+    const ftPerKg = row["Ft/kg"] || "";
 
-    // Akciós formátum CSAK ha mindkét ár ki van töltve
-    const isSale = arIsValid && akciosIsValid;
-
-    // Ha csak Akciós_ár van kitöltve → kezelés mint sima Ár
-    const renderRow = (!arIsValid && akciosIsValid)
-      ? { ...row, "Ár": akciosAr, "Akciós_ár": "" }
-      : row;
-
-    if (isSale) {
-      buildSaleLabel(div, renderRow, logo);
+    let price = "";
+    let pricePerUnit = "";
+    let unitLabel = "";
+    if (/db$/i.test(kiszereles)) {
+      unitLabel = "Ft/db";
+      if (ar !== "") {
+        pricePerUnit = formatPrice(ar);
+        price = formatPrice(ar);
+      }
     } else {
-      buildNormalLabel(div, renderRow, logo);
+      if (ar !== "") {
+        price = formatPrice(ar);
+        if (ftPerL !== "") {
+          pricePerUnit = formatPrice(ftPerL);
+          unitLabel = "Ft/l";
+        } else if (ftPerKg !== "") {
+          pricePerUnit = formatPrice(ftPerKg);
+          unitLabel = "Ft/kg";
+        }
+      } else {
+        if (kiszereles.match(/ml|l/i)) {
+          unitLabel = "Ft/l";
+        } else if (kiszereles.match(/g|kg/i)) {
+          unitLabel = "Ft/kg";
+        }
+      }
     }
+
+    div.innerHTML = `
+      <img src="${logo.src}" class="logo ${logo.cssClass}">
+      <div class="line1">${line1}</div>
+      <div class="line2">${secondLineText}</div>
+      <div class="line3">${thirdLineText}</div>
+      <div class="kiszereles">${kiszereles}</div>
+      <div class="line4">${row["Cikkszám"] ? "cikkszám: " + padCikkszam(row["Cikkszám"]) : ""}</div>
+      <div class="barcode-container">
+        <svg class="barcode"></svg>
+      </div>
+      <div class="bottom">
+        <div class="price-box1">
+          <span class="amount">${price}</span>
+          <span class="unit">,- Ft</span>
+        </div>
+        <div class="price-box2">
+          <span class="amount">${pricePerUnit}</span>
+          <span class="unit">${unitLabel ? ",- " + unitLabel : ""}</span>
+        </div>
+      </div>
+    `;
 
     pageDiv.appendChild(div);
 
@@ -497,16 +361,14 @@ function renderLabels(data) {
     }
   });
 }
-  
+
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#downloadBtn").addEventListener("click", generatePDF);
   document.querySelector("#sablonBtn").addEventListener("click", downloadTemplate);
-  document.querySelector("#searchCompanyBtn").addEventListener("click", searchCompany);
   document.getElementById("tablePreviewBtn").addEventListener("click", openDataTable);
-document.getElementById("dataTableCloseBtn").addEventListener("click", closeDataTable);
+  document.getElementById("dataTableCloseBtn").addEventListener("click", closeDataTable);
   document.getElementById("dataTableSaveBtn").addEventListener("click", saveAndGenerate);
 
-  // Cella változás figyelése – újraszámítja a függő értékeket
   document.getElementById("dataTableBody").addEventListener("change", (e) => {
     const input = e.target;
     if (!input.classList.contains("table-cell-input")) return;
@@ -515,26 +377,20 @@ document.getElementById("dataTableCloseBtn").addEventListener("click", closeData
     handleCellChange(rowIndex, colKey, input.value.trim(), input);
   });
 
-  // Betöltjük a cég címkeszámát, ha van username
   loadCompanyLabelCount();
 });
 
 async function updateLabelCount(count) {
   const username = getUsername();
   if (!username) return;
-  
   try {
     const response = await fetch(`${API_URL}/api/update-label-count`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, count }),
     });
-    
     if (response.ok) {
       const data = await response.json();
-      console.log(`Címkeszám frissítve: ${data.new_count}`);
       updateDisplayedCount(data.new_count);
     }
   } catch (error) {
@@ -552,7 +408,6 @@ function updateDisplayedCount(count) {
 async function loadCompanyLabelCount() {
   const username = getUsername();
   if (!username) return;
-  
   try {
     const response = await fetch(`${API_URL}/api/company-label-count/${username}`);
     if (response.ok) {
@@ -565,7 +420,6 @@ async function loadCompanyLabelCount() {
 }
 
 function generatePDF() {
-  const downloadBtn = document.getElementById("downloadBtn");
   const progressContainer = document.getElementById("progressContainer");
   const progressBar = document.getElementById("progressBar");
 
@@ -587,11 +441,9 @@ function generatePDF() {
       clearInterval(timer);
 
       createPDF();
-      
-      // Frissítjük a címkeszámot
       updateLabelCount(totalLabelsGenerated);
 
-      progressBar.style.backgroundColor = "#f6bd60";
+      progressBar.style.backgroundColor = "#4a7dc0";
       progressBar.style.width = "0%";
 
       document.querySelectorAll("button").forEach(btn => btn.disabled = false);
@@ -604,7 +456,6 @@ function createPDF() {
     const svgData = new XMLSerializer().serializeToString(svg);
     const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(svgBlob);
-
     const img = document.createElement("img");
     img.src = url;
     img.className = svg.className;
@@ -614,7 +465,7 @@ function createPDF() {
   let element = document.getElementById("labels");
   let opt = {
     margin: 0,
-    filename: "cimkek.pdf",
+    filename: "ritzer_cimkek.pdf",
     image: { type: 'jpeg', quality: 0.8 },
     html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' },
     jsPDF: { unit: 'mm', format: 'A4', orientation: 'portrait' },
@@ -627,16 +478,13 @@ function createPDF() {
     .get('pdf')
     .then(function(pdf) {
       const totalPages = pdf.internal.getNumberOfPages();
-      
       for (let i = 1; i <= totalPages; i++) {
         pdf.setPage(i);
         pdf.setFontSize(10);
         pdf.setTextColor(100, 100, 100);
-        
         const pageText = `${i} / ${totalPages}`;
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
-        
         pdf.text(pageText, pageWidth / 2, pageHeight - 3, { align: 'center' });
       }
     })
@@ -644,119 +492,14 @@ function createPDF() {
 }
 
 function downloadTemplate() {
-    const link = document.createElement("a");
-    link.href = "excel_sablon.xlsx";
-    link.download = "excel_sablon.xlsx";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const link = document.createElement("a");
+  link.href = "assets/ritzer_sablon.xlsx";
+  link.download = "ritzer_sablon.xlsx";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
-// =============================================================================
-// CÉG KERESÉS - termékek keresése az interneten
-// =============================================================================
-
-async function searchCompany() {
-  const input = document.getElementById("companyNameInput");
-  const statusEl = document.getElementById("searchStatus");
-  const companyName = input.value.trim();
-
-  if (!companyName) {
-    statusEl.textContent = "Kérem adja meg a cég nevét!";
-    statusEl.style.color = "#ff8080";
-    return;
-  }
-
-  // Loading state
-  statusEl.textContent = "Keresés folyamatban... (ez akár 15-20 másodpercig is tarthat)";
-  statusEl.style.color = "#f6bd60";
-  document.getElementById("searchCompanyBtn").disabled = true;
-
-  const loadingOverlay = document.getElementById("loadingOverlay");
-  loadingOverlay.classList.add("active");
-
-  try {
-    const response = await fetch(`${API_URL}/api/search-company`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ company_name: companyName })
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    const result = await response.json();
-
-    loadingOverlay.classList.remove("active");
-
-    if (!result.products || result.products.length === 0) {
-      statusEl.textContent = "Nem találtunk termékeket. Próbáljon más cégnevet!";
-      statusEl.style.color = "#ff8080";
-      document.getElementById("searchCompanyBtn").disabled = false;
-      return;
-    }
-
-    // Logo beállítása (ha van)
-    if (result.logo_base64) {
-      companyLogoBase64 = result.logo_base64;
-      statusEl.textContent = `${result.products.length} termék és logó találva!`;
-    } else {
-      companyLogoBase64 = null;
-      statusEl.textContent = `${result.products.length} termék találva (logó nem található).`;
-    }
-    statusEl.style.color = "#4caf50";
-
-    // Forrás linkek megjelenítése
-    const linksEl = document.getElementById("searchLinks");
-    linksEl.innerHTML = "";
-    const titleEl = document.createElement("div");
-    titleEl.className = "search-links-title";
-    titleEl.textContent = "Forrás linkek:";
-    linksEl.appendChild(titleEl);
-
-    if (result.logo_url) {
-      const item = document.createElement("div");
-      item.className = "search-link-item";
-      item.innerHTML = `<span class="search-link-badge logo-badge">logó</span><a href="${result.logo_url}" target="_blank" rel="noopener">${result.logo_url}</a>`;
-      linksEl.appendChild(item);
-    }
-    (result.source_urls || []).forEach(url => {
-      const item = document.createElement("div");
-      item.className = "search-link-item";
-      item.innerHTML = `<span class="search-link-badge">forrás</span><a href="${url}" target="_blank" rel="noopener">${url}</a>`;
-      linksEl.appendChild(item);
-    });
-
-    // Minta cikkszámok és EAN-13 kódok (max 6 termékhez)
-    const mintaCikkszamok = ["100001", "100002", "100003", "100004", "100005", "100006"];
-    const mintaEAN13 = ["8711347001576", "8711347000012", "8711347000050", "8711347000067", "8711347000111", "8711347000135"];
-
-    // Átalakítás az agent által várt formátumra
-    const rows = result.products.map((p, i) => ({
-      "Megnevezés": p["Megnevezés"] || "",
-      "Kiszerelés": p["Kiszerelés"] || "",
-      "Ár": p["Ár"] || "",
-      "EAN-13": mintaEAN13[i] || "",
-      "Cikkszám": mintaCikkszamok[i] || ""
-    }));
-
-    // Meglévő validációs pipeline-ba tápláljuk
-    rawData = rows.map(r => ({ ...r })); // Nyers adatok mentése előnézethez
-    validateWithAgent(rows, (correctedData) => {
-      validatedData = correctedData;
-      renderLabels(correctedData);
-    });
-
-  } catch (err) {
-    console.error("Cég keresési hiba:", err);
-    loadingOverlay.classList.remove("active");
-    statusEl.textContent = "Hiba történt a keresés során. Próbálja újra!";
-    statusEl.style.color = "#ff8080";
-  } finally {
-    document.getElementById("searchCompanyBtn").disabled = false;
-  }
-}
 // =============================================================================
 // ADATOK ELŐNÉZETE - szerkeszthető táblázat
 // =============================================================================
@@ -767,7 +510,6 @@ const TABLE_COLUMNS = [
   { key: "Megnevezés",   editable: false },
   { key: "Kiszerelés",   editable: true  },
   { key: "Ár",           editable: true  },
-  { key: "Akciós_ár",   editable: true  },
   { key: "Első_sor",     editable: true  },
   { key: "Második_sor",  editable: true  },
   { key: "Harmadik_sor", editable: true  },
@@ -807,14 +549,6 @@ function getTableCellValue(colKey, rowIndex) {
     const ar = (pRow && pRow["Ár"]) || (rRow && rRow["Ár"]) || "";
     const { ftl, ftkg } = recalculateUnitPrice(kiszereles, ar);
     return colKey === "Ft/l" ? ftl : ftkg;
-  }
-
-  // Akciós_ár: ha a validatedData szándékosan ürítette (backend átmozgatta Ár-ba),
-  // ne essen vissza a rawData értékére
-  if (colKey === "Akciós_ár") {
-    if (pRow && pRow["Akciós_ár"] !== undefined) return String(pRow["Akciós_ár"] || "");
-    if (rRow && rRow["Akciós_ár"] !== undefined) return String(rRow["Akciós_ár"] || "");
-    return "";
   }
 
   if (pRow && pRow[colKey] !== undefined && pRow[colKey] !== "") return String(pRow[colKey]);
@@ -872,7 +606,6 @@ function closeDataTable() {
 function saveAndGenerate() {
   if (!validatedData) return;
 
-  // Beolvassuk az aktuális táblázat értékeit a validatedData-ba
   document.querySelectorAll("#dataTableBody .table-cell-input").forEach(input => {
     const rowIdx = parseInt(input.dataset.row);
     const colKey = input.dataset.col;
@@ -881,13 +614,11 @@ function saveAndGenerate() {
     }
   });
 
-  // Összerakjuk a nyers adatokat az agent számára (Megnevezés = összerakott sorok)
   const rawForValidation = validatedData.map(row => ({
     "Megnevezés": [row["Első_sor"] || "", row["Második_sor"] || "", row["Harmadik_sor"] || ""]
       .filter(s => s).join(" ").trim(),
     "Kiszerelés": row["Kiszerelés"] || "",
     "Ár": row["Ár"] || "",
-    "Akciós_ár": row["Akciós_ár"] || "",
     "EAN-13": row["EAN-13"] || "",
     "Cikkszám": row["Cikkszám"] || "",
   }));
@@ -904,9 +635,8 @@ function saveAndGenerate() {
 // TÁBLÁZAT CELLA ÚJRASZÁMÍTÁS
 // =============================================================================
 
-// EAN-13 formátum és check digit validáció
 function validateEan13(ean) {
-  if (!ean || ean === "") return true; // üres EAN = rendben
+  if (!ean || ean === "") return true;
   const str = String(ean).replace(/\s/g, "");
   if (!/^\d{13}$/.test(str)) return false;
   let sum = 0;
@@ -916,7 +646,6 @@ function validateEan13(ean) {
   return (10 - (sum % 10)) % 10 === parseInt(str[12]);
 }
 
-// Kiszerelés szövegéből ml / l / kg / g / db értékek kiszámítása
 function parseKiszereles(kiszereles) {
   const result = { ml: "", l: "", kg: "", g: "", db: "" };
   if (!kiszereles) return result;
@@ -945,7 +674,6 @@ function parseKiszereles(kiszereles) {
   return result;
 }
 
-// Egy cella értékének frissítése a táblázatban (input vagy readonly td)
 function updateTableCell(rowIndex, colKey, value) {
   const input = document.querySelector(
     `#dataTableBody input[data-row="${rowIndex}"][data-col="${colKey}"]`
@@ -957,7 +685,6 @@ function updateTableCell(rowIndex, colKey, value) {
   if (td) td.textContent = value;
 }
 
-// Cella módosítás kezelése: EAN-13 validáció + függő mezők újraszámítása
 function handleCellChange(rowIndex, colKey, newValue, inputEl) {
   if (!validatedData || validatedData[rowIndex] === undefined) return;
   validatedData[rowIndex][colKey] = newValue;
@@ -987,13 +714,6 @@ function handleCellChange(rowIndex, colKey, newValue, inputEl) {
     validatedData[rowIndex]["Ft/kg"] = ftkg;
     updateTableCell(rowIndex, "Ft/l", ftl);
     updateTableCell(rowIndex, "Ft/kg", ftkg);
-    renderLabels(validatedData);
-    return;
-  }
-
-  if (colKey === "Akciós_ár") {
-    // Azonnal váltja a cimkeformátumot
-    renderLabels(validatedData);
     return;
   }
 }

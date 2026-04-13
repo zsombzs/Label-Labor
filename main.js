@@ -267,7 +267,7 @@ function loadInfoPage() {
           <div class="videos-container">
             <div class="video-wrapper">
               <iframe
-                src="https://www.youtube.com/embed/C6Dae-JsmxM"
+                src="https://www.youtube.com/embed/6fC6GIi21DQ"
                 title="Label Labor demo"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -290,7 +290,7 @@ function loadInfoPage() {
           <h2 class="scroll-animate-fade" data-lang="user-guide">User Guide</h2>
           <div class="steps-list">
             <div class="step-item scroll-animate-right">
-              <div class="step-number">1/7</div>
+              <div class="step-number">1/8</div>
               <div class="step-content">
                 <h3 data-lang="step1-title"></h3>
                 <p data-lang="step1-desc"></p>
@@ -298,7 +298,7 @@ function loadInfoPage() {
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">2/7</div>
+              <div class="step-number">2/8</div>
               <div class="step-content">
                 <h3 data-lang="step2-title"></h3>
                 <p data-lang="step2-desc"></p>
@@ -306,7 +306,7 @@ function loadInfoPage() {
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">3/7</div>
+              <div class="step-number">3/8</div>
               <div class="step-content">
                 <h3 data-lang="step3-title"></h3>
                 <p data-lang="step3-desc"></p>
@@ -314,7 +314,7 @@ function loadInfoPage() {
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">4/7</div>
+              <div class="step-number">4/8</div>
               <div class="step-content">
                 <h3 data-lang="step4-title"></h3>
                 <p data-lang="step4-desc"></p>
@@ -322,7 +322,7 @@ function loadInfoPage() {
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">5/7</div>
+              <div class="step-number">5/8</div>
               <div class="step-content">
                 <h3 data-lang="step5-title"></h3>
                 <p data-lang="step5-desc"></p>
@@ -330,7 +330,7 @@ function loadInfoPage() {
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">6/7</div>
+              <div class="step-number">6/8</div>
               <div class="step-content">
                 <h3 data-lang="step6-title"></h3>
                 <p data-lang="step6-desc"></p>
@@ -338,10 +338,18 @@ function loadInfoPage() {
             </div>
 
             <div class="step-item scroll-animate-right">
-              <div class="step-number">7/7</div>
+              <div class="step-number">7/8</div>
               <div class="step-content">
                 <h3 data-lang="step7-title"></h3>
                 <p data-lang="step7-desc"></p>
+              </div>
+            </div>
+
+            <div class="step-item scroll-animate-right">
+              <div class="step-number">8/8</div>
+              <div class="step-content">
+                <h3 data-lang="step8-title"></h3>
+                <p data-lang="step8-desc"></p>
               </div>
             </div>
           </div>

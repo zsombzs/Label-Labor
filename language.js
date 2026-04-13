@@ -28,13 +28,16 @@ const translations = {
       'step4-desc': 'Click the "Upload Excel File (.xlsx)" button and select your completed template.',
 
       'step5-title': 'Data validation and correction',
-      'step5-desc': 'The system validates the uploaded data and notifies the user where errors are found.<br><br><div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;"><div><span style="display:inline-block;width:14px;height:14px;background:#378eff;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Blue</strong> background — editable field</div><div><span style="display:inline-block;width:14px;height:14px;background:#4caf50;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Green</strong> background — marked as ready</div><div><span style="display:inline-flex;align-items:center;justify-content:center;background:#007ea7;color:#fff;border-radius:4px;width:20px;height:20px;font-size:12px;vertical-align:middle;margin-right:4px;">✓</span> Press to toggle between the two states</div></div>Minor errors are automatically corrected by the system, but you can also manually edit the values of <span style="color:#378eff;">blue</span> background fields if needed.<br><br><strong>Important:</strong> After validation, make sure all fields have a <span style="color:green;">green</span> background, meaning they are marked as ready.',
+      'step5-desc': 'For consistent labels, the system automatically corrects minor errors — just confirm them with the checkmark icon. If needed, you can also edit the data manually.<br><br><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"><div><span style="display:inline-block;width:14px;height:14px;background:#4caf50;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Green</strong> background — field marked as ready</div><div><span style="display:inline-flex;align-items:center;justify-content:center;background:#4caf50;color:#fff;border-radius:4px;width:20px;height:20px;font-size:12px;vertical-align:middle;margin-right:4px;">✓</span> Use the checkmark icon to confirm and mark as ready</div></div><strong>By the end of validation, all fields should have a green background.</strong>',
 
       'step6-title': 'Check labels and select label type',
       'step6-desc': 'Review the information displayed on the labels, then select the appropriate label type.',
 
-      'step7-title': 'Download and print labels',
-      'step7-desc': 'Click the "Download PDF" button. If you want to generate new labels, refresh the page before starting the process. You can print the downloaded labels.pdf document with any standard printer — just like any invoice or regular document.',
+      'step7-title': 'Modify label data (if needed)',
+      'step7-desc': 'Click the "View Data" button to open a table with all label data. If necessary, you can edit any field. Click "Save and Generate" to regenerate the labels with the updated changes.',
+
+      'step8-title': 'Download and print labels',
+      'step8-desc': 'Click the "Download PDF" button. If you want to generate new labels, refresh the page before starting the process. You can print the downloaded labels.pdf document with any standard printer — just like any invoice or regular document.',
 
       'contact-footer': 'Contact: info@labellabor.com',
       'contact': 'Contact us',
@@ -103,13 +106,16 @@ const translations = {
       'step4-desc': 'Kattintson az "Excel fájl feltöltése (.xlsx)" gombra, és válassza ki a kitöltött sablont.',
 
       'step5-title': 'Adatok ellenőrzése, javítása',
-      'step5-desc': 'A rendszer ellenőrzi a feltöltött adatokat, és ahol hibát talál, jelzi a felhasználónak.<br><br><div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;"><div><span style="display:inline-block;width:14px;height:14px;background:#378eff;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Kék</strong> hátterű mező — szerkeszthető</div><div><span style="display:inline-block;width:14px;height:14px;background:#4caf50;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Zöld</strong> hátterű mező — késznek jelölve</div><div><span style="display:inline-flex;align-items:center;justify-content:center;background:#007ea7;color:#fff;border-radius:4px;width:20px;height:20px;font-size:12px;vertical-align:middle;margin-right:4px;">✓</span> Ikon megnyomásával válthat a két állapot között</div></div>A kisebb hibákat a rendszer automatikusan kijavítja, de szükség esetén a <span style="color:#378eff;">kék</span> hátterű mezők értékét manuálisan is módosíthatja.<br><br><strong>Fontos:</strong> Az ellenőrzés végeztével győződjön meg arról, hogy minden mező <span style="color:green;">zöld</span> hátterű, vagyis késznek van jelölve.',
+      'step5-desc': 'Az egységes címkék érdekében a kisebb hibákat a rendszer kijavítja, csak a pipa ikonnal kell jóváhagyni. Ha szükséges, manuálisan is lehet módosítani az adatokat.<br><br><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"><div><span style="display:inline-block;width:14px;height:14px;background:#4caf50;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Zöld</strong> háttér — mező késznek jelölve</div><div><span style="display:inline-flex;align-items:center;justify-content:center;background:#4caf50;color:#fff;border-radius:4px;width:20px;height:20px;font-size:12px;vertical-align:middle;margin-right:4px;">✓</span> Pipa ikonnal lehet jóváhagyni és késznek jelölni</div></div><strong>Az adatellenőrzés legvégén az összes mező háttere legyen zöld.</strong>',
 
       'step6-title': 'Címkék ellenőrzése és címketípus választása',
       'step6-desc': 'Ellenőrizze a címkéken megjelenő adatokat, majd válassza ki a megfelelő címketípust.',
 
-      'step7-title': 'Címkék letöltése és nyomtatása',
-      'step7-desc': 'Kattintson a "PDF letöltése" gombra. Ha új címkéket szeretne generálni, frissítsen rá az oldalra a folyamat megkezdése előtt. A letöltött cimkek.pdf dokumentumot bármilyen hagyományos nyomtatóval kinyomtathatja – ugyanúgy, mint egy számlát vagy más dokumentumot.',
+      'step7-title': 'Címkeadatok módosítása (ha szükséges)',
+      'step7-desc': 'Az "Adatok megtekintése" gombra kattintva megjelenik egy táblázat, benne az összes címkeadattal. Ha szükséges, lehet módosítani bármelyik adatot, a "Mentés és generálás" gombra kattintva pedig a rendszer ismét elkészíti a címkéket a friss változtatásokkal.',
+
+      'step8-title': 'Címkék letöltése és nyomtatása',
+      'step8-desc': 'Kattintson a "PDF letöltése" gombra. Ha új címkéket szeretne generálni, frissítsen rá az oldalra a folyamat megkezdése előtt. A letöltött cimkek.pdf dokumentumot bármilyen hagyományos nyomtatóval kinyomtathatja – ugyanúgy, mint egy számlát vagy más dokumentumot.',
 
       'contact-footer': 'Kontakt: info@labellabor.com',
       'contact': 'Kapcsolat',

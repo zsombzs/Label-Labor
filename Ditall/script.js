@@ -145,7 +145,7 @@ function showValidationModal(validationResult, onComplete) {
     }
   }
 
-  summary.textContent = `${validationResult.osszes_hiba} problémát találtunk ${validationResult.issues.length} terméknél. Az alábbiakban javasolt megoldásokat talál. Ha egyetért velük, kattintson a pipa ikonra. A zöld hátterű mezők nem módosíthatók, a kék hátterű mezők szerkeszthetők, ezt a pipa ikon segítségével állíthatja. Ha készen van a módosításokkal, ügyeljen arra, hogy az összes mező háttere zöld legyen.`;
+  summary.textContent = `${validationResult.osszes_hiba} problémát találtunk ${validationResult.issues.length} terméknél. Az alábbiakban javasolt javításokat talál. A kisebb hibákat a rendszer automatikusan kijavítja — a pipa ikonnal lehet jóváhagyni. Ha szükséges, manuálisan is módosítható bármelyik adat. Az összes mező jóváhagyása után kattintson a "Javítások alkalmazása" gombra.`;
 
   issuesList.innerHTML = "";
 
@@ -235,6 +235,7 @@ window.acceptFix = function acceptFix(rowIndex, oszlop, inputId) {
   const overlay = document.getElementById("validationOverlay");
   const input = document.getElementById(inputId);
   const item = input.closest(".issue-item");
+  const btn = document.getElementById("btn_" + inputId);
 
   // Toggle: ha már el van fogadva, visszavonjuk
   if (item && item.dataset.accepted === "true") {
@@ -242,6 +243,7 @@ window.acceptFix = function acceptFix(rowIndex, oszlop, inputId) {
     input.disabled = false;
     input.style.borderColor = "";
     item.style.backgroundColor = "";
+    if (btn) btn.style.background = "";
     return;
   }
 
@@ -262,6 +264,7 @@ window.acceptFix = function acceptFix(rowIndex, oszlop, inputId) {
     if (item) {
       item.style.backgroundColor = "rgba(76, 175, 80, 0.2)";
       item.dataset.accepted = "true";
+      if (btn) btn.style.background = "#4caf50";
     }
   }
 }

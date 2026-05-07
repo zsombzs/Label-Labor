@@ -360,7 +360,7 @@ def extract_kiszereles_from_name(name: str) -> tuple[str, str]:
     return name, ""
 
 
-def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, extract_kiszereles: bool = False) -> dict:
+def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, max_chars_line3: int | None = None, extract_kiszereles: bool = False) -> dict:
     """
     Egy Excel sort validál és normalizál.
     Visszaad: {processed: {...}, hibak: [...], excel_sor: N}
@@ -459,7 +459,10 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, ext
 
     # 5. Névfeldarabolás - nagybetűs nevek szélesebbek, kevesebb karakter fér ki
     effective_max_chars = max_chars_per_line if name.isupper() else max_chars_per_line + 2
-    line1, line2, line3, name_overflow = split_name(name, max_chars=effective_max_chars)
+    effective_max_chars_line3 = None
+    if max_chars_line3 is not None:
+        effective_max_chars_line3 = max_chars_line3 if name.isupper() else max_chars_line3 + 2
+    line1, line2, line3, name_overflow = split_name(name, max_chars=effective_max_chars, max_chars_line3=effective_max_chars_line3)
 
     if name_overflow:
         hibak.extend([

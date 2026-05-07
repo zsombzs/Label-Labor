@@ -61,23 +61,54 @@ document.getElementById("excelFile").addEventListener("change", function(e) {
 })();
 
 function handleFile(file) {
+  if (!file) {
+    console.error("Nincs kiválasztott fájl");
+    return;
+  }
+
   let reader = new FileReader();
 
-  reader.onload = function(event) {
-    let data = new Uint8Array(event.target.result);
-    let workbook = XLSX.read(data, { type: 'array' });
-    let sheet = workbook.Sheets[workbook.SheetNames[0]];
-    let json = XLSX.utils.sheet_to_json(sheet, { defval: "", blankrows: true });
-    // Záró teljesen üres sorok eltávolítása
-    while (json.length > 0 && Object.values(json[json.length - 1]).every(v => v === "")) json.pop();
-    rawData = json.map(r => ({ ...r })); // Nyers adatok mentése előnézethez
+  reader.onerror = function(error) {
+    console.error("❌ Fájl olvasási hiba:", error);
+    showAlert("Hiba történt a fájl beolvasása során!");
+  };
 
-    // Agent validáció (nyers adatok - Megnevezés oszloppal)
-    console.log("Agent validáció használata");
-    validateWithAgent(json, (correctedData) => {
-      validatedData = correctedData;
-      renderLabels(correctedData);
-    });
+  reader.onload = function(event) {
+    try {
+      let data = new Uint8Array(event.target.result);
+      let workbook = XLSX.read(data, { type: 'array' });
+
+      if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+        showAlert("Az Excel fájl üres vagy hibás!");
+        return;
+      }
+
+      let sheet = workbook.Sheets[workbook.SheetNames[0]];
+      let json = XLSX.utils.sheet_to_json(sheet, { defval: "", blankrows: true });
+      // Záró teljesen üres sorok eltávolítása
+      while (json.length > 0 && Object.values(json[json.length - 1]).every(v => v === "")) json.pop();
+
+      if (json.length === 0) {
+        showAlert("Az Excel fájl nem tartalmaz adatokat!");
+        return;
+      }
+
+      rawData = json.map(r => ({ ...r }));
+
+      // Ha az Excel már tartalmazza a feldolgozott oszlopokat (régi formátum)
+      if (json[0].hasOwnProperty("Első_sor")) {
+        validatedData = json;
+        renderLabels(json);
+      } else {
+        validateWithAgent(json, (correctedData) => {
+          validatedData = correctedData;
+          renderLabels(correctedData);
+        });
+      }
+    } catch (error) {
+      console.error("❌ Excel feldolgozási hiba:", error);
+      showAlert(`Hiba történt az Excel feldolgozása során: ${error.message}`);
+    }
   };
   reader.readAsArrayBuffer(file);
 }
@@ -96,7 +127,7 @@ async function validateWithAgent(data, onComplete) {
     const response = await fetch(`${API_URL}/api/process-labels`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rows: data, max_chars_per_line: 18, extract_kiszereles: true })
+      body: JSON.stringify({ rows: data, max_chars_per_line: 18, max_chars_line3: 22, extract_kiszereles: true })
     });
 
     if (!response.ok) {
@@ -159,6 +190,8 @@ function showValidationModal(validationResult, onComplete) {
       const item = document.createElement("div");
       item.className = "issue-item";
       const inputId = `fix_${issue.row_index}_${hibaIdx}`;
+      const maxLen = getLineMaxLength(hiba.oszlop);
+      const maxLenAttr = maxLen ? ` maxlength="${maxLen}"` : "";
 
       item.innerHTML = `
         <div class="field-label">${issue.excel_sor}. sor, ${hiba.oszlop} oszlop</div>
@@ -166,7 +199,7 @@ function showValidationModal(validationResult, onComplete) {
         <div class="fix-row">
           <input type="text"
             value="${hiba.javitott || hiba.eredeti}"
-            id="${inputId}"
+            id="${inputId}"${maxLenAttr}
             placeholder="Javított érték...">
           <button class="accept-btn"
             id="btn_${inputId}"
@@ -269,6 +302,12 @@ window.acceptFix = function acceptFix(rowIndex, oszlop, inputId) {
   }
 }
 
+function getLineMaxLength(colKey) {
+  if (colKey === "Harmadik_sor") return 24;
+  if (colKey === "Első_sor" || colKey === "Második_sor") return 20;
+  return null;
+}
+
 function formatPrice(price) {
   if (price === null || price === undefined || price === "") return "";
   const num = parseInt(price, 10);
@@ -278,107 +317,166 @@ function formatPrice(price) {
 
 let totalLabelsGenerated = 0;
 
+function buildNormalLabel(div, row, logo) {
+  const line1 = (row["Első_sor"] || "").substring(0, 20);
+  const secondLineText = (row["Második_sor"] || "").substring(0, 20);
+  const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 24);
+  const kiszereles = row["Kiszerelés"] || "";
+  const ar = row["Ár"] || "";
+  const ftPerL = row["Ft/l"] || "";
+  const ftPerKg = row["Ft/kg"] || "";
+
+  let price = "";
+  let pricePerUnit = "";
+  let unitLabel = "";
+  if (/db$/i.test(kiszereles)) {
+    unitLabel = "Ft/db";
+    if (ar !== "") { pricePerUnit = formatPrice(ar); price = formatPrice(ar); }
+  } else {
+    if (ar !== "") {
+      price = formatPrice(ar);
+      if (ftPerL !== "") { pricePerUnit = formatPrice(ftPerL); unitLabel = "Ft/l"; }
+      else if (ftPerKg !== "") { pricePerUnit = formatPrice(ftPerKg); unitLabel = "Ft/kg"; }
+    } else {
+      if (kiszereles.match(/ml|l/i)) unitLabel = "Ft/l";
+      else if (kiszereles.match(/g|kg/i)) unitLabel = "Ft/kg";
+    }
+  }
+
+  div.innerHTML = `
+    <img src="${logo.src}" class="logo ${logo.cssClass}">
+    <div class="line1">${line1}</div>
+    <div class="line2">${secondLineText}</div>
+    <div class="line3">${thirdLineText}</div>
+    <div class="kiszereles">${kiszereles}</div>
+    <div class="line4">${("cikkszám: " + (row["Cikkszám"] || "")).substring(0, 24)}</div>
+    <div class="barcode-container">
+      <svg class="barcode"></svg>
+    </div>
+    <div class="bottom">
+      <div class="price-box1">
+        <span class="amount">${price}</span>
+        <span class="unit">,- Ft</span>
+      </div>
+      <div class="price-box2">
+        <span class="amount">${pricePerUnit}</span>
+        <span class="unit">${unitLabel ? ",- " + unitLabel : ""}</span>
+      </div>
+    </div>
+  `;
+}
+
+function buildSaleLabel(div, row, logo) {
+  div.classList.add("label-sale");
+
+  const line1 = (row["Első_sor"] || "").substring(0, 20);
+  const secondLineText = (row["Második_sor"] || "").substring(0, 20);
+  const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 24);
+  const kiszereles = row["Kiszerelés"] || "";
+  const ar = row["Ár"] || "";
+  const akciosAr = row["Akciós_ár"] || "";
+
+  const origNum = parseFloat(String(ar).replace(",", "."));
+  const saleNum = parseFloat(String(akciosAr).replace(",", "."));
+  let discountPct = "";
+  if (!isNaN(origNum) && !isNaN(saleNum) && origNum > 0 && saleNum < origNum) {
+    discountPct = "-" + Math.round((origNum - saleNum) / origNum * 100) + "%";
+  }
+
+  let saleUnitPrice = "";
+  let saleUnitLabel = "";
+  if (/db$/i.test(kiszereles)) {
+    saleUnitLabel = "Ft/db";
+    saleUnitPrice = formatPrice(akciosAr);
+  } else {
+    const { ftl, ftkg } = recalculateUnitPrice(kiszereles, akciosAr);
+    if (ftl) { saleUnitPrice = formatPrice(ftl); saleUnitLabel = "Ft/l"; }
+    else if (ftkg) { saleUnitPrice = formatPrice(ftkg); saleUnitLabel = "Ft/kg"; }
+  }
+
+  const logoSmClass = logo.cssClass === "logo-a" ? "logo-a-sm" : "logo-b-sm";
+
+  div.innerHTML = `
+    <img src="${logo.src}" class="logo ${logoSmClass}">
+    <div class="line1">${line1}</div>
+    <div class="line2">${secondLineText}</div>
+    <div class="line3">${thirdLineText}</div>
+    <div class="barcode-container">
+      <svg class="barcode"></svg>
+    </div>
+    <div class="sale-info-row">
+      <span class="sale-cikk">${(row["Cikkszám"] || "").substring(0, 12)}</span>
+      <span class="sale-kiszeres">${kiszereles}</span>
+    </div>
+    <div class="price-box-orig">
+      <span class="original-price">${formatPrice(ar)},- Ft</span>
+      <span class="pct">${discountPct}</span>
+    </div>
+    <div class="price-box-sale">
+      <span class="amount">${formatPrice(akciosAr)}</span>
+      <span class="unit">,- Ft</span>
+    </div>
+    ${saleUnitLabel ? `<div class="sale-unit-price">${saleUnitPrice ? saleUnitPrice + ",-&nbsp;" : ""}${saleUnitLabel}</div>` : ""}
+  `;
+}
+
 function renderLabels(data) {
-    const container = document.getElementById("labels");
-    container.innerHTML = "";
-    let pageDiv = null;
+  const container = document.getElementById("labels");
+  container.innerHTML = "";
+  let pageDiv = null;
 
-    totalLabelsGenerated = data.length; // Eltároljuk hány címkét generáltunk
+  totalLabelsGenerated = data.length;
 
-    data.forEach((row, index) => {
-      if (index % 21 === 0) {
-        pageDiv = document.createElement("div");
-        pageDiv.className = "page";
-        container.appendChild(pageDiv);
+  data.forEach((row, index) => {
+    if (index % 21 === 0) {
+      pageDiv = document.createElement("div");
+      pageDiv.className = "page";
+      container.appendChild(pageDiv);
+    }
+
+    const div = document.createElement("div");
+    div.className = "label";
+    const logo = getSelectedLogo();
+
+    const rowAr = row["Ár"] || "";
+    const rowArNum = parseFloat(String(rowAr).replace(",", "."));
+    const akciosAr = row["Akciós_ár"] || "";
+    const akciosArNum = parseFloat(String(akciosAr).replace(",", "."));
+    const arIsValid = rowAr !== "" && !isNaN(rowArNum) && rowArNum > 0;
+    const akciosIsValid = akciosAr !== "" && !isNaN(akciosArNum) && akciosArNum > 0;
+
+    const isSale = arIsValid && akciosIsValid;
+
+    const renderRow = (!arIsValid && akciosIsValid)
+      ? { ...row, "Ár": akciosAr, "Akciós_ár": "" }
+      : row;
+
+    if (isSale) {
+      buildSaleLabel(div, renderRow, logo);
+    } else {
+      buildNormalLabel(div, renderRow, logo);
+    }
+
+    pageDiv.appendChild(div);
+
+    const barcodeSVG = div.querySelector(".barcode");
+    const eanCode = row["EAN-13"];
+    if (eanCode) {
+      try {
+        JsBarcode(barcodeSVG, eanCode.toString(), {
+          format: "EAN13",
+          lineColor: "#000",
+          width: 1,
+          height: 20,
+          displayValue: true,
+          fontSize: 14,
+        });
+      } catch (e) {
+        console.warn(`Hibás vonalkód (${eanCode}), kihagyva`);
+        barcodeSVG.remove();
       }
-
-      const div = document.createElement("div");
-      div.className = "label";
-
-      const logo = getSelectedLogo();
-
-      const line1 = (row["Első_sor"] || "").substring(0, 20);
-      const secondLineText = (row["Második_sor"] || "").substring(0, 20);
-      const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 20);
-      const kiszereles = row["Kiszerelés"] || "";
-      const ar = row["Ár"] || "";
-      const ftPerL = row["Ft/l"] || "";
-      const ftPerKg = row["Ft/kg"] || "";
-
-      let price = "";
-      let pricePerUnit = "";
-      let unitLabel = "";
-      if (/db$/i.test(kiszereles)) {
-        unitLabel = "Ft/db";
-        if (ar !== "") {
-          pricePerUnit = formatPrice(ar);
-          price = formatPrice(ar);
-        } else {
-          pricePerUnit = "";
-          price = "";
-        }
-      } else {
-        if (ar !== "") {
-          price = formatPrice(ar);
-          if (ftPerL !== "") {
-            pricePerUnit = formatPrice(ftPerL);
-            unitLabel = "Ft/l";
-          } else if (ftPerKg !== "") {
-            pricePerUnit = formatPrice(ftPerKg);
-            unitLabel = "Ft/kg";
-          }
-        } else {
-          price = "";
-          if (kiszereles.match(/ml|l/i)) {
-            unitLabel = "Ft/l";
-          } else if (kiszereles.match(/g|kg/i)) {
-            unitLabel = "Ft/kg";
-          }
-        }
-      }
-
-      div.innerHTML = `
-        <img src="${logo.src}" class="logo ${logo.cssClass}">
-        <div class="line1">${line1}</div>
-        <div class="line2">${secondLineText}</div>
-        <div class="line3">${thirdLineText}</div>
-        <div class="kiszereles">${kiszereles}</div>
-        <div class="line4">${("cikkszám: " + (row["Cikkszám"] || "")).substring(0, 24)}</div>
-        <div class="barcode-container">
-          <svg class="barcode"></svg>
-        </div>
-        <div class="bottom">
-            <div class="price-box1">
-            <span class="amount">${price}</span>
-            <span class="unit">,- Ft</span>
-            </div>
-            <div class="price-box2">
-              <span class="amount">${pricePerUnit}</span>
-              <span class="unit">${unitLabel ? ",- " + unitLabel : ""}</span>
-            </div>
-        </div>
-      `;
-
-      pageDiv.appendChild(div);
-
-      const barcodeSVG = div.querySelector(".barcode");
-      const eanCode = row["EAN-13"];
-      if (eanCode) {
-        try {
-          JsBarcode(barcodeSVG, eanCode.toString(), {
-            format: "EAN13",
-            lineColor: "#000",
-            width: 1,
-            height: 20,
-            displayValue: true,
-            fontSize: 14,
-          });
-        } catch (e) {
-          console.warn(`Hibás vonalkód (${eanCode}), kihagyva`);
-          barcodeSVG.remove();
-        }
-      }
-    });
+    }
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -544,6 +642,7 @@ const TABLE_COLUMNS = [
   { key: "Megnevezés",   editable: false },
   { key: "Kiszerelés",   editable: true  },
   { key: "Ár",           editable: true  },
+  { key: "Akciós_ár",   editable: true  },
   { key: "Első_sor",     editable: true  },
   { key: "Második_sor",  editable: true  },
   { key: "Harmadik_sor", editable: true  },
@@ -585,6 +684,14 @@ function getTableCellValue(colKey, rowIndex) {
     return colKey === "Ft/l" ? ftl : ftkg;
   }
 
+  // Akciós_ár: ha a validatedData szándékosan ürítette (backend átmozgatta Ár-ba),
+  // ne essen vissza a rawData értékére
+  if (colKey === "Akciós_ár") {
+    if (pRow && pRow["Akciós_ár"] !== undefined) return String(pRow["Akciós_ár"] || "");
+    if (rRow && rRow["Akciós_ár"] !== undefined) return String(rRow["Akciós_ár"] || "");
+    return "";
+  }
+
   if (pRow && pRow[colKey] !== undefined && pRow[colKey] !== "") return String(pRow[colKey]);
   if (rRow && rRow[colKey] !== undefined && rRow[colKey] !== "") return String(rRow[colKey]);
   return "";
@@ -618,7 +725,9 @@ function openDataTable() {
       const td = document.createElement("td");
       const val = getTableCellValue(col.key, rowIndex);
       if (col.editable) {
-        td.innerHTML = `<input type="text" class="table-cell-input" data-row="${rowIndex}" data-col="${col.key}" value="${escapeAttr(val)}">`;
+        const maxLen = getLineMaxLength(col.key);
+        const maxLenAttr = maxLen ? ` maxlength="${maxLen}"` : "";
+        td.innerHTML = `<input type="text" class="table-cell-input" data-row="${rowIndex}" data-col="${col.key}"${maxLenAttr} value="${escapeAttr(val)}">`;
       } else {
         td.className = "cell-readonly";
         td.dataset.row = rowIndex;
@@ -655,6 +764,7 @@ function saveAndGenerate() {
       .filter(s => s).join(" ").trim(),
     "Kiszerelés": row["Kiszerelés"] || "",
     "Ár": row["Ár"] || "",
+    "Akciós_ár": row["Akciós_ár"] || "",
     "EAN-13": row["EAN-13"] || "",
     "Cikkszám": row["Cikkszám"] || "",
   }));
@@ -754,6 +864,12 @@ function handleCellChange(rowIndex, colKey, newValue, inputEl) {
     validatedData[rowIndex]["Ft/kg"] = ftkg;
     updateTableCell(rowIndex, "Ft/l", ftl);
     updateTableCell(rowIndex, "Ft/kg", ftkg);
+    renderLabels(validatedData);
+    return;
+  }
+
+  if (colKey === "Akciós_ár") {
+    renderLabels(validatedData);
     return;
   }
 }

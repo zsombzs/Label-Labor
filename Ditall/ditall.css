@@ -467,6 +467,145 @@ body {
   font-weight: bold;
 }
 /* =============================================================================
+   AKCIÓS CIMKE
+   ============================================================================= */
+
+.logo-a-sm {
+  width: 55px;
+  top: 6px;
+  right: 4px;
+}
+
+.logo-b-sm {
+  width: 40px;
+  top: 6px;
+  right: 7px;
+}
+
+.price-box-orig {
+  display: flex;
+  align-items: stretch;
+  position: absolute;
+  background-color: #fff;
+  box-sizing: border-box;
+  border: 0.5px solid #222;
+  width: 100px;
+  height: 28px;
+  bottom: calc(4mm + 36px);
+  right: 3mm;
+  overflow: hidden;
+}
+
+.price-box-orig .pct {
+  flex: 0 0 33%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 10pt;
+  color: #e00000;
+  border-left: 0.5px solid #bbb;
+  font-family: Calibri, sans-serif;
+  white-space: nowrap;
+  letter-spacing: -0.3px;
+}
+
+.price-box-orig .original-price {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 9.5pt;
+  font-weight: normal;
+  font-family: Calibri, sans-serif;
+  padding: 0 3px;
+  position: relative;
+  white-space: nowrap;
+}
+
+.price-box-orig .original-price::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 3px;
+  top: 50%;
+  border-top: 1.5px solid #e00000;
+  pointer-events: none;
+}
+
+.price-box-sale {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: absolute;
+  background-color: #fff;
+  box-sizing: border-box;
+  border: 0.5px solid #222;
+  width: 100px;
+  height: 36px;
+  padding: 0 2px;
+  font-weight: bold;
+  bottom: 4mm;
+  right: 3mm;
+}
+
+.price-box-sale .amount {
+  flex: 1;
+  font-size: 15pt;
+  text-align: right;
+  flex-shrink: 0;
+  min-width: 60px;
+  font-family: Calibri, sans-serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.price-box-sale .unit {
+  text-align: right;
+  white-space: nowrap;
+  font-size: 15pt;
+  font-family: Calibri, sans-serif;
+}
+
+.sale-info-row {
+  position: absolute;
+  bottom: calc(4mm + 36px);
+  left: 0;
+  width: calc(100% - 3mm - 100px);
+  height: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+
+.sale-cikk {
+  font-family: Calibri, sans-serif;
+  font-size: 9pt;
+  font-weight: normal;
+  line-height: 1;
+}
+
+.sale-kiszeres {
+  font-family: Calibri, sans-serif;
+  font-size: 10pt;
+  font-weight: bold;
+  text-align: right;
+  line-height: 1;
+}
+
+.sale-unit-price {
+  font-family: Calibri, sans-serif;
+  font-size: 7.5pt;
+  font-weight: normal;
+  position: absolute;
+  bottom: 22mm;
+  right: 3mm;
+  text-align: right;
+  line-height: 1;
+}
+
+/* =============================================================================
    BETÖLTÉSI ANIMÁCIÓ
    ============================================================================= */
 

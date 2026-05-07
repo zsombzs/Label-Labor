@@ -9,3 +9,4 @@ httpx
 ddgs
 curl_cffi>=0.7.0
 beautifulsoup4
+openpyxl

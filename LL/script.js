@@ -1,5 +1,5 @@
-/* const API_URL = "http://localhost:8000"; */
-const API_URL = "https://labelgenerator-production.up.railway.app";
+const API_URL = "http://localhost:8000";
+/* const API_URL = "https://labelgenerator-production.up.railway.app"; */
 
 const COMPANY_USERNAME = 'L_L';
 let validatedData = null; // Validált adatok tárolása (logo-váltásnál ne fussanak újra)
@@ -21,7 +21,7 @@ function getSelectedLogo() {
   } else if (selectedType === "B") {
     // Manual logo: mindig a kek.png
     return {
-      src: "assets/3.png",
+      src: "assets/stimmel.png",
       cssClass: "logo-b"
     };
   } else {
@@ -1020,5 +1020,230 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("customAlertOk").addEventListener("click", closeAlert);
   document.getElementById("customAlertOverlay").addEventListener("click", function (e) {
     if (e.target === this) closeAlert();
+  });
+});
+
+// =============================================================================
+// ÁRVÁLTOZÁS DETEKTOR
+// =============================================================================
+
+document.addEventListener("DOMContentLoaded", function () {
+  let arvRegiData = null;
+  let arvUjData   = null;
+
+  // ── Toggle (lenyíló fül) ─────────────────────────────────────────────────
+  const toggleBtn = document.getElementById("arvaltozasToggle");
+  const body      = document.getElementById("arvaltozasBody");
+  const arrow     = document.getElementById("arvaltozasArrow");
+
+  if (!toggleBtn) return; // védelem: ha az elem nem létezik, ne dobj hibát
+
+  toggleBtn.addEventListener("click", () => {
+    const isOpen = body.classList.toggle("open");
+    arrow.classList.toggle("open", isOpen);
+  });
+
+  // ── Reset gomb ────────────────────────────────────────────────────────────
+  document.getElementById("arvResetBtn").addEventListener("click", (e) => {
+    e.stopPropagation(); // ne nyissa/csukja a lenyílót
+
+    arvRegiData = null;
+    arvUjData   = null;
+
+    document.getElementById("arv-regi-text").textContent = "Régi árlista";
+    document.getElementById("arv-uj-text").textContent   = "Új árlista";
+    document.getElementById("arv-regi-label").classList.remove("loaded");
+    document.getElementById("arv-uj-label").classList.remove("loaded");
+    document.getElementById("arvRegi").value = "";
+    document.getElementById("arvUj").value   = "";
+    frissitStatus("");
+    frissitGomb();
+  });
+
+  // ── Excel beolvasás ───────────────────────────────────────────────────────
+  function readExcelFile(file, callback) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const wb   = XLSX.read(data, { type: "array" });
+        const ws   = wb.Sheets[wb.SheetNames[0]];
+        // üres záró sorok kihagyása
+        const json = XLSX.utils.sheet_to_json(ws, { defval: "", blankrows: false });
+        callback(null, json);
+      } catch (err) {
+        callback(err, null);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // Oszlopnév normalizálás: whitespace + Unicode NFC → így "Cikkszám " == "Cikkszám"
+  function normalizeRow(row) {
+    const result = {};
+    for (const [k, v] of Object.entries(row)) {
+      result[String(k).trim().normalize("NFC")] = v;
+    }
+    return result;
+  }
+
+  // Ár normalizálás: csak a számjegyeket tartjuk meg
+  // "8 990", "8.990", 8990, "8990" → mindegyik "8990" lesz
+  function normalizeAr(val) {
+    if (val === null || val === undefined || val === "") return "";
+    return String(val).replace(/[^0-9]/g, "");
+  }
+
+  // ── Rendezési kulcs: Cikkszám (numerikusan) → Megnevezés → sorok szövege ──
+  function cikkKulcs(row) {
+    const cikk = String(row["Cikkszám"] || "").trim();
+    if (cikk) return cikk.padStart(20, "0");
+    const megn = String(row["Megnevezés"] || "").trim().toLowerCase();
+    if (megn) return megn;
+    const e1 = String(row["Első_sor"]     || "").trim().toLowerCase();
+    const e2 = String(row["Második_sor"]  || "").trim().toLowerCase();
+    const e3 = String(row["Harmadik_sor"] || "").trim().toLowerCase();
+    return (e1 + " " + e2 + " " + e3).trim();
+  }
+
+  // Cikkszám szerint csoportosít: kulcs → [sor, sor, sor]
+  function csoportosit(sorok) {
+    const map = new Map();
+    for (const sor of sorok) {
+      const row = normalizeRow(sor);
+      const k = cikkKulcs(row);
+      if (!k) continue;
+      if (!map.has(k)) map.set(k, []);
+      map.get(k).push(row);
+    }
+    return map;
+  }
+
+  function frissitGomb() {
+    document.getElementById("arvGenerateBtn").disabled = !(arvRegiData && arvUjData);
+  }
+
+  function frissitStatus(szoveg) {
+    document.getElementById("arvStatus").textContent = szoveg || "";
+  }
+
+  // ── Fájlfeltöltők ─────────────────────────────────────────────────────────
+  document.getElementById("arvRegi").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+    frissitStatus("Beolvasás...");
+    readExcelFile(file, (err, data) => {
+      if (err) { showAlert("Hiba a régi árlista beolvasásakor!"); frissitStatus(""); return; }
+      arvRegiData = data;
+      document.getElementById("arv-regi-text").textContent = file.name;
+      document.getElementById("arv-regi-label").classList.add("loaded");
+      frissitStatus(`Régi: ${data.length} sor betöltve`);
+      frissitGomb();
+    });
+  });
+
+  document.getElementById("arvUj").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+    frissitStatus("Beolvasás...");
+    readExcelFile(file, (err, data) => {
+      if (err) { showAlert("Hiba az új árlista beolvasásakor!"); frissitStatus(""); return; }
+      arvUjData = data;
+      document.getElementById("arv-uj-text").textContent = file.name;
+      document.getElementById("arv-uj-label").classList.add("loaded");
+      frissitStatus(`Új: ${data.length} sor betöltve`);
+      frissitGomb();
+    });
+  });
+
+  // ── Összehasonlítás és generálás ──────────────────────────────────────────
+  document.getElementById("arvGenerateBtn").addEventListener("click", () => {
+    if (!arvRegiData || !arvUjData) return;
+
+    // Cikkszám szerinti csoportosítás + pozíció-alapú összehasonlítás csoporton belül.
+    // Így az uj fájlba bárhova beillesztett új termék helyesen kezelt,
+    // és a meglévő termékek sorai nem tolódnak el.
+    const regiCsop = csoportosit(arvRegiData);
+    const ujCsop   = csoportosit(arvUjData);
+
+    const valtozottSorok = [];
+    const mindenKulcs = new Set([...regiCsop.keys(), ...ujCsop.keys()]);
+
+    for (const kulcs of [...mindenKulcs].sort()) {
+      const regiCsoport = regiCsop.get(kulcs) || [];
+      const ujCsoport   = ujCsop.get(kulcs)   || [];
+
+      // Csak az újban van → teljesen új termék
+      if (regiCsoport.length === 0) {
+        for (const ujRow of ujCsoport) {
+          if (normalizeAr(ujRow["Ár"]) || normalizeAr(ujRow["Akciós_ár"])) {
+            valtozottSorok.push(ujRow);
+          }
+        }
+        continue;
+      }
+
+      // Csak a régiben van → törölt termék, nem generálunk cimkét
+      if (ujCsoport.length === 0) continue;
+
+      // Meglévő termék: pozíció-alapú összehasonlítás csoporton belül
+      const minLen = Math.min(regiCsoport.length, ujCsoport.length);
+      for (let i = 0; i < minLen; i++) {
+        const regiRow = regiCsoport[i];
+        const ujRow   = ujCsoport[i];
+
+        const regiAr    = normalizeAr(regiRow["Ár"]);
+        const ujAr      = normalizeAr(ujRow["Ár"]);
+        const regiAkcio = normalizeAr(regiRow["Akciós_ár"]);
+        const ujAkcio   = normalizeAr(ujRow["Akciós_ár"]);
+        const regiKisz  = String(regiRow["Kiszerelés"] || "").trim();
+        const ujKisz    = String(ujRow["Kiszerelés"]   || "").trim();
+
+        const valtozott = regiAr !== ujAr || regiAkcio !== ujAkcio || regiKisz !== ujKisz;
+        const ujVanAr   = !!(ujAr || ujAkcio);
+
+        if (valtozott && ujVanAr) {
+          valtozottSorok.push(ujRow);
+        }
+        // Ha uj sor ures lett (nincs ár) → törölt, nem generálunk cimkét
+      }
+
+      // Uj csoportban több sor van mint régiben → új sorok ennél a terméknél
+      for (let i = minLen; i < ujCsoport.length; i++) {
+        const ujRow = ujCsoport[i];
+        if (normalizeAr(ujRow["Ár"]) || normalizeAr(ujRow["Akciós_ár"])) {
+          valtozottSorok.push(ujRow);
+        }
+      }
+    }
+
+    if (valtozottSorok.length === 0) {
+      showAlert("A két árlista között nincs különbség — nincs generálandó cimke.");
+      return;
+    }
+
+    frissitStatus(`${valtozottSorok.length} változott termék feldolgozása...`);
+
+    // ── Formátum felismerés: régi (Első_sor) vs. új (Megnevezés) ─────────────
+    // Ugyanaz a logika, mint a normál fájlfeltöltésnél (handleFile)
+    const isRegiFormat = valtozottSorok[0].hasOwnProperty("Első_sor");
+
+    if (isRegiFormat) {
+      // Makróval feldolgozott Excel → közvetlen renderelés
+      validatedData = valtozottSorok;
+      renderLabels(valtozottSorok);
+      frissitStatus(`✓ ${valtozottSorok.length} cimke generálva`);
+      showAlert(
+        `${valtozottSorok.length} változott / új termék cimkéje elkészült.`,
+        "Árváltozás detektor"
+      );
+    } else {
+      // Nyers (sablon) Excel → agent feldolgozás, pontosan úgy mint normál feltöltésnél
+      validateWithAgent(valtozottSorok, (correctedData) => {
+        validatedData = correctedData;
+        renderLabels(correctedData);
+        frissitStatus(`✓ ${correctedData.length} cimke generálva`);
+      });
+    }
   });
 });

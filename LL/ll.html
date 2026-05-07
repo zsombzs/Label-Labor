@@ -46,6 +46,35 @@
           <span></span>nincs logo
         </label>
       </div>
+      <!-- Árváltozás detektor szekció -->
+      <div class="arvaltozas-section">
+        <div class="arvaltozas-toggle" id="arvaltozasToggle">
+          <span class="arvaltozas-toggle-label">Árváltozás detektor</span>
+          <button class="arv-reset-btn" id="arvResetBtn" title="Visszaállítás">↺</button>
+          <span class="arvaltozas-toggle-arrow" id="arvaltozasArrow">▼</span>
+        </div>
+        <div class="arvaltozas-body" id="arvaltozasBody">
+          <div class="arv-upload-row">
+            <label class="arv-upload-btn" id="arv-regi-label">
+              <span class="arv-upload-icon">📂</span>
+              <span class="arv-upload-text" id="arv-regi-text">Régi árlista</span>
+              <input type="file" id="arvRegi" accept=".xlsx" style="display:none">
+            </label>
+          </div>
+          <div class="arv-upload-row">
+            <label class="arv-upload-btn" id="arv-uj-label">
+              <span class="arv-upload-icon">📂</span>
+              <span class="arv-upload-text" id="arv-uj-text">Új árlista</span>
+              <input type="file" id="arvUj" accept=".xlsx" style="display:none">
+            </label>
+          </div>
+          <div class="arv-status" id="arvStatus"></div>
+          <button class="arv-generate-btn" id="arvGenerateBtn" disabled>
+            Változott termékek generálása
+          </button>
+        </div>
+      </div>
+
       <div class="company-search-section" style="display:none"><!-- IDEIGLENESEN ELREJTVE -->
         <div class="search-header">Minta címkék generálása</div>
         <div class="search-subtitle">Adjon meg egy cégnevet, és az agent az internetről keres termékadatokat és logót</div>

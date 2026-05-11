@@ -80,9 +80,7 @@ class LabelCountUpdate(BaseModel):
 
 class LabelProcessRequest(BaseModel):
     rows: list[dict]
-    max_chars_per_line: int = 22  # Default: 22 (LL), EA uses 20
-    max_chars_line3: int | None = None  # Ha meg van adva, a 3. sorra külön limit vonatkozik
-    extract_kiszereles: bool = False  # Ha True, a megnevezés végéről kinyeri a kiszerelést
+    subpage: str = "standard"  # Aloldal azonosító: "ll", "ea", "hudak", "ritzer", "ditall"
 
 class CompanySearchRequest(BaseModel):
     company_name: str
@@ -90,7 +88,7 @@ class CompanySearchRequest(BaseModel):
 @app.post("/api/process-labels")
 def process_labels(req: LabelProcessRequest):
     try:
-        result = process_and_validate(req.rows, max_chars_per_line=req.max_chars_per_line, max_chars_line3=req.max_chars_line3, extract_kiszereles=req.extract_kiszereles)
+        result = process_and_validate(req.rows, subpage=req.subpage)
 
         # Debug: Log what we're sending back
         if result.get("issues"):

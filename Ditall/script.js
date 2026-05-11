@@ -1,5 +1,5 @@
-const API_URL = "https://labelgenerator-production.up.railway.app";
-/* const API_URL = "http://localhost:8000"; */
+/* const API_URL = "https://labelgenerator-production.up.railway.app"; */
+const API_URL = "http://localhost:8000";
 
 const COMPANY_USERNAME = 'DITALL';
 let validatedData = null; // Validált adatok tárolása (logo-váltásnál ne fussanak újra)
@@ -127,7 +127,7 @@ async function validateWithAgent(data, onComplete) {
     const response = await fetch(`${API_URL}/api/process-labels`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rows: data, max_chars_per_line: 18, max_chars_line3: 22, extract_kiszereles: true })
+      body: JSON.stringify({ rows: data, subpage: "ditall" })
     });
 
     if (!response.ok) {
@@ -143,11 +143,10 @@ async function validateWithAgent(data, onComplete) {
     // Animáció elrejtése
     loadingOverlay.classList.remove("active");
 
-    // Ha vannak hibák → popup
-    if (result.osszes_hiba > 0) {
+    // Ha vannak manuális beavatkozást igénylő hibák → popup
+    if (result.osszes_manualis_hiba > 0) {
       showValidationModal(result, onComplete);
     } else {
-      // Minden rendben → renderel a feldolgozott adatokkal
       onComplete(result.processed_rows);
     }
 
@@ -163,25 +162,19 @@ function showValidationModal(validationResult, onComplete) {
   const summary = document.getElementById("validationSummary");
   const issuesList = document.getElementById("issuesList");
 
-  // Debug: Log what we received
-  console.log("🔍 DEBUG - Frontend received validation result:");
-  if (validationResult.issues && validationResult.issues.length > 0) {
-    const firstIssue = validationResult.issues[0];
-    console.log("  First issue:", firstIssue);
-    if (firstIssue.hibak && firstIssue.hibak.length > 0) {
-      const firstHiba = firstIssue.hibak[0];
-      console.log("  First hiba:", firstHiba);
-      console.log("  javitott value:", firstHiba.javitott);
-      console.log("  eredeti value:", firstHiba.eredeti);
-    }
-  }
+  const manualisIssues = validationResult.issues
+    .map(issue => ({
+      ...issue,
+      hibak: issue.hibak.filter(h => !h.auto_javitott),
+    }))
+    .filter(issue => issue.hibak.length > 0);
 
-  summary.textContent = `${validationResult.osszes_hiba} problémát találtunk ${validationResult.issues.length} terméknél. Az alábbiakban javasolt javításokat talál. A kisebb hibákat a rendszer automatikusan kijavítja — a pipa ikonnal lehet jóváhagyni. Ha szükséges, manuálisan is módosítható bármelyik adat. Az összes mező jóváhagyása után kattintson a "Javítások alkalmazása" gombra.`;
+  summary.textContent = `${validationResult.osszes_manualis_hiba} problémát találtunk ${manualisIssues.length} terméknél. Az alábbiakban javasolt javításokat talál. Ha szükséges, manuálisan is módosítható bármelyik adat. Az összes mező jóváhagyása után kattintson a "Javítások alkalmazása" gombra.`;
 
   issuesList.innerHTML = "";
 
-  // Soronként jelenítjük meg a hibákat (Excel sor sorrendben)
-  validationResult.issues.forEach(issue => {
+  // Soronként jelenítjük meg a manuális hibákat (Excel sor sorrendben)
+  manualisIssues.forEach(issue => {
     const card = document.createElement("div");
     card.className = "issue-card";
     card.innerHTML = `<div class="product-name">${issue.excel_sor}. sor — ${issue.termek}</div>`;
@@ -209,13 +202,11 @@ function showValidationModal(validationResult, onComplete) {
         </div>
       `;
 
-      // Auto-acceptance on blur (when user clicks out of input)
       const input = item.querySelector(`#${inputId}`);
       if (input) {
         const originalValue = hiba.javitott || hiba.eredeti;
         input.addEventListener('blur', () => {
           const currentValue = input.value.trim();
-          // Only auto-accept if value changed and field is not already accepted (disabled)
           if (!input.disabled && currentValue !== originalValue) {
             window.acceptFix(issue.row_index, hiba.oszlop, inputId);
           }
@@ -246,20 +237,22 @@ function showValidationModal(validationResult, onComplete) {
 
 // Egységár újraszámítás (Ár vagy Kiszerelés javítása után)
 function recalculateUnitPrice(kiszereles, ar) {
-  if (!kiszereles || !ar) return { ftl: "", ftkg: "" };
+  if (!kiszereles || !ar) return { ftl: "", ftkg: "", ftm2: "" };
   const priceVal = parseFloat(String(ar).replace(",", "."));
-  if (isNaN(priceVal) || priceVal <= 0) return { ftl: "", ftkg: "" };
+  if (isNaN(priceVal) || priceVal <= 0) return { ftl: "", ftkg: "", ftm2: "" };
   const packStr = String(kiszereles).trim().toLowerCase();
   const numMatch = packStr.match(/[\d.,]+/);
-  if (!numMatch) return { ftl: "", ftkg: "" };
+  if (!numMatch) return { ftl: "", ftkg: "", ftm2: "" };
   const qty = parseFloat(numMatch[0].replace(",", "."));
-  if (isNaN(qty) || qty <= 0) return { ftl: "", ftkg: "" };
-  const unit = packStr.replace(/[\d.,\s]/g, "").trim();
-  if (unit === "ml") return { ftl: String(Math.round(priceVal / (qty / 1000))), ftkg: "" };
-  if (unit === "l")  return { ftl: String(Math.round(priceVal / qty)), ftkg: "" };
-  if (unit === "g")  return { ftl: "", ftkg: String(Math.round(priceVal / (qty / 1000))) };
-  if (unit === "kg") return { ftl: "", ftkg: String(Math.round(priceVal / qty)) };
-  return { ftl: "", ftkg: "" };
+  if (isNaN(qty) || qty <= 0) return { ftl: "", ftkg: "", ftm2: "" };
+  const numMatch2 = packStr.match(/[\d.,]+/);
+  const unit = numMatch2 ? packStr.slice(numMatch2.index + numMatch2[0].length).trim() : "";
+  if (unit === "ml") return { ftl: String(Math.round(priceVal / (qty / 1000))), ftkg: "", ftm2: "" };
+  if (unit === "l")  return { ftl: String(Math.round(priceVal / qty)), ftkg: "", ftm2: "" };
+  if (unit === "g")  return { ftl: "", ftkg: String(Math.round(priceVal / (qty / 1000))), ftm2: "" };
+  if (unit === "kg") return { ftl: "", ftkg: String(Math.round(priceVal / qty)), ftm2: "" };
+  if (unit === "m2") return { ftl: "", ftkg: "", ftm2: String(Math.round(priceVal / qty)) };
+  return { ftl: "", ftkg: "", ftm2: "" };
 }
 
 // Javítás elfogadása - toggle: első kattintás elfogad (zöld), második visszavonja (kék)
@@ -287,9 +280,10 @@ window.acceptFix = function acceptFix(rowIndex, oszlop, inputId) {
     // Ha Ár vagy Kiszerelés változott → újraszámoljuk az egységárat
     if (oszlop === "Ár" || oszlop === "Kiszerelés") {
       const row = overlay._data[rowIndex];
-      const { ftl, ftkg } = recalculateUnitPrice(row["Kiszerelés"], row["Ár"]);
+      const { ftl, ftkg, ftm2 } = recalculateUnitPrice(row["Kiszerelés"], row["Ár"]);
       row["Ft/l"] = ftl;
       row["Ft/kg"] = ftkg;
+      row["Ft/m2"] = ftm2;
     }
 
     input.style.borderColor = "#4caf50";
@@ -315,6 +309,10 @@ function formatPrice(price) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+function formatKiszereles(kisz) {
+  return String(kisz).replace(/m2/gi, 'm<sup>2</sup>');
+}
+
 let totalLabelsGenerated = 0;
 
 function buildNormalLabel(div, row, logo) {
@@ -325,6 +323,7 @@ function buildNormalLabel(div, row, logo) {
   const ar = row["Ár"] || "";
   const ftPerL = row["Ft/l"] || "";
   const ftPerKg = row["Ft/kg"] || "";
+  const ftPerM2 = row["Ft/m2"] || "";
 
   let price = "";
   let pricePerUnit = "";
@@ -337,19 +336,37 @@ function buildNormalLabel(div, row, logo) {
       price = formatPrice(ar);
       if (ftPerL !== "") { pricePerUnit = formatPrice(ftPerL); unitLabel = "Ft/l"; }
       else if (ftPerKg !== "") { pricePerUnit = formatPrice(ftPerKg); unitLabel = "Ft/kg"; }
+      else if (ftPerM2 !== "") { pricePerUnit = formatPrice(ftPerM2); unitLabel = "Ft/m2"; }
     } else {
-      if (kiszereles.match(/ml|l/i)) unitLabel = "Ft/l";
-      else if (kiszereles.match(/g|kg/i)) unitLabel = "Ft/kg";
+      if (/ml|l/i.test(kiszereles)) unitLabel = "Ft/l";
+      else if (/g|kg/i.test(kiszereles)) unitLabel = "Ft/kg";
+      else if (/m2/i.test(kiszereles)) unitLabel = "Ft/m2";
     }
   }
 
+  // 4. sor prioritás: Cikkszám → Szín (vastag) → Negyedik_sor (overflow) → üres
+  let line4Content = "";
+  const cikkszam = row["Cikkszám"] || "";
+  const szin = row["Szín"] || "";
+  const negyedikSor = row["Negyedik_sor"] || "";
+  if (cikkszam) {
+    line4Content = ("cikkszám: " + cikkszam).substring(0, 24);
+  } else if (szin) {
+    line4Content = `Szín: <strong>${szin}</strong>`;
+  } else if (negyedikSor) {
+    line4Content = negyedikSor.substring(0, 24);
+  }
+
+  // Ha nincs szín és nincs cikkszám, a terméknév vastag betűs (kiemelés fallback)
+  const nameWeight = (cikkszam || szin) ? "normal" : "bold";
+
   div.innerHTML = `
     <img src="${logo.src}" class="logo ${logo.cssClass}">
-    <div class="line1">${line1}</div>
-    <div class="line2">${secondLineText}</div>
-    <div class="line3">${thirdLineText}</div>
-    <div class="kiszereles">${kiszereles}</div>
-    <div class="line4">${("cikkszám: " + (row["Cikkszám"] || "")).substring(0, 24)}</div>
+    <div class="line1" style="font-weight:${nameWeight}">${line1}</div>
+    <div class="line2" style="font-weight:${nameWeight}">${secondLineText}</div>
+    <div class="line3" style="font-weight:${nameWeight}">${thirdLineText}</div>
+    <div class="kiszereles">${formatKiszereles(kiszereles)}</div>
+    <div class="line4">${line4Content}</div>
     <div class="barcode-container">
       <svg class="barcode"></svg>
     </div>
@@ -360,7 +377,7 @@ function buildNormalLabel(div, row, logo) {
       </div>
       <div class="price-box2">
         <span class="amount">${pricePerUnit}</span>
-        <span class="unit">${unitLabel ? ",- " + unitLabel : ""}</span>
+        <span class="unit">${unitLabel ? ",- " + formatKiszereles(unitLabel) : ""}</span>
       </div>
     </div>
   `;
@@ -406,7 +423,7 @@ function buildSaleLabel(div, row, logo) {
     </div>
     <div class="sale-info-row">
       <span class="sale-cikk">${(row["Cikkszám"] || "").substring(0, 12)}</span>
-      <span class="sale-kiszeres">${kiszereles}</span>
+      <span class="sale-kiszeres">${formatKiszereles(kiszereles)}</span>
     </div>
     <div class="price-box-orig">
       <span class="original-price">${formatPrice(ar)},- Ft</span>
@@ -640,18 +657,22 @@ const TABLE_COLUMNS = [
   { key: "Cikkszám",     editable: true  },
   { key: "EAN-13",       editable: true  },
   { key: "Megnevezés",   editable: false },
+  { key: "Szín",         editable: true  },
   { key: "Kiszerelés",   editable: true  },
   { key: "Ár",           editable: true  },
   { key: "Akciós_ár",   editable: true  },
   { key: "Első_sor",     editable: true  },
   { key: "Második_sor",  editable: true  },
   { key: "Harmadik_sor", editable: true  },
+  { key: "Negyedik_sor", editable: false },
   { key: "ml",           editable: false },
   { key: "l",            editable: false },
   { key: "kg",           editable: false },
   { key: "g",            editable: false },
+  { key: "m2",           editable: false },
   { key: "Ft/l",         editable: false },
   { key: "Ft/kg",        editable: false },
+  { key: "Ft/m2",        editable: false },
   { key: "db",           editable: false },
 ];
 
@@ -675,13 +696,15 @@ function getTableCellValue(colKey, rowIndex) {
     return parseKiszereles(kiszereles)[colKey] || "";
   }
 
-  if (colKey === "Ft/l" || colKey === "Ft/kg") {
+  if (colKey === "Ft/l" || colKey === "Ft/kg" || colKey === "Ft/m2") {
     if (pRow && pRow[colKey] !== undefined && pRow[colKey] !== "") return String(pRow[colKey]);
     if (rRow && rRow[colKey] !== undefined && rRow[colKey] !== "") return String(rRow[colKey]);
     const kiszereles = (pRow && pRow["Kiszerelés"]) || (rRow && rRow["Kiszerelés"]) || "";
     const ar = (pRow && pRow["Ár"]) || (rRow && rRow["Ár"]) || "";
-    const { ftl, ftkg } = recalculateUnitPrice(kiszereles, ar);
-    return colKey === "Ft/l" ? ftl : ftkg;
+    const { ftl, ftkg, ftm2 } = recalculateUnitPrice(kiszereles, ar);
+    if (colKey === "Ft/l") return ftl;
+    if (colKey === "Ft/kg") return ftkg;
+    return ftm2;
   }
 
   // Akciós_ár: ha a validatedData szándékosan ürítette (backend átmozgatta Ár-ba),
@@ -762,6 +785,7 @@ function saveAndGenerate() {
   const rawForValidation = validatedData.map(row => ({
     "Megnevezés": [row["Első_sor"] || "", row["Második_sor"] || "", row["Harmadik_sor"] || ""]
       .filter(s => s).join(" ").trim(),
+    "Szín": row["Szín"] || "",
     "Kiszerelés": row["Kiszerelés"] || "",
     "Ár": row["Ár"] || "",
     "Akciós_ár": row["Akciós_ár"] || "",
@@ -795,7 +819,7 @@ function validateEan13(ean) {
 
 // Kiszerelés szövegéből ml / l / kg / g / db értékek kiszámítása
 function parseKiszereles(kiszereles) {
-  const result = { ml: "", l: "", kg: "", g: "", db: "" };
+  const result = { ml: "", l: "", kg: "", g: "", db: "", m2: "" };
   if (!kiszereles) return result;
   const str = String(kiszereles).trim().toLowerCase();
   if (str === "db") { result.db = "db"; return result; }
@@ -803,7 +827,7 @@ function parseKiszereles(kiszereles) {
   if (!numMatch) return result;
   const qty = parseFloat(numMatch[1].replace(",", "."));
   if (isNaN(qty) || qty <= 0) return result;
-  const unit = str.replace(/[\d.,\s]/g, "").trim();
+  const unit = str.slice(numMatch.index + numMatch[1].length).trim();
   if (unit === "ml") {
     result.ml = String(qty);
     result.l = String(parseFloat((qty / 1000).toFixed(3)));
@@ -818,6 +842,8 @@ function parseKiszereles(kiszereles) {
     result.g = String(Math.round(qty * 1000));
   } else if (unit === "db") {
     result.db = String(qty);
+  } else if (unit === "m2") {
+    result.m2 = String(qty);
   }
   return result;
 }
@@ -846,24 +872,28 @@ function handleCellChange(rowIndex, colKey, newValue, inputEl) {
 
   if (colKey === "Kiszerelés") {
     const parsed = parseKiszereles(newValue);
-    ["ml", "l", "kg", "g", "db"].forEach(k => {
+    ["ml", "l", "kg", "g", "db", "m2"].forEach(k => {
       validatedData[rowIndex][k] = parsed[k];
       updateTableCell(rowIndex, k, parsed[k]);
     });
-    const { ftl, ftkg } = recalculateUnitPrice(newValue, validatedData[rowIndex]["Ár"]);
+    const { ftl, ftkg, ftm2 } = recalculateUnitPrice(newValue, validatedData[rowIndex]["Ár"]);
     validatedData[rowIndex]["Ft/l"] = ftl;
     validatedData[rowIndex]["Ft/kg"] = ftkg;
+    validatedData[rowIndex]["Ft/m2"] = ftm2;
     updateTableCell(rowIndex, "Ft/l", ftl);
     updateTableCell(rowIndex, "Ft/kg", ftkg);
+    updateTableCell(rowIndex, "Ft/m2", ftm2);
     return;
   }
 
   if (colKey === "Ár") {
-    const { ftl, ftkg } = recalculateUnitPrice(validatedData[rowIndex]["Kiszerelés"], newValue);
+    const { ftl, ftkg, ftm2 } = recalculateUnitPrice(validatedData[rowIndex]["Kiszerelés"], newValue);
     validatedData[rowIndex]["Ft/l"] = ftl;
     validatedData[rowIndex]["Ft/kg"] = ftkg;
+    validatedData[rowIndex]["Ft/m2"] = ftm2;
     updateTableCell(rowIndex, "Ft/l", ftl);
     updateTableCell(rowIndex, "Ft/kg", ftkg);
+    updateTableCell(rowIndex, "Ft/m2", ftm2);
     renderLabels(validatedData);
     return;
   }

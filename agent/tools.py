@@ -6,7 +6,7 @@ import re
 
 
 # =============================================================================
-# NÉVFELDARABOLÁS (max 22 karakter soronként)
+# NÉVFELDARABOLÁS - 3 soros (standard)
 # =============================================================================
 
 def split_name(name: str, max_chars: int = 22, max_chars_line3: int | None = None) -> tuple[str, str, str, bool]:
@@ -54,7 +54,55 @@ def split_name(name: str, max_chars: int = 22, max_chars_line3: int | None = Non
 
 
 # =============================================================================
-# CIKKSZÁM VALIDÁLÁS (max 12 karakter)
+# NÉVFELDARABOLÁS - 4 soros (csak Ditall)
+# =============================================================================
+
+def split_name_ditall(name: str, max_chars: int = 22, max_chars_line3: int | None = None) -> tuple[str, str, str, str, bool]:
+    """Szavanként tördeli a nevet max 4 sorra (csak Ditall).
+    Visszatér: (sor1, sor2, sor3, sor4, volt_túlcsordulás_4_sor_után)"""
+    if not name:
+        return "", "", "", "", False
+
+    line3_limit = max_chars_line3 if max_chars_line3 is not None else max_chars
+    limits = [max_chars, max_chars, line3_limit, line3_limit]
+
+    words = str(name).strip().split()
+    lines = ["", "", "", ""]
+    current_line = 0
+    overflow = False
+
+    for word in words:
+        if current_line >= 4:
+            overflow = True
+            continue
+
+        limit = limits[current_line]
+        if lines[current_line] == "":
+            lines[current_line] = word
+            if len(word) > limit:
+                overflow = True
+        elif len(lines[current_line] + " " + word) <= limit:
+            lines[current_line] = lines[current_line] + " " + word
+        else:
+            current_line += 1
+            if current_line >= 4:
+                overflow = True
+                continue
+            limit = limits[current_line]
+            lines[current_line] = word
+            if len(word) > limit:
+                overflow = True
+
+    if len(lines[2]) > line3_limit:
+        overflow = True
+    if len(lines[3]) > line3_limit:
+        overflow = True
+
+    return lines[0], lines[1], lines[2], lines[3], overflow
+
+
+# =============================================================================
+# CIKKSZÁM VALIDÁLÁS (max 10 karakter)
 # =============================================================================
 
 def validate_cikkszam(cikk: str) -> dict | None:
@@ -75,7 +123,7 @@ def validate_cikkszam(cikk: str) -> dict | None:
 # KISZERELÉS NORMALIZÁLÁS
 # =============================================================================
 
-# Elfogadott mértékegységek és szinonimáik
+# Elfogadott mértékegységek (standard)
 UNIT_MAP = {
     "ml": ["ml", "mL", "ML", "milliliter", "millilitre", "milliliteres", "milliiter", "mili", "milli"],
     "l":  ["l", "L", "liter", "litre", "litres", "literes", "liters", "lit"],
@@ -84,24 +132,28 @@ UNIT_MAP = {
     "db": ["db", "DB", "Db", "dB", "darab", "piece", "pieces", "pcs"],
 }
 
-def normalize_kiszerelesek(pack: str) -> tuple[str, dict | None]:
-    """
-    Normalizálja a kiszerelést.
-    Visszaad: (normalizált_érték, hiba_dict vagy None)
+# Ditall-specifikus mértékegységek (UNIT_MAP + m2, m)
+DITALL_UNIT_MAP = {
+    **UNIT_MAP,
+    "m2": ["m2", "M2", "m²", "négyzetméter", "negyzetmeter", "sqm"],
+    "m":  ["m", "méter", "meter", "meters"],
+}
 
-    Pl: "500ml" → ("500 ml", None)
-        "1kilogramm" → ("1 kg", figyelmeztetés)
-        "db" → ("db", None)
-        "darab" → ("db", auto-javítva)
-        "valami" → ("valami", hiba: ismeretlen)
-    """
+UNIT_MAPS = {
+    "standard": UNIT_MAP,
+    "ditall": DITALL_UNIT_MAP,
+}
+
+
+def normalize_kiszerelesek(pack: str, unit_map: dict) -> tuple[str, dict | None]:
+    """Normalizálja a kiszerelést a megadott unit_map alapján."""
     if not pack or str(pack).strip() == "":
         return "", None
 
     pack = str(pack).strip()
 
     # Különleges eset: "db" és szinonimái (szám nélkül is elfogadott)
-    db_synonyms = [s.lower() for s in UNIT_MAP["db"]]
+    db_synonyms = [s.lower() for s in unit_map["db"]]
     if pack.lower() in db_synonyms:
         if pack == "db":
             return "db", None
@@ -113,10 +165,9 @@ def normalize_kiszerelesek(pack: str) -> tuple[str, dict | None]:
             "auto_javitott": True
         }
 
-    # Szám kinyerése (ml, l, g, kg esetén kötelező)
+    # Szám kinyerése
     num_match = re.search(r'^[\d.,]+', pack)
     if not num_match:
-        # Próbálkozás: szám bárhol
         num_match = re.search(r'[\d.,]+', pack)
 
     if not num_match:
@@ -129,7 +180,6 @@ def normalize_kiszerelesek(pack: str) -> tuple[str, dict | None]:
 
     qty_str = num_match.group().replace(",", ".")
 
-    # Érvényes szám ellenőrzés (pl. "2..5" nem érvényes)
     try:
         float(qty_str)
     except ValueError:
@@ -140,11 +190,14 @@ def normalize_kiszerelesek(pack: str) -> tuple[str, dict | None]:
             "javitott": ""
         }
 
-    # Egység kinyerése (ami marad a szám után)
-    unit_raw = re.sub(r'[\d.,\s]', '', pack).strip()
+    # Ditall: unit_raw a szám utáni szöveg (szóközzel is)
+    # Standard: unit_raw csak a nem-szám/szóköz karakterek
+    if unit_map is DITALL_UNIT_MAP:
+        unit_raw = pack[num_match.end():].strip()
+    else:
+        unit_raw = re.sub(r'[\d.,\s]', '', pack).strip()
 
-    # Ha db-szinonima + szám → hiba (db-nél nincs szám, mindig csak "db")
-    db_synonyms = [s.lower() for s in UNIT_MAP["db"]]
+    # Ha db-szinonima + szám → hiba
     if unit_raw.lower() in db_synonyms:
         return "db", {
             "oszlop": "Kiszerelés",
@@ -155,32 +208,31 @@ def normalize_kiszerelesek(pack: str) -> tuple[str, dict | None]:
 
     # Egység keresése a térképben
     normalized_unit = None
-    for standard, synonyms in UNIT_MAP.items():
+    for standard, synonyms in unit_map.items():
         if unit_raw.lower() in [s.lower() for s in synonyms]:
             normalized_unit = standard
             break
 
     if normalized_unit is None:
+        allowed = ", ".join(unit_map.keys())
         return pack, {
             "oszlop": "Kiszerelés",
-            "hiba": f"Ismeretlen mértékegység: '{unit_raw}' (engedélyezett: ml, l, g, kg, db)",
+            "hiba": f"Ismeretlen mértékegység: '{unit_raw}' (engedélyezett: {allowed})",
             "eredeti": pack,
             "javitott": ""
         }
 
     normalized = f"{qty_str} {normalized_unit}"
 
-    # Ha már normalizált volt (semmi sem változott)
     if normalized == pack:
         return normalized, None
 
-    # Megváltozott → figyelmeztetés
     return normalized, {
         "oszlop": "Kiszerelés",
         "hiba": f"Átírva: '{pack}' → '{normalized}'",
         "eredeti": pack,
         "javitott": normalized,
-        "auto_javitott": True  # jelzi hogy már alkalmazva van
+        "auto_javitott": True
     }
 
 
@@ -275,49 +327,60 @@ def validate_ean13(ean: str) -> dict | None:
 # EGYSÉGÁR SZÁMÍTÁS
 # =============================================================================
 
-def calculate_unit_price(pack: str, price) -> tuple:
-    """Ft/l és Ft/kg számítás. Visszaad: (ft_per_l, ft_per_kg)"""
+def calculate_unit_price(pack: str, price, unit_map: dict, ft_m2: bool) -> tuple:
+    """
+    Ft/l, Ft/kg (és opcionálisan Ft/m2) számítás.
+    Visszaad: (ft_per_l, ft_per_kg) vagy (ft_per_l, ft_per_kg, ft_per_m2) ha ft_m2=True.
+    """
     if not pack or price == "" or price is None:
-        return None, None
+        return (None, None, None) if ft_m2 else (None, None)
 
     try:
         price_val = float(str(price).replace(",", "."))
         if price_val <= 0:
-            return None, None
+            return (None, None, None) if ft_m2 else (None, None)
     except (ValueError, TypeError):
-        return None, None
+        return (None, None, None) if ft_m2 else (None, None)
 
     pack_str = str(pack).strip().lower()
     num_match = re.search(r'[\d.,]+', pack_str)
     if not num_match:
-        return None, None
+        return (None, None, None) if ft_m2 else (None, None)
 
     try:
         qty = float(num_match.group().replace(",", "."))
         if qty <= 0:
-            return None, None
+            return (None, None, None) if ft_m2 else (None, None)
     except ValueError:
-        return None, None
+        return (None, None, None) if ft_m2 else (None, None)
 
-    unit = re.sub(r'[\d.,\s]', '', pack_str).strip()
+    # Ditall: unit a szám utáni szöveg; standard: nem-szám/szóköz karakterek
+    if unit_map is DITALL_UNIT_MAP:
+        unit = pack_str[num_match.end():].strip()
+    else:
+        unit = re.sub(r'[\d.,\s]', '', pack_str).strip()
+
+    ft_l = ft_kg = ft_m2_val = None
 
     if unit == "ml":
-        return round(price_val / (qty / 1000)), None
+        ft_l = round(price_val / (qty / 1000))
     elif unit == "l":
-        return round(price_val / qty), None
+        ft_l = round(price_val / qty)
     elif unit == "g":
-        return None, round(price_val / (qty / 1000))
+        ft_kg = round(price_val / (qty / 1000))
     elif unit == "kg":
-        return None, round(price_val / qty)
+        ft_kg = round(price_val / qty)
+    elif unit == "m2" and ft_m2:
+        ft_m2_val = round(price_val / qty)
 
-    return None, None
+    return (ft_l, ft_kg, ft_m2_val) if ft_m2 else (ft_l, ft_kg)
 
 
 # =============================================================================
-# FŐ FELDOLGOZÓ - egy sort dolgoz fel
+# KISZERELÉS KINYERÉSE A MEGNEVEZÉSBŐL - standard
 # =============================================================================
 
-def extract_kiszereles_from_name(name: str) -> tuple[str, str]:
+def extract_kiszereles_from_name(name: str, unit_map: dict) -> tuple[str, str]:
     """
     Ha a megnevezés végén kiszerelés-jellegű szöveg van (pl. "festék 500 ml"),
     kinyeri azt és visszaadja a tisztított nevet + kiszerelést.
@@ -327,16 +390,16 @@ def extract_kiszereles_from_name(name: str) -> tuple[str, str]:
         return name, ""
 
     # 1. Különleges eset: "db" és szinonimái a végén (szám nélkül is elfogadott)
-    db_synonyms_pattern = "|".join(re.escape(s) for s in UNIT_MAP["db"])
+    db_synonyms_pattern = "|".join(re.escape(s) for s in unit_map["db"])
     db_pattern = rf'\s+({db_synonyms_pattern})\s*$'
     db_match = re.search(db_pattern, name, re.IGNORECASE)
     if db_match:
         cleaned_name = name[:db_match.start()].strip()
         return cleaned_name, "db"
 
-    # 2. Szám + mértékegység a végén (pl. "500 ml", "1 kg", "400g", "2.5 l", "1,5l", "500mili")
+    # 2. Szám + mértékegység a végén
     all_units = []
-    for synonyms in UNIT_MAP.values():
+    for synonyms in unit_map.values():
         all_units.extend(synonyms)
     units_pattern = "|".join(re.escape(u) for u in sorted(all_units, key=len, reverse=True))
 
@@ -347,9 +410,8 @@ def extract_kiszereles_from_name(name: str) -> tuple[str, str]:
         qty = match.group(1)
         unit_raw = match.group(2)
 
-        # Normalizáljuk az egységet
         normalized_unit = unit_raw
-        for standard, synonyms in UNIT_MAP.items():
+        for standard, synonyms in unit_map.items():
             if unit_raw.lower() in [s.lower() for s in synonyms]:
                 normalized_unit = standard
                 break
@@ -360,11 +422,73 @@ def extract_kiszereles_from_name(name: str) -> tuple[str, str]:
     return name, ""
 
 
-def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, max_chars_line3: int | None = None, extract_kiszereles: bool = False) -> dict:
+# =============================================================================
+# KISZERELÉS ÉS SZÍN KINYERÉSE A MEGNEVEZÉSBŐL - Ditall
+# =============================================================================
+
+def extract_kiszereles_and_szin_from_name(name: str, unit_map: dict) -> tuple[str, str, str]:
     """
-    Egy Excel sort validál és normalizál.
+    A megnevezés végétől visszafelé keresi a kiszerelést (szám+mértékegység).
+    A kiszerelés utáni szöveg a szín.
+    Visszaad: (cleaned_name, kiszerelés, szín)
+    Ha nincs kiszerelés találat: (eredeti_name, "", "")
+    """
+    if not name:
+        return name or "", "", ""
+
+    # 1. Különleges eset: "db" és szinonimái (szám nélkül is elfogadott)
+    db_synonyms_pattern = "|".join(re.escape(s) for s in unit_map["db"])
+    db_pattern = rf'(.*)\s({db_synonyms_pattern})(\s+.+?)?\s*$'
+    db_match = re.search(db_pattern, name, re.IGNORECASE)
+    if db_match:
+        cleaned_name = db_match.group(1).strip()
+        szin = (db_match.group(3) or "").strip()
+        return cleaned_name, "db", szin
+
+    # 2. Szám + mértékegység + opcionális szín a végén
+    all_units = []
+    for synonyms in unit_map.values():
+        all_units.extend(synonyms)
+    units_pattern = "|".join(re.escape(u) for u in sorted(all_units, key=len, reverse=True))
+
+    pattern = rf'(.*)\s([\d.,]+)\s*({units_pattern})(\s+.+?)?\s*$'
+    match = re.search(pattern, name, re.IGNORECASE)
+    if match:
+        cleaned_name = match.group(1).strip()
+        qty = match.group(2)
+        unit_raw = match.group(3)
+        szin = (match.group(4) or "").strip()
+
+        normalized_unit = unit_raw
+        for standard, synonyms in unit_map.items():
+            if unit_raw.lower() in [s.lower() for s in synonyms]:
+                normalized_unit = standard
+                break
+
+        kiszereles = f"{qty} {normalized_unit}"
+        return cleaned_name, kiszereles, szin
+
+    return name, "", ""
+
+
+# =============================================================================
+# FŐ FELDOLGOZÓ - egy sort dolgoz fel
+# =============================================================================
+
+def process_row(raw_row: dict, row_index: int, cfg: dict) -> dict:
+    """
+    Egy Excel sort validál és normalizál a subpage config alapján.
     Visszaad: {processed: {...}, hibak: [...], excel_sor: N}
     """
+    max_chars_per_line = cfg["max_chars_per_line"]
+    max_chars_line3 = cfg.get("max_chars_line3")
+    extract_kiszereles = cfg["extract_kiszereles"]
+    extract_szin = cfg["extract_szin"]
+    max_lines = cfg["max_lines"]
+    unit_map = UNIT_MAPS[cfg["unit_map"]]
+    ft_m2 = cfg["ft_m2"]
+    use_szin_extract = cfg["unit_map"] == "ditall"  # csak Ditall keres színt a névből
+
     name = str(raw_row.get("Megnevezés", "")).strip()
     # Fallback: ha az oszlopnév xlsm-ben eltér (pl. trailing space, vagy más elnevezés)
     if not name:
@@ -374,6 +498,7 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, max
                 break
     pack = str(raw_row.get("Kiszerelés", "")).strip()
     price = raw_row.get("Ár", "")
+    szin = str(raw_row.get("Szín", "")).strip() if extract_szin else ""
 
     akcio_price = raw_row.get("Akciós_ár", "")
 
@@ -389,22 +514,33 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, max
     ean_check = str(raw_row.get("EAN-13", "")).strip()
     cikk_check = str(raw_row.get("Cikkszám", "")).strip()
     if not name and not pack and not price_str and not ean_check and not cikk_check:
-        return {
-            "processed": {
-                "Első_sor": "", "Második_sor": "", "Harmadik_sor": "",
-                "Kiszerelés": "", "Ár": "", "Akciós_ár": "", "Ft/l": "", "Ft/kg": "",
-                "EAN-13": "", "Cikkszám": "",
-            },
-            "hibak": [],
-            "excel_sor": row_index + 2,
-            "termek": "",
+        empty = {
+            "Első_sor": "", "Második_sor": "", "Harmadik_sor": "",
+            "Kiszerelés": "", "Ár": "", "Akciós_ár": "", "Ft/l": "", "Ft/kg": "",
+            "EAN-13": "", "Cikkszám": "",
         }
+        if max_lines == 4:
+            empty["Negyedik_sor"] = ""
+        if ft_m2:
+            empty["Ft/m2"] = ""
+        if extract_szin:
+            empty["Szín"] = ""
+        return {"processed": empty, "hibak": [], "excel_sor": row_index + 2, "termek": ""}
 
-    # Ha extract_kiszereles aktív és a Kiszerelés üres, próbáljuk kinyerni a névből
-    if extract_kiszereles and not pack:
-        name, extracted_pack = extract_kiszereles_from_name(name)
+    # Kiszerelés (és szín) kinyerése a névből
+    if use_szin_extract and (extract_kiszereles or extract_szin) and name:
+        cleaned_name, found_kiszereles, found_szin = extract_kiszereles_and_szin_from_name(name, unit_map)
+        if found_kiszereles:
+            name = cleaned_name
+            if extract_kiszereles and not pack:
+                pack = found_kiszereles
+            if extract_szin and not szin:
+                szin = found_szin
+    elif extract_kiszereles and not pack:
+        name, extracted_pack = extract_kiszereles_from_name(name, unit_map)
         if extracted_pack:
             pack = extracted_pack
+
     ean = str(raw_row.get("EAN-13", "")).strip()
     cikk = str(raw_row.get("Cikkszám", "")).strip()
 
@@ -416,7 +552,7 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, max
         hibak.append(cikk_hiba)
 
     # 2. Kiszerelés normalizálás
-    normalized_pack, pack_hiba = normalize_kiszerelesek(pack)
+    normalized_pack, pack_hiba = normalize_kiszerelesek(pack, unit_map)
     if pack_hiba:
         hibak.append(pack_hiba)
 
@@ -462,32 +598,28 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, max
     effective_max_chars_line3 = None
     if max_chars_line3 is not None:
         effective_max_chars_line3 = max_chars_line3 if name.isupper() else max_chars_line3 + 2
-    line1, line2, line3, name_overflow = split_name(name, max_chars=effective_max_chars, max_chars_line3=effective_max_chars_line3)
+
+    if max_lines == 4:
+        line1, line2, line3, line4, name_overflow = split_name_ditall(
+            name, max_chars=effective_max_chars, max_chars_line3=effective_max_chars_line3
+        )
+        overflow_msg = "A terméknév nem fér ki 4 sorban, kérjük javítsa."
+    else:
+        line1, line2, line3, name_overflow = split_name(
+            name, max_chars=effective_max_chars, max_chars_line3=effective_max_chars_line3
+        )
+        line4 = None
+        overflow_msg = "A terméknév nem fér ki 3 sorban, kérjük javítsa."
 
     if name_overflow:
         hibak.extend([
-            {
-                "oszlop": "Első_sor",
-                "hiba": "A terméknév nem fér ki 3 sorban, kérjük javítsa.",
-                "eredeti": line1,
-                "javitott": line1
-            },
-            {
-                "oszlop": "Második_sor",
-                "hiba": "A terméknév nem fér ki 3 sorban, kérjük javítsa.",
-                "eredeti": line2,
-                "javitott": line2
-            },
-            {
-                "oszlop": "Harmadik_sor",
-                "hiba": "A terméknév nem fér ki 3 sorban, kérjük javítsa.",
-                "eredeti": line3,
-                "javitott": line3
-            }
+            {"oszlop": "Első_sor", "hiba": overflow_msg, "eredeti": line1, "javitott": line1},
+            {"oszlop": "Második_sor", "hiba": overflow_msg, "eredeti": line2, "javitott": line2},
+            {"oszlop": "Harmadik_sor", "hiba": overflow_msg, "eredeti": line3, "javitott": line3},
         ])
 
-    # 6. Egységár számítás (normalizált kiszerelés és ár alapján)
-    ft_per_l, ft_per_kg = calculate_unit_price(normalized_pack, normalized_price)
+    # 6. Egységár számítás
+    unit_prices = calculate_unit_price(normalized_pack, normalized_price, unit_map, ft_m2)
 
     processed = {
         "Első_sor": line1,
@@ -496,11 +628,18 @@ def process_row(raw_row: dict, row_index: int, max_chars_per_line: int = 22, max
         "Kiszerelés": normalized_pack,
         "Ár": normalized_price,
         "Akciós_ár": normalized_akcio,
-        "Ft/l": ft_per_l if ft_per_l else "",
-        "Ft/kg": ft_per_kg if ft_per_kg else "",
+        "Ft/l": unit_prices[0] if unit_prices[0] else "",
+        "Ft/kg": unit_prices[1] if unit_prices[1] else "",
         "EAN-13": ean,
         "Cikkszám": cikk,
     }
+
+    if max_lines == 4:
+        processed["Negyedik_sor"] = line4
+    if ft_m2:
+        processed["Ft/m2"] = unit_prices[2] if unit_prices[2] else ""
+    if extract_szin:
+        processed["Szín"] = szin
 
     return {
         "processed": processed,

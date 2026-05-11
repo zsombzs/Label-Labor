@@ -348,6 +348,7 @@ body {
   width: 55px;
   top: 6px;
   right: 4px;
+  filter: grayscale(100%) brightness(0.5) contrast(130%);
 }
 .logo-b {
   width: 40px;
@@ -355,7 +356,6 @@ body {
   right: 7px;
 }
 .line1 {
-  font-weight: bold;
   font-family: Calibri, sans-serif;
   font-size: 11pt;
   position: absolute;
@@ -364,7 +364,6 @@ body {
 }
 .line2 {
   font-family: Calibri, sans-serif;
-  font-weight: bold;
   font-size: 11pt;
   position: absolute;
   top: 30px;
@@ -373,7 +372,6 @@ body {
 
 .line3 {
   font-family: Calibri, sans-serif;
-  font-weight: bold;
   font-size: 11pt;
   position: absolute;
   top: 50px;
@@ -384,13 +382,12 @@ body {
   font-family: Calibri, sans-serif;
   font-size: 10.5pt;
   position: absolute;
-  top: 73.5px;
+  top: 70px;
   left: 5px;
 }
 
 .kiszereles {
   font-family: Calibri, sans-serif;
-  font-weight: bold;
   font-size: 11pt;
   position: absolute;
   top: 55px;

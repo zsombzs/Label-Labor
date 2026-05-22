@@ -348,7 +348,6 @@ body {
   width: 55px;
   top: 6px;
   right: 4px;
-  filter: grayscale(100%) brightness(0.5) contrast(130%);
 }
 .logo-b {
   width: 40px;

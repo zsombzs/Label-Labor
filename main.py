@@ -1,8 +1,11 @@
 import os
 import sys
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import bcrypt
@@ -10,7 +13,6 @@ import uvicorn
 import resend
 from datetime import datetime, timezone, timedelta
 
-# Az agent mappát hozzáadjuk a Python keresési úthoz
 sys.path.append(os.path.join(os.path.dirname(__file__), "agent"))
 from validator_agent import process_and_validate
 
@@ -23,10 +25,15 @@ resend.api_key = os.getenv("RESEND_API_KEY")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+limiter = Limiter(key_func=get_remote_address)
+
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 
 def send_label_notification(username: str, count: int, new_company_total: int):
     try:
-        # Összes cég label count lekérdezése
         response = supabase.table("companies")\
             .select("label_count")\
             .execute()
@@ -54,7 +61,6 @@ def send_label_notification(username: str, count: int, new_company_total: int):
     except Exception as e:
         print(f"Email notification error: {e}")
 
-app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -70,32 +76,68 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class LoginRequest(BaseModel):
     username: str
     password: str
+
+    @field_validator("username", "password")
+    @classmethod
+    def no_empty(cls, v: str) -> str:
+        if not v or len(v.strip()) == 0:
+            raise ValueError("Nem lehet üres")
+        return v
+
 
 class LabelCountUpdate(BaseModel):
     username: str
     count: int
 
+    @field_validator("count")
+    @classmethod
+    def count_positive(cls, v: int) -> int:
+        if v <= 0 or v > 10000:
+            raise ValueError("Érvénytelen darabszám")
+        return v
+
+
 class LabelProcessRequest(BaseModel):
     rows: list[dict]
-    subpage: str = "standard"  # Aloldal azonosító: "ll", "ea", "hudak", "ritzer", "ditall"
+    subpage: str = "standard"
+
+    @field_validator("rows")
+    @classmethod
+    def limit_rows(cls, v: list) -> list:
+        if len(v) > 500:
+            raise ValueError("Egyszerre maximum 500 sor dolgozható fel")
+        return v
+
 
 class CompanySearchRequest(BaseModel):
     company_name: str
 
+    @field_validator("company_name")
+    @classmethod
+    def validate_company_name(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("Cégnév nem lehet üres")
+        if len(v) > 100:
+            raise ValueError("Cégnév maximum 100 karakter lehet")
+        return v
+
+
 @app.post("/api/process-labels")
-def process_labels(req: LabelProcessRequest):
+@limiter.limit("20/minute")
+def process_labels(request: Request, req: LabelProcessRequest):
     try:
         result = process_and_validate(req.rows, subpage=req.subpage)
 
-        # Debug: Log what we're sending back
         if result.get("issues"):
             print(f"\n🔍 DEBUG - Returning {len(result['issues'])} issues to frontend:")
-            for issue in result['issues'][:2]:  # Show first 2 issues
+            for issue in result['issues'][:2]:
                 print(f"  Issue row {issue['row_index']}:")
-                for hiba in issue['hibak'][:2]:  # Show first 2 errors per issue
+                for hiba in issue['hibak'][:2]:
                     print(f"    - {hiba['oszlop']}: javitott='{hiba.get('javitott', 'NINCS')}', eredeti='{hiba.get('eredeti', '')}'")
 
         return result
@@ -110,7 +152,8 @@ def process_labels_options():
 
 
 @app.post("/api/search-company")
-def search_company_endpoint(req: CompanySearchRequest):
+@limiter.limit("10/minute")
+def search_company_endpoint(request: Request, req: CompanySearchRequest):
     try:
         from web_search import search_company_products
         result = search_company_products(req.company_name)
@@ -121,6 +164,7 @@ def search_company_endpoint(req: CompanySearchRequest):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Szerverhiba a keresés során")
 
+
 @app.options("/api/search-company")
 def search_company_options():
     return {"message": "OK"}
@@ -130,20 +174,25 @@ def search_company_options():
 def login_options():
     return {"message": "OK"}
 
+
 @app.options("/api/update-label-count")
 def update_label_count_options():
     return {"message": "OK"}
+
 
 @app.options("/api/total-label-count")
 def total_label_count_options():
     return {"message": "OK"}
 
+
 @app.get("/")
 def read_root():
     return {"message": "API működik"}
 
+
 @app.post("/api/login")
-def login(req: LoginRequest):
+@limiter.limit("10/minute")
+def login(request: Request, req: LoginRequest):
     try:
         response = supabase.table("companies")\
             .select("username, password_hash, redirect_url")\
@@ -159,15 +208,18 @@ def login(req: LoginRequest):
             raise HTTPException(status_code=401, detail="Hibás felhasználónév vagy jelszó")
 
         return {"redirect_url": user["redirect_url"]}
-    
+
+    except HTTPException:
+        raise
     except Exception as e:
-        print(f"Login error: {e}")  
+        print(f"Login error: {e}")
         raise HTTPException(status_code=500, detail="Szerverhiba")
 
+
 @app.post("/api/update-label-count")
-def update_label_count(req: LabelCountUpdate, background_tasks: BackgroundTasks):
+@limiter.limit("30/minute")
+def update_label_count(request: Request, req: LabelCountUpdate, background_tasks: BackgroundTasks):
     try:
-        # Lekérjük a jelenlegi értéket
         response = supabase.table("companies")\
             .select("label_count")\
             .eq("username", req.username)\
@@ -179,54 +231,58 @@ def update_label_count(req: LabelCountUpdate, background_tasks: BackgroundTasks)
         current_count = response.data[0].get("label_count", 0) or 0
         new_count = current_count + req.count
 
-        # Frissítjük az értéket
-        update_response = supabase.table("companies")\
+        supabase.table("companies")\
             .update({"label_count": new_count})\
             .eq("username", req.username)\
             .execute()
 
-        # Email értesítés háttérben
         background_tasks.add_task(send_label_notification, req.username, req.count, new_count)
 
         return {"success": True, "new_count": new_count}
 
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Update label count error: {e}")
         raise HTTPException(status_code=500, detail="Szerverhiba")
 
+
 @app.get("/api/total-label-count")
-def get_total_label_count():
+@limiter.limit("60/minute")
+def get_total_label_count(request: Request):
     try:
         response = supabase.table("companies")\
             .select("label_count")\
             .execute()
-        
+
         if not response.data:
             return {"total_count": 0}
-        
+
         total = sum(company.get("label_count", 0) or 0 for company in response.data)
-        
         return {"total_count": total}
-    
+
     except Exception as e:
         print(f"Get total label count error: {e}")
         raise HTTPException(status_code=500, detail="Szerverhiba")
 
+
 @app.get("/api/company-label-count/{username}")
-def get_company_label_count(username: str):
+@limiter.limit("60/minute")
+def get_company_label_count(request: Request, username: str):
     try:
         response = supabase.table("companies")\
             .select("label_count")\
             .eq("username", username)\
             .execute()
-        
+
         if not response.data or len(response.data) == 0:
             raise HTTPException(status_code=404, detail="Felhasználó nem található")
-        
+
         count = response.data[0].get("label_count", 0) or 0
-        
         return {"count": count}
-    
+
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Get company label count error: {e}")
         raise HTTPException(status_code=500, detail="Szerverhiba")

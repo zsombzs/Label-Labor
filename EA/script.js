@@ -1,4 +1,5 @@
 const API_URL = "https://labelgenerator-production.up.railway.app";
+const INTERNAL_API_KEY = "REMOVED_SECRET";
 
 const COMPANY_USERNAME = 'EA_HU';
 let validatedData = null; // Validált adatok tárolása (logo-váltásnál ne fussanak újra)
@@ -106,7 +107,7 @@ async function validateWithAgent(data, onComplete) {
     // EA: 20 karakter/sor (LL: 22 karakter/sor)
     const response = await fetch(`${API_URL}/api/process-labels`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-API-Key": INTERNAL_API_KEY },
       body: JSON.stringify({ rows: data, subpage: "ea" })
     });
 

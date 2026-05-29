@@ -1,7 +1,8 @@
 import os
 import sys
-from fastapi import FastAPI, HTTPException, BackgroundTasks, Request
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Request, Depends, Security
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, field_validator
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -30,6 +31,13 @@ limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+_api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+_INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY")
+
+async def require_api_key(api_key: str = Security(_api_key_header)):
+    if not api_key or api_key != _INTERNAL_API_KEY:
+        raise HTTPException(status_code=403, detail="Érvénytelen API kulcs")
 
 
 def send_label_notification(username: str, count: int, new_company_total: int):
@@ -129,7 +137,7 @@ class CompanySearchRequest(BaseModel):
 
 @app.post("/api/process-labels")
 @limiter.limit("20/minute")
-def process_labels(request: Request, req: LabelProcessRequest):
+def process_labels(request: Request, req: LabelProcessRequest, _=Depends(require_api_key)):
     try:
         result = process_and_validate(req.rows, subpage=req.subpage)
 
@@ -153,7 +161,7 @@ def process_labels_options():
 
 @app.post("/api/search-company")
 @limiter.limit("10/minute")
-def search_company_endpoint(request: Request, req: CompanySearchRequest):
+def search_company_endpoint(request: Request, req: CompanySearchRequest, _=Depends(require_api_key)):
     try:
         from web_search import search_company_products
         result = search_company_products(req.company_name)

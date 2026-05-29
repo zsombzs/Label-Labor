@@ -1,5 +1,6 @@
 const API_URL = "https://labelgenerator-production.up.railway.app";
 /* const API_URL = "http://localhost:8000"; */
+const INTERNAL_API_KEY = "REMOVED_SECRET";
 
 const COMPANY_USERNAME = 'DITALL';
 let validatedData = null; // Validált adatok tárolása (logo-váltásnál ne fussanak újra)
@@ -126,7 +127,7 @@ async function validateWithAgent(data, onComplete) {
     // Elküldjük a nyers adatokat → backend elvégzi a makró munkáját
     const response = await fetch(`${API_URL}/api/process-labels`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-API-Key": INTERNAL_API_KEY },
       body: JSON.stringify({ rows: data, subpage: "ditall" })
     });
 

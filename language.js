@@ -108,8 +108,8 @@ const translations = {
     'howto2-desc': 'Drop in your existing spreadsheet, or fill in the template.',
     'howto3-title': 'Print',
     'howto3-desc': 'Click "Generate", then print directly from your browser.',
-    'pricing-title': 'One monthly fee — everything included',
-    'pricing-desc': 'Unlimited printing, updates and support.',
+    'pricing-title': 'Monthly fee',
+    'pricing-desc': 'Unlimited printing, updates and online support.',
     'pricing-amount': '9 900 HUF <small>/ month</small>',
     'pricing-cta': 'Request a Quote',
 
@@ -229,8 +229,8 @@ const translations = {
     'howto2-desc': 'Húzza be a meglévő Excel-táblázatát, vagy töltse ki a sablont.',
     'howto3-title': 'Nyomtatás',
     'howto3-desc': 'Kattintson a „Generál" gombra, majd nyomtassa ki közvetlenül a böngészőből.',
-    'pricing-title': 'Egy havi díj – minden benne van',
-    'pricing-desc': 'Korlátlan nyomtatás, frissítések és támogatás.',
+    'pricing-title': 'Havi díj',
+    'pricing-desc': 'Korlátlan nyomtatás, frissítések és online támogatás.',
     'pricing-amount': '9 900 Ft <small>/ hó</small>',
     'pricing-cta': 'Ajánlatot kérek',
 

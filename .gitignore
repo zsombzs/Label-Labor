@@ -9,3 +9,12 @@ __pycache__/
 # IDE
 .vscode/
 .idea/
+
+# Node
+node_modules/
+package-lock.json
+
+# Claude
+CLAUDE.md
+
+design_preview.html

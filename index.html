@@ -6,89 +6,343 @@
   <title>Label Labor</title>
   <link rel="icon" type="image/png" href="assets/main_icon.png">
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-  <div class="header-container">
+
+  <!-- ══════════ HEADER ══════════ -->
+  <header class="header-container">
     <div class="header-left">
-      <h1>Label Labor 1.2.1</h1>
+      <a href="#bemutatkozas" class="logo">Label<span>Labor</span></a>
     </div>
     <div class="header-center">
-      <div class="header-stats-container">
-        <span class="header-stats-text" data-lang="all-labels">Összes generált címke: <span class="stats-number" id="totalLabelCount">0</span></span>
-      </div>
+      <nav class="header-nav">
+        <a href="#bemutatkozas" class="nav-link active" data-lang="about">Bemutatkozás</a>
+        <a href="#miert" class="nav-link" data-lang="what-is">Mi az a Label Labor?</a>
+        <a href="#pelda-cimkek" class="nav-link" data-lang="demo-labels">Példa polccimkék</a>
+        <a href="#arajanlat" class="nav-link" data-lang="contact-request">Árajánlat</a>
+      </nav>
     </div>
     <div class="header-right">
-      <label class="theme-switch">
-        <input type="checkbox" class="theme-switch__checkbox" id="theme-toggle">
-        <div class="theme-switch__container">
-          <div class="theme-switch__clouds"></div>
-          <div class="theme-switch__stars-container">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M135.831 3.00688C135.055 3.85027 134.111 4.29946 133 4.35447C134.111 4.40947 135.055 4.85867 135.831 5.71123C136.607 6.55462 136.996 7.56303 136.996 8.72727C136.996 7.95722 137.172 7.25134 137.525 6.59129C137.886 5.93124 138.372 5.39954 138.98 5.00535C139.598 4.60199 140.268 4.39114 141 4.35447C139.88 4.2903 138.936 3.85027 138.16 3.00688C137.384 2.16348 136.996 1.16425 136.996 0C136.996 1.16425 136.607 2.16348 135.831 3.00688ZM31 23.3545C32.1114 23.2995 33.0551 22.8503 33.8313 22.0069C34.6075 21.1635 34.9956 20.1642 34.9956 19C34.9956 20.1642 35.3837 21.1635 36.1599 22.0069C36.9361 22.8503 37.8798 23.2903 39 23.3545C38.2679 23.3911 37.5976 23.602 36.9802 24.0053C36.3716 24.3995 35.8864 24.9312 35.5248 25.5913C35.172 26.2513 34.9956 26.9572 34.9956 27.7273C34.9956 26.563 34.6075 25.5546 33.8313 24.7112C33.0551 23.8587 32.1114 23.4095 31 23.3545ZM0 36.3545C1.11136 36.2995 2.05513 35.8503 2.83131 35.0069C3.6075 34.1635 3.99559 33.1642 3.99559 32C3.99559 33.1642 4.38368 34.1635 5.15987 35.0069C5.93605 35.8503 6.87982 36.2903 8 36.3545C7.26792 36.3911 6.59757 36.602 5.98015 37.0053C5.37155 37.3995 4.88644 37.9312 4.52481 38.5913C4.172 39.2513 3.99559 39.9572 3.99559 40.7273C3.99559 39.563 3.6075 38.5546 2.83131 37.7112C2.05513 36.8587 1.11136 36.4095 0 36.3545ZM56.8313 24.0069C56.0551 24.8503 55.1114 25.2995 54 25.3545C55.1114 25.4095 56.0551 25.8587 56.8313 26.7112C57.6075 27.5546 57.9956 28.563 57.9956 29.7273C57.9956 28.9572 58.172 28.2513 58.5248 27.5913C58.8864 26.9312 59.3716 26.3995 59.9802 26.0053C60.5976 25.602 61.2679 25.3911 62 25.3545C60.8798 25.2903 59.9361 24.8503 59.1599 24.0069C58.3837 23.1635 57.9956 22.1642 57.9956 21C57.9956 22.1642 57.6075 23.1635 56.8313 24.0069ZM81 25.3545C82.1114 25.2995 83.0551 24.8503 83.8313 24.0069C84.6075 23.1635 84.9956 22.1642 84.9956 21C84.9956 22.1642 85.3837 23.1635 86.1599 24.0069C86.9361 24.8503 87.8798 25.2903 89 25.3545C88.2679 25.3911 87.5976 25.602 86.9802 26.0053C86.3716 26.3995 85.8864 26.9312 85.5248 27.5913C85.172 28.2513 84.9956 28.9572 84.9956 29.7273C84.9956 28.563 84.6075 27.5546 83.8313 26.7112C83.0551 25.8587 82.1114 25.4095 81 25.3545ZM136 36.3545C137.111 36.2995 138.055 35.8503 138.831 35.0069C139.607 34.1635 139.996 33.1642 139.996 32C139.996 33.1642 140.384 34.1635 141.16 35.0069C141.936 35.8503 142.88 36.2903 144 36.3545C143.268 36.3911 142.598 36.602 141.98 37.0053C141.372 37.3995 140.886 37.9312 140.525 38.5913C140.172 39.2513 139.996 39.9572 139.996 40.7273C139.996 39.563 139.607 38.5546 138.831 37.7112C138.055 36.8587 137.111 36.4095 136 36.3545ZM101.831 49.0069C101.055 49.8503 100.111 50.2995 99 50.3545C100.111 50.4095 101.055 50.8587 101.831 51.7112C102.607 52.5546 102.996 53.563 102.996 54.7273C102.996 53.9572 103.172 53.2513 103.525 52.5913C103.886 51.9312 104.372 51.3995 104.98 51.0053C105.598 50.602 106.268 50.3911 107 50.3545C105.88 50.2903 104.936 49.8503 104.16 49.0069C103.384 48.1635 102.996 47.1642 102.996 46C102.996 47.1642 102.607 48.1635 101.831 49.0069Z" fill="currentColor"></path>
-            </svg>
-          </div>
-          <div class="theme-switch__circle-container">
-            <div class="theme-switch__sun-moon-container">
-              <div class="theme-switch__moon">
-                <div class="theme-switch__spot"></div>
-                <div class="theme-switch__spot"></div>
-                <div class="theme-switch__spot"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </label>
       <div class="language-switcher">
         <button class="lang-btn" data-lang-code="en">EN</button>
         <button class="lang-btn active" data-lang-code="hu">HU</button>
       </div>
+      <button class="btn-login" id="openLoginBtn" data-lang="nav-login">Bejelentkezés</button>
     </div>
-  </div>
+  </header>
 
-  <nav class="navigation-menu">
-    <ul class="nav-list">
-      <li><a href="#about" class="nav-link" data-lang="about">About us</a></li>
-      <li><a href="#info" class="nav-link" data-lang="what-is">What is Label Labor?</a></li>
-      <li><a href="#labels" class="nav-link" data-lang="demo-labels">Demo Labels</a></li>
-      <li><a href="#contact" class="nav-link" data-lang="contact-request">Request a quote</a></li>
-      <li><a href="#login" class="nav-link" data-lang="nav-login">Login</a></li>
-    </ul>
-  </nav>
-
-  <!-- Mobile/Tablet Navigation -->
+  <!-- ══════════ MOBILE NAV ══════════ -->
   <nav class="mobile-navigation">
-    <span class="current-page-title" data-lang="about">About us</span>
-    <button class="hamburger-menu" aria-label="Menu">
+    <span class="current-page-title" data-lang="about">Bemutatkozás</span>
+    <button class="hamburger-menu" aria-label="Menü">
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>
     </button>
   </nav>
 
-  <!-- Mobile Menu Overlay -->
+  <!-- ══════════ MOBILE MENU OVERLAY ══════════ -->
   <div class="mobile-menu-overlay">
     <div class="mobile-menu-content">
-      <button class="mobile-menu-close" aria-label="Close menu">×</button>
+      <button class="mobile-menu-close" aria-label="Bezárás">×</button>
       <ul class="mobile-menu-list">
-        <li><a href="#about" class="mobile-menu-link" data-lang="about">About us</a></li>
-        <li><a href="#info" class="mobile-menu-link" data-lang="what-is">What is Label Labor?</a></li>
-        <li><a href="#labels" class="mobile-menu-link" data-lang="demo-labels">Demo Labels</a></li>
-        <li><a href="#contact" class="mobile-menu-link" data-lang="contact-request">Request a quote</a></li>
-        <li><a href="#login" class="mobile-menu-link" data-lang="nav-login">Login</a></li>
+        <li><a href="#bemutatkozas" class="mobile-menu-link" data-lang="about">Bemutatkozás</a></li>
+        <li><a href="#miert" class="mobile-menu-link" data-lang="what-is">Mi az a Label Labor?</a></li>
+        <li><a href="#pelda-cimkek" class="mobile-menu-link" data-lang="demo-labels">Példa polccimkék</a></li>
+        <li><a href="#arajanlat" class="mobile-menu-link" data-lang="contact-request">Árajánlat</a></li>
+        <li><a href="#" class="mobile-menu-link" id="mobileLoginBtn" data-lang="nav-login">Bejelentkezés</a></li>
       </ul>
     </div>
   </div>
 
-  <div id="page-content">
-    <!-- A tartalmat JavaScript tölteti be -->
-  </div>
+  <!-- ══════════════════════════════════
+       FŐOLDAL — egyetlen görgethető lap
+  ══════════════════════════════════ -->
+  <main id="main-content">
 
-  <div class="footer-container">
-    <p class="contacts" data-lang="contact-footer">Contact: info@labellabor.com</p>
+    <!-- ═══ BEMUTATKOZÁS ═══ -->
+    <section id="bemutatkozas" class="page-section">
+      <div class="page-wrapper about-container">
+
+        <!-- Hero -->
+        <div class="hero-section">
+          <div class="hero-text">
+            <h1 class="hero-title" data-lang="hero-title">Professzionális <span>polccimkék</span><br>percek alatt</h1>
+            <p class="hero-desc" data-lang="about-intro">A legtöbb boltban problémát jelent a polccimkék gyors, költséghatékony és egységes előállítása. A Label Labor erre kínál egyszerű megoldást.</p>
+            <div class="hero-actions">
+              <button class="btn-cta-primary" id="heroLoginBtn" data-lang="nav-login">Bejelentkezés</button>
+              <a href="#pelda-cimkek" class="btn-cta-secondary" data-lang="cta-examples-btn">Példa megtekintése</a>
+            </div>
+          </div>
+          <div class="hero-badge-stack">
+            <div class="hero-badge hero-badge--blue">
+              <span class="hero-badge-num" id="totalLabelCount">0</span>
+              <span class="hero-badge-label" data-lang="hero-total-label">összes generált polccímke</span>
+            </div>
+            <div class="hero-badge">
+              <span class="hero-badge-num">100+</span>
+              <span class="hero-badge-label" data-lang="hero-badge-label">generált polccimke percek alatt</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Előny kártyák -->
+        <div class="about-benefits-section">
+          <p class="section-eyebrow" data-lang="why-label">Miért Label Labor?</p>
+          <p class="section-lead" data-lang="kifejezetten">Kifejezetten festékbolt-tulajdonosoknak és kiskereskedelmi dolgozóknak terveztük.</p>
+          <div class="benefit-cards-grid">
+            <div class="benefit-card">
+              <div class="benefit-card-icon"><i data-lucide="zap"></i></div>
+              <p data-lang="about-benefit-1">Több 100 polccimke percek alatt</p>
+            </div>
+            <div class="benefit-card">
+              <div class="benefit-card-icon"><i data-lucide="piggy-bank"></i></div>
+              <p data-lang="about-benefit-2">Időt és pénzt tud spórolni a polccimkék előállításán</p>
+            </div>
+            <div class="benefit-card">
+              <div class="benefit-card-icon"><i data-lucide="file-text"></i></div>
+              <p data-lang="about-benefit-3">Hagyományos A4-es lapra is nyomtatható polccimkék, nem kell drága öntapadós cimkét vásárolni</p>
+            </div>
+            <div class="benefit-card">
+              <div class="benefit-card-icon"><i data-lucide="printer"></i></div>
+              <p data-lang="about-benefit-4">Egyszerű számlanyomtatásra használt nyomtatóval is lehet polccimkét nyomtatni, nem szükséges speciális cimke-nyomtató</p>
+            </div>
+            <div class="benefit-card">
+              <div class="benefit-card-icon"><i data-lucide="sliders-horizontal"></i></div>
+              <p data-lang="about-benefit-5">Egyedi, személyre szabott polccimke-formátum</p>
+            </div>
+            <div class="benefit-card">
+              <div class="benefit-card-icon"><i data-lucide="headphones"></i></div>
+              <p data-lang="about-benefit-6">Online támogatás a bevezetés és használat során</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Árazás banner -->
+        <div class="pricing-banner">
+          <div class="pricing-banner-text">
+            <h3 data-lang="pricing-title">Egy fix havi díj – minden benne van</h3>
+            <p data-lang="pricing-desc">Korlátlan nyomtatás, frissítések és támogatás.</p>
+          </div>
+          <div class="pricing-banner-price" data-lang="pricing-amount">9 900 Ft <small>/ hó</small></div>
+          <button class="btn-cta-white" onclick="document.getElementById('arajanlat').scrollIntoView({behavior:'smooth'})" data-lang="pricing-cta">Ajánlatot kérek</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══ MI AZ A LABEL LABOR — videó + útmutató ═══ -->
+    <section id="miert" class="page-section section-alt">
+      <div class="page-wrapper info-page-wrapper">
+        <div class="content-grid">
+
+          <!-- Bal: YouTube videó -->
+          <div class="video-section">
+            <h2 data-lang="demo-video">Bemutató videó</h2>
+            <div class="videos-container">
+              <div class="video-wrapper">
+                <iframe
+                  src="https://www.youtube.com/embed/6fC6GIi21DQ"
+                  title="Label Labor bemutató"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen>
+                </iframe>
+              </div>
+            </div>
+          </div>
+
+          <!-- Jobb: Görgethető használati útmutató -->
+          <div class="steps-section">
+            <h2 data-lang="user-guide">Használati útmutató</h2>
+            <div class="steps-list steps-scrollable">
+
+              <div class="step-item">
+                <div class="step-number">1/8</div>
+                <div class="step-content">
+                  <h3 data-lang="step1-title">Bejelentkezés</h3>
+                  <p data-lang="step1-desc"></p>
+                </div>
+              </div>
+
+              <div class="step-item">
+                <div class="step-number">2/8</div>
+                <div class="step-content">
+                  <h3 data-lang="step2-title">Sablon excel letöltése</h3>
+                  <p data-lang="step2-desc"></p>
+                </div>
+              </div>
+
+              <div class="step-item">
+                <div class="step-number">3/8</div>
+                <div class="step-content">
+                  <h3 data-lang="step3-title">A sablon excel kitöltése</h3>
+                  <p data-lang="step3-desc"></p>
+                </div>
+              </div>
+
+              <div class="step-item">
+                <div class="step-number">4/8</div>
+                <div class="step-content">
+                  <h3 data-lang="step4-title">Excel fájl feltöltése</h3>
+                  <p data-lang="step4-desc"></p>
+                </div>
+              </div>
+
+              <div class="step-item">
+                <div class="step-number">5/8</div>
+                <div class="step-content">
+                  <h3 data-lang="step5-title">Adatok ellenőrzése, javítása</h3>
+                  <p data-lang="step5-desc"></p>
+                </div>
+              </div>
+
+              <div class="step-item">
+                <div class="step-number">6/8</div>
+                <div class="step-content">
+                  <h3 data-lang="step6-title">Polccimkék ellenőrzése és polccimke-típus választása</h3>
+                  <p data-lang="step6-desc"></p>
+                </div>
+              </div>
+
+              <div class="step-item">
+                <div class="step-number">7/8</div>
+                <div class="step-content">
+                  <h3 data-lang="step7-title">Polccimke-adatok módosítása</h3>
+                  <p data-lang="step7-desc"></p>
+                </div>
+              </div>
+
+              <div class="step-item">
+                <div class="step-number">8/8</div>
+                <div class="step-content">
+                  <h3 data-lang="step8-title">Polccimkék letöltése és nyomtatása</h3>
+                  <p data-lang="step8-desc"></p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PÉLDA POLCCIMKÉK ═══ -->
+    <section id="pelda-cimkek" class="page-section">
+      <div class="page-wrapper">
+
+        <p class="section-eyebrow" data-lang="examples-eyebrow">Példa kimenet <span class="new-text-badge">ÚJ</span></p>
+        <h2 class="section-heading" data-lang="examples-heading">Így néz ki a végeredmény</h2>
+        <p class="section-lead" data-lang="examples-lead">Egyedi polccímkék, amelyek A4-es papírra nyomtatva kerülnek a polcsínbe.</p>
+
+        <div class="labels-preview-grid">
+          <div class="label-preview-card">
+            <img src="assets/labels.jpg" alt="Generált polccímkék – teljes nyomtatási oldal" loading="lazy">
+            <div class="label-preview-caption" data-lang="examples-caption-1">Teljes nyomtatási oldal – így néz ki a kész PDF</div>
+          </div>
+          <div class="label-preview-card">
+            <img src="assets/label.png" alt="Egy darab polccímke közelről" loading="lazy">
+            <div class="label-preview-caption" data-lang="examples-caption-2">Egyetlen polccímke közelről</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══ ÁRAJÁNLAT — kapcsolati űrlap ═══ -->
+    <section id="arajanlat" class="page-section section-alt">
+      <div class="page-wrapper">
+        <div class="contact-container">
+          <h2 class="page-title" data-lang="contact-form-title">Kérjen személyre szabott árajánlatot!</h2>
+          <div class="contact-grid">
+            <div class="contact-left">
+              <form id="contactForm" class="contact-form">
+                <div class="form-group">
+                  <label for="contactName"></label>
+                  <input type="text" id="contactName" name="name" required placeholder="Teljes név" data-lang="contact-name">
+                </div>
+                <div class="form-group">
+                  <label for="contactEmail"></label>
+                  <input type="email" id="contactEmail" name="email" required placeholder="Email cím" data-lang="contact-email">
+                </div>
+                <div class="form-group">
+                  <label for="contactCompany"></label>
+                  <input type="text" id="contactCompany" name="company" required placeholder="Cég neve" data-lang="contact-company">
+                </div>
+                <div class="form-group">
+                  <label for="contactMessage"></label>
+                  <textarea id="contactMessage" name="message" required placeholder="Üzenet" rows="6" data-lang="contact-message"></textarea>
+                </div>
+                <button type="submit" class="contact-submit-btn" data-lang="contact-submit">Küldés</button>
+              </form>
+            </div>
+            <div class="contact-right">
+              <div class="contact-info-section">
+                <h3 class="contact-subtitle" data-lang="contact-subtitle-1">Árképzés és információk</h3>
+                <p class="contact-text" data-lang="contact-text-1">A cégének egyedileg elkészített felület és polccimke-formátum, betanítás.</p>
+                <p class="contact-text" data-lang="contact-text-2">Ezt követően havi díj ellenében biztosítjuk a karbantartást, hibajavítást és kisebb módosítási kérések teljesítését.</p>
+              </div>
+              <div class="contact-info-section">
+                <h3 class="contact-subtitle" data-lang="contact-subtitle-2">Nekünk hasznos információk</h3>
+                <p class="contact-text" data-lang="contact-text-3">Kérjük adja meg az alábbi információkat az "Üzenet" mezőbe:</p>
+                <ul class="contact-benefits-list">
+                  <li data-lang="contact-benefit-1">Hány féle méretű polccimkét szeretne generálni az oldalon</li>
+                  <li data-lang="contact-benefit-2">Egy adott polccimke-méreten belül hány féle elrendezésű polccimkét szeretne használni</li>
+                  <li data-lang="contact-benefit-3">Felhasználni kívánt logók mennyisége a különböző polccimkéken</li>
+                  <li data-lang="contact-benefit-4">Boltjainak száma, ahol használná a Label Labort</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="footer-static">
+    <p class="contacts" data-lang="contact-footer">Kapcsolat: info@labellabor.com</p>
+  </footer>
+
+  <!-- ══════════ LOGIN MODAL ══════════ -->
+  <div class="login-modal-overlay" id="loginModal">
+    <div class="login-modal-box">
+      <button class="login-modal-close" id="loginModalClose" aria-label="Bezárás">×</button>
+      <form id="loginForm">
+        <div class="login-container">
+          <div class="label-content">
+            <img src="assets/main_icon.png" alt="Logo" class="label-logo">
+            <div class="inputs">
+              <div class="input-line">
+                <input type="text" id="username" placeholder="Felhasználónév" required data-lang="username">
+              </div>
+              <div class="input-line">
+                <input type="password" id="password" placeholder="Jelszó" required data-lang="password">
+              </div>
+            </div>
+            <div class="login-mobile-msg">
+              <p data-lang="desktop-warning">A Label Labor jelenleg csak asztali számítógépen/laptopon érhető el.<br>Ha számítógépen használja, növelje az ablak méretét!</p>
+            </div>
+            <div class="label-bottom-row">
+              <div class="barcode-container">
+                <img src="assets/barcode.png" alt="Barcode">
+              </div>
+              <div class="price-box">
+                <span class="amount">9.900,- Ft</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="login-button" data-lang="login">Bejelentkezés</button>
+      </form>
+    </div>
   </div>
 
   <script src="language.js"></script>
   <script src="main.js"></script>
+  <script>lucide.createIcons();</script>
 </body>
 </html>

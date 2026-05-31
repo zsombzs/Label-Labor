@@ -96,10 +96,13 @@ def enhance_errors_with_ai_suggestions(issues: list[dict], processed_rows: list[
     for i, err in enumerate(errors_to_fix[:3]):
         print(f"  {i+1}. {err['oszlop']}: '{err['eredeti']}' - {err['hiba_leiras']}")
 
+    # Replace angle brackets so Excel cell values cannot break the <hibak> XML delimiter.
+    errors_json = json.dumps(errors_to_fix, ensure_ascii=False, indent=2)
+    errors_json = errors_json.replace("<", "\\u003c").replace(">", "\\u003e")
     user_message = (
         f"Hibák száma: {len(errors_to_fix)}\n\n"
         f"<hibak>\n"
-        f"{json.dumps(errors_to_fix, ensure_ascii=False, indent=2)}\n"
+        f"{errors_json}\n"
         f"</hibak>"
     )
 

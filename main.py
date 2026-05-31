@@ -77,7 +77,10 @@ app.add_middleware(
         "https://www.labellabor.com",
         "https://cimkegenerator.netlify.app",
         "http://localhost:3000",
-        "http://127.0.0.1:5500"
+        "http://localhost:5500",
+        "http://localhost:5501",
+        "http://127.0.0.1:5500",
+        "http://127.0.0.1:5501"
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -226,7 +229,7 @@ def login(request: Request, req: LoginRequest):
 
 @app.post("/api/update-label-count")
 @limiter.limit("30/minute")
-def update_label_count(request: Request, req: LabelCountUpdate, background_tasks: BackgroundTasks):
+def update_label_count(request: Request, req: LabelCountUpdate, background_tasks: BackgroundTasks, _=Depends(require_api_key)):
     try:
         response = supabase.table("companies")\
             .select("label_count")\

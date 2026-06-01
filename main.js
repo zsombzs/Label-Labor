@@ -247,4 +247,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Scroll spy
   initScrollSpy();
+
+  // Zoom into cursor on labels preview image (desktop only)
+  if (window.matchMedia('(hover: hover)').matches) {
+    const previewImg = document.querySelector('.label-preview-card img[src*="labels.jpg"]');
+    if (previewImg) {
+      previewImg.addEventListener('mousemove', e => {
+        const { left, top, width, height } = previewImg.getBoundingClientRect();
+        const x = ((e.clientX - left) / width) * 100;
+        const y = ((e.clientY - top) / height) * 100;
+        previewImg.style.transformOrigin = `${x}% ${y}%`;
+      });
+      previewImg.addEventListener('mouseleave', () => {
+        previewImg.style.transformOrigin = '50% 50%';
+      });
+    }
+  }
 });

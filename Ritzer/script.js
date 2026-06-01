@@ -390,7 +390,7 @@ async function updateLabelCount(count) {
   try {
     const response = await fetch(`${API_URL}/api/update-label-count`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-API-Key": INTERNAL_API_KEY },
       body: JSON.stringify({ username, count }),
     });
     if (response.ok) {

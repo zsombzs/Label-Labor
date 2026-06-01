@@ -1,5 +1,4 @@
-const API_URL = "http://localhost:8000";
-/* const API_URL = "https://labelgenerator-production.up.railway.app"; */
+const API_URL = "https://labelgenerator-production.up.railway.app";
 const INTERNAL_API_KEY = "REMOVED_SECRET";
 
 const COMPANY_USERNAME = 'L_L';
@@ -532,6 +531,7 @@ async function updateLabelCount(count) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-API-Key": INTERNAL_API_KEY,
       },
       body: JSON.stringify({ username, count }),
     });

@@ -526,6 +526,7 @@ async function updateLabelCount(count) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-API-Key": INTERNAL_API_KEY,
       },
       body: JSON.stringify({ username, count }),
     });

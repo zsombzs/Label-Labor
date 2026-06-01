@@ -1668,10 +1668,52 @@ a.btn-cta-secondary {
 
 .label-preview-card:hover { box-shadow: var(--shadow-md); }
 
+.label-img-container {
+  overflow: hidden;
+}
+
+.label-img-container img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (hover: hover) {
+  .label-img-container img {
+    transition: transform .55s cubic-bezier(.25, .46, .45, .94);
+  }
+  .label-img-container:hover img {
+    transform: scale(1.6);
+    transition: transform .25s ease-in;
+  }
+}
+
 .label-preview-card img {
   width: 100%;
   height: auto;
   display: block;
+}
+
+.label-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .65rem 1rem;
+  font-size: .85rem;
+  color: var(--blue);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.label-preview-header:hover { background: var(--blue-light, #eff6ff); }
+
+.label-preview-header svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
 }
 
 .label-preview-caption {

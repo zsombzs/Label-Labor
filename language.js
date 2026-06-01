@@ -118,6 +118,7 @@ const translations = {
     'examples-lead': 'Custom shelf labels, printed on A4 paper, cut and placed in the shelf rail.',
     'examples-caption-1': 'Full print page — this is how the final PDF looks',
     'examples-caption-2': 'A single shelf label up close',
+    'examples-download': 'Download PDF',
 
     },
     hu: {
@@ -239,6 +240,7 @@ const translations = {
     'examples-lead': 'Egyedi polccímkék, amelyek A4-es papírra nyomtatás után kivágva kerülnek a polcsínbe.',
     'examples-caption-1': 'Teljes nyomtatási oldal – így néz ki a kész PDF',
     'examples-caption-2': 'Egyetlen polccímke közelről',
+    'examples-download': 'PDF letöltése',
 
     }
   };

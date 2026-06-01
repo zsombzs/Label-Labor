@@ -49,8 +49,8 @@ const translations = {
       'about-benefits-title': 'Benefits of using Label Labor:',
       'about-benefit-1': 'Hundreds of shelf labels in just minutes',
       'about-benefit-2': 'Saving time and money on shelf label creation',
-      'about-benefit-3': 'Shelf labels that can be printed on regular A4 paper — no need to buy expensive adhesive labels',
-      'about-benefit-4': 'Printing shelf labels even with a regular invoice printer — no special label printer required',
+      'about-benefit-3': 'Shelf labels that can be printed on regular A4 paper — no need to buy expensive roll labels',
+      'about-benefit-4': 'Printing shelf labels even with a regular printer for invoices — no special roll label printer required',
       'about-benefit-5': 'Personalized shelf label formats',
       'about-benefit-6': 'Online support for introduction and usage',
       
@@ -80,7 +80,7 @@ const translations = {
     // About page — new layout
     'hero-title': 'Professional <span>shelf labels</span><br>in minutes',
     'hero-total-label': 'shelf labels generated',
-    'hero-badge-label': 'shelf labels generated in minutes',
+    'hero-badge-label': 'shelf labels in minutes',
     'hero-stat-pre': 'Already ',
     'hero-stat-suf': ' shelf labels generated',
     'cta-quote-btn': 'Request a Quote',
@@ -110,12 +110,12 @@ const translations = {
     'howto3-desc': 'Click "Generate", then print directly from your browser.',
     'pricing-title': 'Monthly fee',
     'pricing-desc': 'Unlimited printing, updates and online support.',
-    'pricing-amount': '9 900 HUF <small>/ month</small>',
+    'pricing-amount': '<small>from</small> 9 900 HUF <small>/ month</small>',
     'pricing-cta': 'Request a Quote',
 
     'examples-eyebrow': 'Sample output <span class="new-text-badge">NEW</span>',
     'examples-heading': 'Here\'s what the result looks like',
-    'examples-lead': 'Custom shelf labels, printed on A4 paper and placed in the shelf rail.',
+    'examples-lead': 'Custom shelf labels, printed on A4 paper, cut and placed in the shelf rail.',
     'examples-caption-1': 'Full print page — this is how the final PDF looks',
     'examples-caption-2': 'A single shelf label up close',
 
@@ -170,8 +170,8 @@ const translations = {
       'about-benefits-title': 'A Label Labor használatának előnyei:',
       'about-benefit-1': 'Több 100 polccímke percek alatt',
       'about-benefit-2': 'Időt és pénzt tud spórolni a polccímkék előállításán',
-      'about-benefit-3': 'Hagyományos A4-es lapra is nyomtatható polccímkék, nem kell drága öntapadós polccímkét vásárolni',
-      'about-benefit-4': 'Egyszerű számlanyomtatásra használt nyomtatóval is lehet polccímkét nyomtatni, nem szükséges speciális címke-nyomtató',
+      'about-benefit-3': 'Hagyományos A4-es lapra is nyomtatható polccímkék, nem kell a drága öntapadós, tekercses polccímkét vásárolni',
+      'about-benefit-4': 'Egyszerű számlanyomtatásra használt nyomtatóval is lehet polccímkét nyomtatni, nem szükséges a speciális, tekercses címkenyomtató',
       'about-benefit-5': 'Egyedi, személyre szabott polccímke-formátum',
       'about-benefit-6': 'Online támogatás a bevezetés és használat során',
       
@@ -201,7 +201,7 @@ const translations = {
     // About page — new layout
     'hero-title': 'Professzionális <span>polccímkék</span><br>percek alatt',
     'hero-total-label': 'összes generált polccímke',
-    'hero-badge-label': 'generált polccimke percek alatt',
+    'hero-badge-label': 'polccimke percek alatt',
     'hero-stat-pre': 'Eddig ',
     'hero-stat-suf': ' polccimkét generáltak',
     'cta-quote-btn': 'Ajánlatot kérek',
@@ -231,12 +231,12 @@ const translations = {
     'howto3-desc': 'Kattintson a „Generál" gombra, majd nyomtassa ki közvetlenül a böngészőből.',
     'pricing-title': 'Havi díj',
     'pricing-desc': 'Korlátlan nyomtatás, frissítések és online támogatás.',
-    'pricing-amount': '9 900 Ft <small>/ hó</small>',
+    'pricing-amount': '9 900 Ft <small>/ hónap-tól</small>',
     'pricing-cta': 'Ajánlatot kérek',
 
     'examples-eyebrow': 'Példa kimenet <span class="new-text-badge">ÚJ</span>',
     'examples-heading': 'Így néz ki a végeredmény',
-    'examples-lead': 'Egyedi polccímkék, amelyek A4-es papírra nyomtatva kerülnek a polcsínbe.',
+    'examples-lead': 'Egyedi polccímkék, amelyek A4-es papírra nyomtatás után kivágva kerülnek a polcsínbe.',
     'examples-caption-1': 'Teljes nyomtatási oldal – így néz ki a kész PDF',
     'examples-caption-2': 'Egyetlen polccímke közelről',
 

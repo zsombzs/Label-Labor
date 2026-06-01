@@ -1431,6 +1431,7 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
   .lang-btn            { font-size: .78rem; padding: 5px 10px; }
   .mobile-navigation   { padding: .6rem 1rem; top: 56px; height: 48px; }
   .current-page-title  { font-size: .9rem; }
+  .logo-icon           { height: 1.75rem; }
 
   #page-content {
     margin-top: 104px;
@@ -1573,6 +1574,14 @@ html { scroll-padding-top: 82px; }
   white-space: nowrap;
   text-decoration: none;
   transition: opacity .2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-icon {
+  height: 2.25rem;
+  width: auto;
+  display: block;
 }
 .logo span { color: var(--text); }
 .logo:hover { opacity: .75; }

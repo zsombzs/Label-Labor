@@ -41,6 +41,7 @@ const translations = {
       'step8-desc': 'Click the "Download PDF" button. If you want to generate new shelf labels, refresh the page before starting the process. You can print the downloaded labels.pdf document with any standard printer — just like any invoice or regular document.',
 
       'contact-footer': 'Contact: info@labellabor.com',
+      'footer-analytics': 'Anonymous visit tracking: Cloudflare Analytics',
       'contact': 'Contact us',
       
       // About page
@@ -163,6 +164,7 @@ const translations = {
       'step8-desc': 'Kattintson a "PDF letöltése" gombra. Ha új polccímkéket szeretne generálni, frissítsen rá az oldalra a folyamat megkezdése előtt. A letöltött cimkek.pdf dokumentumot bármilyen hagyományos nyomtatóval kinyomtathatja – ugyanúgy, mint egy számlát vagy más dokumentumot.',
 
       'contact-footer': 'Kontakt: info@labellabor.com',
+      'footer-analytics': 'Anonim látogatottsági mérés: Cloudflare Analytics',
       'contact': 'Kapcsolat',
       
       // About page

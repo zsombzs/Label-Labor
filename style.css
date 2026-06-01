@@ -1747,11 +1747,24 @@ a.btn-cta-secondary {
   border-top: 1px solid var(--border);
   padding: 1.1rem 2rem;
   text-align: center;
+  position: relative;
+}
+
+.footer-analytics-note {
+  position: absolute;
+  top: 50%;
+  right: 1.2rem;
+  transform: translateY(-50%);
+  font-size: 0.68rem;
+  color: var(--text-sec);
+  opacity: 0.55;
 }
 
 /* ── RESPONSIVE — single-page ── */
 @media (max-width: 1024px) {
   html { scroll-padding-top: 120px; }
+
+  .footer-analytics-note { display: none; }
 
   #main-content {
     margin-top: 112px;

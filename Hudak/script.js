@@ -27,9 +27,23 @@ document.querySelectorAll('input[name="labelType"]').forEach(radio => {
   });
 });
 
+function updateUploadUI(file) {
+  uploadedFileName = file.name;
+  const labelText = document.querySelector('.upload-label-text');
+  if (labelText) labelText.textContent = file.name;
+  document.querySelector('.icon-before-upload')?.style.setProperty('display', 'none');
+  document.querySelector('.icon-after-upload')?.style.setProperty('display', '');
+  const tooltip = document.querySelector('.info-tooltip');
+  if (tooltip) tooltip.textContent = file.name;
+  const label = document.querySelector('label[for="excelFile"]');
+  if (label) label.classList.add('upload-done');
+}
+
 document.getElementById("excelFile").addEventListener("change", function(e) {
   validatedData = null;
-  handleFile(e.target.files[0]);
+  const file = e.target.files[0];
+  if (file) updateUploadUI(file);
+  handleFile(file);
 }, false);
 
 // Drag & drop a bal panelen
@@ -57,6 +71,7 @@ document.getElementById("excelFile").addEventListener("change", function(e) {
       return;
     }
     validatedData = null;
+    updateUploadUI(file);
     handleFile(file);
   });
 })();
@@ -147,7 +162,10 @@ function showValidationModal(validationResult, onComplete) {
     }
   }
 
-  summary.textContent = `${validationResult.osszes_hiba} problémát találtunk ${validationResult.issues.length} terméknél. Az alábbiakban javasolt javításokat talál. A kisebb hibákat a rendszer automatikusan kijavítja — a pipa ikonnal lehet jóváhagyni. Ha szükséges, manuálisan is módosítható bármelyik adat. Az összes mező jóváhagyása után kattintson a "Javítások alkalmazása" gombra.`;
+  summary.innerHTML = `
+    <strong>${validationResult.osszes_hiba} problémát találtunk ${validationResult.issues.length} terméknél.</strong>
+    <br><br><small>Az alábbiakban javasolt javításokat talál. Ha szükséges, manuálisan is módosítható bármelyik érték. A "Javítások alkalmazása" gombra kattintva az összes javítás automatikusan érvénybe lép.</small>
+  `;
 
   issuesList.innerHTML = "";
 
@@ -155,7 +173,7 @@ function showValidationModal(validationResult, onComplete) {
   validationResult.issues.forEach(issue => {
     const card = document.createElement("div");
     card.className = "issue-card";
-    card.innerHTML = `<div class="product-name">${issue.excel_sor}. sor — ${issue.termek}</div>`;
+    card.innerHTML = `<div class="product-name">${issue.excel_sor - 1}. termék — ${issue.termek}</div>`;
 
     issue.hibak.forEach((hiba, hibaIdx) => {
       const item = document.createElement("div");
@@ -163,7 +181,7 @@ function showValidationModal(validationResult, onComplete) {
       const inputId = `fix_${issue.row_index}_${hibaIdx}`;
 
       item.innerHTML = `
-        <div class="field-label">${issue.excel_sor}. sor, ${hiba.oszlop} oszlop</div>
+        <div class="field-label">${issue.excel_sor - 1}. termék, ${hiba.oszlop} oszlop</div>
         <div class="error-text">${hiba.hiba}</div>
         <div class="fix-row">
           <input type="text"
@@ -279,10 +297,13 @@ function formatPrice(price) {
 }
 
 let totalLabelsGenerated = 0;
+let uploadedFileName = null;
 
 function renderLabels(data) {
     const container = document.getElementById("labels");
     container.innerHTML = "";
+    const emptyState = document.getElementById("labelsEmptyState");
+    if (emptyState) emptyState.style.display = "none";
     let pageDiv = null;
 
     totalLabelsGenerated = data.length; // Eltároljuk hány címkét generáltunk
@@ -381,9 +402,17 @@ function renderLabels(data) {
         }
       }
     });
+
+  const labelText = document.querySelector('.upload-label-text');
+  if (labelText && uploadedFileName) {
+    labelText.textContent = uploadedFileName + ' — ' + totalLabelsGenerated + ' polccímke';
+  }
+
+  document.getElementById("downloadBtn").disabled = false;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("downloadBtn").disabled = true;
   document.querySelector("#downloadBtn").addEventListener("click", generatePDF);
   document.querySelector("#sablonBtn").addEventListener("click", downloadTemplate);
   document.getElementById("tablePreviewBtn").addEventListener("click", openDataTable);
@@ -451,6 +480,7 @@ async function loadCompanyLabelCount() {
 
 function generatePDF() {
   const downloadBtn = document.getElementById("downloadBtn");
+  if (downloadBtn.classList.contains('btn-reload')) { location.reload(); return; }
   const progressContainer = document.getElementById("progressContainer");
   const progressBar = document.getElementById("progressBar");
 
@@ -479,7 +509,14 @@ function generatePDF() {
       progressBar.style.backgroundColor = "#f6bd60";
       progressBar.style.width = "0%";
 
-      document.querySelectorAll("button").forEach(btn => btn.disabled = false);
+      setTimeout(() => {
+        document.querySelectorAll("button").forEach(btn => btn.disabled = false);
+        setTimeout(() => {
+          downloadBtn.innerHTML = '<i data-lucide="rotate-ccw" class="reload-icon"></i> Új címkék generálása <i data-lucide="rotate-ccw" class="reload-icon"></i>';
+          downloadBtn.classList.add('btn-reload');
+          lucide.createIcons();
+        }, 1000);
+      }, 1000);
     }
   }, interval);
 }
@@ -546,10 +583,10 @@ const TABLE_COLUMNS = [
   { key: "EAN-13",       editable: true  },
   { key: "Megnevezés",   editable: false },
   { key: "Kiszerelés",   editable: true  },
-  { key: "Ár",           editable: true  },
   { key: "Első_sor",     editable: true  },
   { key: "Második_sor",  editable: true  },
   { key: "Harmadik_sor", editable: true  },
+  { key: "Ár",           editable: true  },
   { key: "ml",           editable: false },
   { key: "l",            editable: false },
   { key: "kg",           editable: false },

@@ -119,6 +119,26 @@ body {
   transition: transform 0.2s, background 0.2s;
 }
 
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+#tablePreviewBtn {
+  position: relative;
+}
+.preview-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+}
+
+
 .btn:nth-of-type(1) {
   background: #1a1a1a;
 }
@@ -149,6 +169,78 @@ body {
 
 .controls2 input[type="file"] {
   display: none;
+}
+
+.btn-with-info {
+  position: relative;
+}
+
+.info-tooltip-wrapper {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.info-icon {
+  width: 22px;
+  height: 22px;
+  color: #E8961E;
+  cursor: help;
+  flex-shrink: 0;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.info-tooltip-wrapper:hover .info-icon {
+  color: #f0b040;
+  transform: scale(1.15);
+}
+
+.icon-after-upload {
+  color: #4caf50 !important;
+}
+
+.btn.upload-done {
+  pointer-events: none;
+  cursor: default;
+}
+
+.btn.btn-reload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.reload-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.info-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  background: #1a1a1a;
+  color: #f0f0f0;
+  font-size: 13px;
+  font-weight: normal;
+  font-style: normal;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #555555;
+  white-space: nowrap;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.info-tooltip-wrapper:hover .info-tooltip {
+  display: block;
 }
 
 .controls3 {
@@ -358,7 +450,7 @@ body {
   }
   
   #progressContainer::after {
-    content: "Downloading PDF...";
+    content: "PDF letöltése folyamatban...";
     position: absolute;
     top: 0;
     left: 0;
@@ -466,6 +558,19 @@ body {
   align-items: center;
   gap: 20px;
   width: 100%;
+}
+
+.labels-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 60px 20px;
+  box-sizing: border-box;
+  color: #666666;
+  font-size: 16px;
+  font-style: italic;
+  text-align: center;
 }
 
 .page:not(:last-child) {
@@ -982,8 +1087,8 @@ body {
 }
 
 .validation-modal .skip-btn:hover {
-  background: rgba(220, 80, 80, 0.25);
-  border-color: #e57373;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #aaaaaa;
   color: #ffaaaa;
 }
 
@@ -1079,6 +1184,7 @@ body {
   background: rgba(204, 219, 220, 0.15);
 }
 
+
 .data-table-scroll {
   overflow: auto;
   flex: 1;
@@ -1144,7 +1250,7 @@ body {
 }
 
 .table-cell-input:hover {
-  background: #b3d9ff;
+  background: #ffe5a0;
 }
 
 .cell-readonly {

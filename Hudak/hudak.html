@@ -10,6 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvg/dist/browser/canvg.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="hudak.css" />
 </head>
 <body>
@@ -23,11 +24,18 @@
         <button class="btn" id="sablonBtn">1. Sablon Excel letöltése</button>
       </div>
       <div class="controls2">
-        <label for="excelFile" class="btn">2. Excel fájl feltöltése (.xlsx)</label>
+        <label for="excelFile" class="btn btn-with-info">
+          <span class="upload-label-text">2. Excel fájl feltöltése (.xlsx)</span>
+          <span class="info-tooltip-wrapper">
+            <i data-lucide="info" class="info-icon icon-before-upload"></i>
+            <i data-lucide="check-circle" class="info-icon icon-after-upload" style="display:none"></i>
+            <span class="info-tooltip">Húzzon ide egy .xlsx fájlt a feltöltéshez</span>
+          </span>
+        </label>
         <input type="file" id="excelFile" accept=".xlsx">
       </div>
       <div class="controls3">
-        <button class="btn" id="tablePreviewBtn">Adatok megtekintése</button>
+        <button class="btn" id="tablePreviewBtn">Adatok megtekintése<i data-lucide="search" class="preview-icon"></i></button>
       </div>
       <div class="controls4">
         <button class="btn" id="downloadBtn">3. PDF letöltése</button>
@@ -54,9 +62,13 @@
         <span class="company-stats-text">Generált címkék száma: <span class="company-stats-number" id="companyLabelCount">0</span></span>
       </div>
       <div class="alcim-container">
-        <h2 class="alcim">Címke generátor 1.0.0 (beta)</h2>
+        <h2 class="alcim">Címke generátor 1.0.0</h2>
       </div>
-      <div id="labels"></div>
+      <div id="labels">
+        <div class="labels-empty-state" id="labelsEmptyState">
+          <p>Töltse fel az Excel fájlt a polccímkék megjelenítéséhez</p>
+        </div>
+      </div>
     </div>
   </div>
   <!-- Betöltési animáció -->
@@ -112,6 +124,17 @@
   </div>
 
   <script type="module" src="script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      const infoWrapper = document.querySelector('.info-tooltip-wrapper');
+      const leftPanel = document.querySelector('.left-panel');
+      if (infoWrapper && leftPanel) {
+        infoWrapper.addEventListener('mouseenter', () => leftPanel.classList.add('drag-over'));
+        infoWrapper.addEventListener('mouseleave', () => leftPanel.classList.remove('drag-over'));
+      }
+    });
+  </script>
   <script>
     window.onload = function() {
       if (!sessionStorage.getItem("reloaded")) {

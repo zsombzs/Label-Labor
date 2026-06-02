@@ -27,9 +27,23 @@ document.querySelectorAll('input[name="labelType"]').forEach(radio => {
   });
 });
 
+function updateUploadUI(file) {
+  uploadedFileName = file.name;
+  const labelText = document.querySelector('.upload-label-text');
+  if (labelText) labelText.textContent = file.name;
+  document.querySelector('.icon-before-upload')?.style.setProperty('display', 'none');
+  document.querySelector('.icon-after-upload')?.style.setProperty('display', '');
+  const tooltip = document.querySelector('.info-tooltip');
+  if (tooltip) tooltip.textContent = file.name;
+  const label = document.querySelector('label[for="excelFile"]');
+  if (label) label.classList.add('upload-done');
+}
+
 document.getElementById("excelFile").addEventListener("change", function(e) {
   validatedData = null;
-  handleFile(e.target.files[0]);
+  const file = e.target.files[0];
+  if (file) updateUploadUI(file);
+  handleFile(file);
 }, false);
 
 // Drag & drop a bal panelen
@@ -57,6 +71,7 @@ document.getElementById("excelFile").addEventListener("change", function(e) {
       return;
     }
     validatedData = null;
+    updateUploadUI(file);
     handleFile(file);
   });
 })();
@@ -170,7 +185,10 @@ function showValidationModal(validationResult, onComplete) {
     }))
     .filter(issue => issue.hibak.length > 0);
 
-  summary.textContent = `${validationResult.osszes_manualis_hiba} problémát találtunk ${manualisIssues.length} terméknél. Az alábbiakban javasolt javításokat talál. Ha szükséges, manuálisan is módosítható bármelyik adat. Az összes mező jóváhagyása után kattintson a "Javítások alkalmazása" gombra.`;
+  summary.innerHTML = `
+    <strong>${validationResult.osszes_manualis_hiba} problémát találtunk ${manualisIssues.length} terméknél.</strong>
+    <br><br><small>Az alábbiakban javasolt javításokat talál. Ha szükséges, manuálisan is módosítható bármelyik érték. A "Javítások alkalmazása" gombra kattintva az összes javítás automatikusan érvénybe lép.</small>
+  `;
 
   issuesList.innerHTML = "";
 
@@ -178,7 +196,7 @@ function showValidationModal(validationResult, onComplete) {
   manualisIssues.forEach(issue => {
     const card = document.createElement("div");
     card.className = "issue-card";
-    card.innerHTML = `<div class="product-name">${issue.excel_sor}. sor — ${issue.termek}</div>`;
+    card.innerHTML = `<div class="product-name">${issue.excel_sor - 1}. termék — ${issue.termek}</div>`;
 
     issue.hibak.forEach((hiba, hibaIdx) => {
       const item = document.createElement("div");
@@ -188,7 +206,7 @@ function showValidationModal(validationResult, onComplete) {
       const maxLenAttr = maxLen ? ` maxlength="${maxLen}"` : "";
 
       item.innerHTML = `
-        <div class="field-label">${issue.excel_sor}. sor, ${hiba.oszlop} oszlop</div>
+        <div class="field-label">${issue.excel_sor - 1}. termék, ${hiba.oszlop} oszlop</div>
         <div class="error-text">${hiba.hiba}</div>
         <div class="fix-row">
           <input type="text"
@@ -315,6 +333,7 @@ function formatKiszereles(kisz) {
 }
 
 let totalLabelsGenerated = 0;
+let uploadedFileName = null;
 
 function buildNormalLabel(div, row, logo) {
   const line1 = (row["Első_sor"] || "").substring(0, 20);
@@ -345,21 +364,24 @@ function buildNormalLabel(div, row, logo) {
     }
   }
 
-  // 4. sor prioritás: Cikkszám → Szín (vastag) → Negyedik_sor (overflow) → üres
+  // 4. sor prioritás: Szín → Cikkszám → Negyedik_sor → üres
   let line4Content = "";
   const cikkszam = row["Cikkszám"] || "";
   const szin = row["Szín"] || "";
   const negyedikSor = row["Negyedik_sor"] || "";
-  if (cikkszam) {
-    line4Content = ("cikkszám: " + cikkszam).substring(0, 24);
-  } else if (szin) {
+  if (szin) {
     line4Content = `Szín: <strong>${szin}</strong>`;
+  } else if (cikkszam) {
+    line4Content = ("cikkszám: " + cikkszam).substring(0, 24);
   } else if (negyedikSor) {
     line4Content = negyedikSor.substring(0, 24);
   }
 
   // Ha nincs szín és nincs cikkszám, a terméknév vastag betűs (kiemelés fallback)
-  const nameWeight = (cikkszam || szin) ? "normal" : "bold";
+  const nameWeight = szin ? "normal" : "bold";
+  const line4Style = (!cikkszam && !szin && negyedikSor)
+    ? `font-size:11pt; font-weight:${nameWeight};`
+    : "";
 
   div.innerHTML = `
     <img src="${logo.src}" class="logo ${logo.cssClass}">
@@ -367,7 +389,7 @@ function buildNormalLabel(div, row, logo) {
     <div class="line2" style="font-weight:${nameWeight}">${secondLineText}</div>
     <div class="line3" style="font-weight:${nameWeight}">${thirdLineText}</div>
     <div class="kiszereles">${formatKiszereles(kiszereles)}</div>
-    <div class="line4">${line4Content}</div>
+    <div class="line4" style="${line4Style}">${line4Content}</div>
     <div class="barcode-container">
       <svg class="barcode"></svg>
     </div>
@@ -441,6 +463,8 @@ function buildSaleLabel(div, row, logo) {
 function renderLabels(data) {
   const container = document.getElementById("labels");
   container.innerHTML = "";
+  const emptyState = document.getElementById("labelsEmptyState");
+  if (emptyState) emptyState.style.display = "none";
   let pageDiv = null;
 
   totalLabelsGenerated = data.length;
@@ -495,9 +519,17 @@ function renderLabels(data) {
       }
     }
   });
+
+  const labelText = document.querySelector('.upload-label-text');
+  if (labelText && uploadedFileName) {
+    labelText.textContent = uploadedFileName + ' — ' + totalLabelsGenerated + ' polccímke';
+  }
+
+  document.getElementById("downloadBtn").disabled = false;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("downloadBtn").disabled = true;
   document.querySelector("#downloadBtn").addEventListener("click", generatePDF);
   document.querySelector("#sablonBtn").addEventListener("click", downloadTemplate);
   document.getElementById("tablePreviewBtn").addEventListener("click", openDataTable);
@@ -565,6 +597,7 @@ async function loadCompanyLabelCount() {
 
 function generatePDF() {
   const downloadBtn = document.getElementById("downloadBtn");
+  if (downloadBtn.classList.contains('btn-reload')) { location.reload(); return; }
   const progressContainer = document.getElementById("progressContainer");
   const progressBar = document.getElementById("progressBar");
 
@@ -593,7 +626,14 @@ function generatePDF() {
       progressBar.style.backgroundColor = "#f6bd60";
       progressBar.style.width = "0%";
 
-      document.querySelectorAll("button").forEach(btn => btn.disabled = false);
+      setTimeout(() => {
+        document.querySelectorAll("button").forEach(btn => btn.disabled = false);
+        setTimeout(() => {
+          downloadBtn.innerHTML = '<i data-lucide="rotate-ccw" class="reload-icon"></i> Új címkék generálása <i data-lucide="rotate-ccw" class="reload-icon"></i>';
+          downloadBtn.classList.add('btn-reload');
+          lucide.createIcons();
+        }, 1000);
+      }, 1000);
     }
   }, interval);
 }
@@ -661,12 +701,12 @@ const TABLE_COLUMNS = [
   { key: "Megnevezés",   editable: false },
   { key: "Szín",         editable: true  },
   { key: "Kiszerelés",   editable: true  },
-  { key: "Ár",           editable: true  },
-  { key: "Akciós_ár",   editable: true  },
   { key: "Első_sor",     editable: true  },
   { key: "Második_sor",  editable: true  },
   { key: "Harmadik_sor", editable: true  },
+  // { key: "Akciós_ár",   editable: true  },  // ideiglenesen kikapcsolva
   { key: "Negyedik_sor", editable: false },
+  { key: "Ár",           editable: true  },
   { key: "ml",           editable: false },
   { key: "l",            editable: false },
   { key: "kg",           editable: false },
@@ -739,9 +779,10 @@ function openDataTable() {
   const thead = document.getElementById("dataTableHead");
   const tbody = document.getElementById("dataTableBody");
 
-  thead.innerHTML = "<tr>" + TABLE_COLUMNS.map(col =>
-    `<th class="${col.editable ? "" : "col-readonly"}">${col.key}</th>`
-  ).join("") + "</tr>";
+  thead.innerHTML = "<tr>" + TABLE_COLUMNS.map(col => {
+    const headerClass = (col.editable || col.key === "Negyedik_sor") ? "" : "col-readonly";
+    return `<th class="${headerClass}">${col.key}</th>`;
+  }).join("") + "</tr>";
 
   tbody.innerHTML = "";
   validatedData.forEach((row, rowIndex) => {
@@ -749,7 +790,10 @@ function openDataTable() {
     TABLE_COLUMNS.forEach(col => {
       const td = document.createElement("td");
       const val = getTableCellValue(col.key, rowIndex);
-      if (col.editable) {
+      const hasSzin = !!getTableCellValue("Szín", rowIndex);
+      const hasCikkszam = !!getTableCellValue("Cikkszám", rowIndex);
+      const isEditable = col.key === "Negyedik_sor" ? (!hasSzin && !hasCikkszam) : col.editable;
+      if (isEditable) {
         const maxLen = getLineMaxLength(col.key);
         const maxLenAttr = maxLen ? ` maxlength="${maxLen}"` : "";
         td.innerHTML = `<input type="text" class="table-cell-input" data-row="${rowIndex}" data-col="${col.key}"${maxLenAttr} value="${escapeAttr(val)}">`;

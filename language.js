@@ -206,7 +206,7 @@ const translations = {
     'hero-total-label': 'összes generált polccímke',
     'hero-badge-label': 'polccimke percek alatt',
     'hero-stat-pre': 'Eddig ',
-    'hero-stat-suf': ' polccimkét generáltak',
+    'hero-stat-suf': ' polccímkét generáltak',
     'cta-quote-btn': 'Ajánlatot kérek',
     'cta-examples-btn': 'Példa polccímkék',
     'why-label': 'Miért Label Labor?',

@@ -33,8 +33,12 @@ function getSelectedLogo() {
 document.querySelectorAll('input[name="labelType"]').forEach(radio => {
   radio.addEventListener('change', () => {
     if (validatedData) {
-      // Ha már validált adatok vannak, csak újra renderelünk
       renderLabels(validatedData);
+    }
+    const downloadBtn = document.getElementById("downloadBtn");
+    if (downloadBtn && downloadBtn.classList.contains('btn-reload')) {
+      downloadBtn.classList.remove('btn-reload');
+      downloadBtn.textContent = '3. PDF letöltése';
     }
   });
 });

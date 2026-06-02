@@ -21,7 +21,7 @@ async function loadTotalLabelCount() {
 
 function updateCounterDisplay(count) {
   const counterElement = document.getElementById('totalLabelCount');
-  if (counterElement) animateCounter(counterElement, 0, count, 7000);
+  if (counterElement) animateCounter(counterElement, 0, count, 4000);
 }
 
 function animateCounter(element, start, end, duration) {

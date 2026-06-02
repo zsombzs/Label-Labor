@@ -23,6 +23,11 @@ document.querySelectorAll('input[name="labelType"]').forEach(radio => {
     if (validatedData) {
       renderLabels(validatedData);
     }
+    const downloadBtn = document.getElementById("downloadBtn");
+    if (downloadBtn && downloadBtn.classList.contains('btn-reload')) {
+      downloadBtn.classList.remove('btn-reload');
+      downloadBtn.textContent = '3. PDF letöltése';
+    }
   });
 });
 

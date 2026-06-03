@@ -423,29 +423,136 @@ def extract_kiszereles_from_name(name: str, unit_map: dict) -> tuple[str, str]:
 
 
 # =============================================================================
+# DITALL SZÍN LISTA ÉS SEGÉDFÜGGVÉNYEK
+# =============================================================================
+
+# Hossz szerint csökkenő sorrend: többszavas színek (pl. "Antik tölgy") előbb kerülnek
+# ellenőrzésre az egyszavasaknál, így a leghosszabb egyezés nyer.
+DITALL_COLORS: list[str] = sorted([
+    # Többszavas színek
+    "Antik tölgy", "Csoki mousse", "Ezüst fenyő", "Fehér agyag",
+    "Forró homok", "Galaxis szürke", "Hamvas szürke", "Nyári zápor",
+    # Összetett egyszavas színek
+    "Acélkék", "Acélszürke", "Akvamarin", "Antracit", "Aranysárga", "Aranytölgy",
+    "Babakék", "Borostyán", "Burgundi", "Cappuccino", "Csokoládébarna", "Csontszín",
+    "Égkék", "Elefántcsont", "Fahéj", "Fenyőzöld", "Grafitszürke", "Harmatszürke",
+    "Jégkék", "Karamell", "Kashmir", "Kasmír", "Kávébarna", "Kobaltkék", "Középszürke",
+    "Levendula", "Mahagóni", "Melange", "Mogyoró", "Mojito", "Mustársárga",
+    "Napraforgó", "Narancssárga", "Olajzöld", "Olívazöld", "Orgona",
+    "Padlizsán", "Paliszander", "Pergamen", "Púderbarack", "Smaragdzöld",
+    "Sonoma", "Szénfekete", "Tengerkék", "Tengerzöld", "Terrakotta",
+    "Téglavörös", "Törtfehér", "Türkizkék", "Vajszín", "Vanília",
+    "Vörösfenyő", "Világosszürke",
+    # Alapszínek és egyszerűbb nevek
+    "Barack", "Bézs", "Bordó", "Borovi", "Barna", "Bronz", "Arany",
+    "Cédrus", "Cseresznye", "Dió", "Drapp", "Ében", "Ezüst",
+    "Fehér", "Fekete", "Fenyő", "Gesztenye", "Gránit", "Homok",
+    "Ibolya", "Kék", "Krém", "Lazac", "Lila", "Méz", "Mocha",
+    "Narancs", "Natúr", "Piros", "Réz", "Rózsaszín", "Sárga",
+    "Szilva", "Színtelen", "Szürke", "Teak", "Tölgy", "Türkiz",
+    "Vörös", "Zöld",
+], key=len, reverse=True)
+
+# "x% extra" és "+x db" minták — megnevezés végére kerülnek, NEM szín
+_EXTRA_PATTERN = re.compile(
+    r'\+?\s*\d+(?:[.,]\d+)?%\s*extra|\+\s*\d+(?:[.,]\d+)?\s*db',
+    re.IGNORECASE
+)
+
+
+def _find_color_in_prefix(text: str) -> tuple[str, str]:
+    """
+    Ha a szöveg ELEJÉN ismert szín van, visszaadja (talált_szín, maradék_szöveg).
+    A maradék (pl. véletlen karakterek) visszakerül a névbe → overflow hiba lesz belőle.
+    Visszaad: ("", eredeti) ha nincs ismert szín az elején.
+    """
+    if not text:
+        return "", text
+    text = text.strip()
+    words = text.split()
+
+    for color in DITALL_COLORS:
+        color_words = color.split()
+        n = len(color_words)
+        if n > len(words):
+            continue
+        if ' '.join(words[:n]).lower() == color.lower():
+            return ' '.join(words[:n]), ' '.join(words[n:]).strip()
+
+    # Részleges: az első szó tartalmaz-e egyszavas színt?
+    first_word_lower = words[0].lower()
+    for color in DITALL_COLORS:
+        if ' ' not in color and color.lower() in first_word_lower:
+            return words[0], ' '.join(words[1:]).strip()
+
+    return "", text
+
+
+def _find_color_in_suffix(text: str) -> tuple[str, str]:
+    """
+    Megnézi, hogy a szöveg VÉGÉN van-e ismert szín a DITALL_COLORS listából.
+    Részleges egyezés is: 'aranysárga' egyezik, mert tartalmazza a 'sárga' szót.
+    Visszaad: (szín_nélküli_szöveg, talált_szín) vagy (eredeti, "")
+    """
+    if not text:
+        return text, ""
+    text = text.strip()
+    words = text.split()
+    if not words:
+        return text, ""
+
+    # Pontos egyezés (leghosszabb először a DITALL_COLORS sorrendje miatt)
+    for color in DITALL_COLORS:
+        color_words = color.split()
+        n = len(color_words)
+        if n > len(words):
+            continue
+        if ' '.join(words[-n:]).lower() == color.lower():
+            return ' '.join(words[:-n]).strip(), ' '.join(words[-n:])
+
+    # Részleges egyezés: az utolsó szó tartalmaz-e egyszavas színt?
+    last_word_lower = words[-1].lower()
+    for color in DITALL_COLORS:
+        if ' ' not in color and color.lower() in last_word_lower and color.lower() != last_word_lower:
+            return ' '.join(words[:-1]).strip(), words[-1]
+
+    return text, ""
+
+
+# =============================================================================
 # KISZERELÉS ÉS SZÍN KINYERÉSE A MEGNEVEZÉSBŐL - Ditall
 # =============================================================================
 
 def extract_kiszereles_and_szin_from_name(name: str, unit_map: dict) -> tuple[str, str, str]:
     """
-    A megnevezés végétől visszafelé keresi a kiszerelést (szám+mértékegység).
-    A kiszerelés utáni szöveg a szín.
+    A megnevezésből kinyeri a kiszerelést és a színt.
+    Kezeli mindkét sorrendet: [név] [méret] [szín] és [név] [szín] [méret].
+    Az "x% extra" / "+x db" szövegeket a megnevezés végére helyezi.
     Visszaad: (cleaned_name, kiszerelés, szín)
     Ha nincs kiszerelés találat: (eredeti_name, "", "")
     """
     if not name:
         return name or "", "", ""
 
-    # 1. Különleges eset: "db" és szinonimái (szám nélkül is elfogadott)
+    # 1. "x% extra" / "+x db" kiemelése — feldolgozás után visszakerül a név végére
+    extras = _EXTRA_PATTERN.findall(name)
+    name = _EXTRA_PATTERN.sub('', name).strip()
+    name = re.sub(r'\s+', ' ', name)
+
+    # 2. Különleges eset: "db" és szinonimái (szám nélkül is elfogadott)
     db_synonyms_pattern = "|".join(re.escape(s) for s in unit_map["db"])
     db_pattern = rf'(.*)\s({db_synonyms_pattern})(\s+.+?)?\s*$'
     db_match = re.search(db_pattern, name, re.IGNORECASE)
     if db_match:
         cleaned_name = db_match.group(1).strip()
         szin = (db_match.group(3) or "").strip()
+        if not szin:
+            cleaned_name, szin = _find_color_in_suffix(cleaned_name)
+        if extras:
+            cleaned_name = (cleaned_name + ' ' + ' '.join(extras)).strip()
         return cleaned_name, "db", szin
 
-    # 2. Szám + mértékegység + opcionális szín a végén
+    # 3. Szám + mértékegység + opcionális szín a végén
     all_units = []
     for synonyms in unit_map.values():
         all_units.extend(synonyms)
@@ -466,8 +573,25 @@ def extract_kiszereles_and_szin_from_name(name: str, unit_map: dict) -> tuple[st
                 break
 
         kiszereles = f"{qty} {normalized_unit}"
+
+        szin_raw = (match.group(4) or "").strip()
+        if szin_raw:
+            # Csak az ismert szín marad szín – a maradék visszakerül a névbe (overflow hiba lesz)
+            szin, leftover = _find_color_in_prefix(szin_raw)
+            if leftover:
+                cleaned_name = (cleaned_name + ' ' + leftover).strip()
+        else:
+            # Nincs szín a méret UTÁN → fordított sorrend: megnevezés végén keressük
+            cleaned_name, szin = _find_color_in_suffix(cleaned_name)
+
+        if extras:
+            cleaned_name = (cleaned_name + ' ' + ' '.join(extras)).strip()
+
         return cleaned_name, kiszereles, szin
 
+    # Nincs kiszerelés
+    if extras:
+        name = (name + ' ' + ' '.join(extras)).strip()
     return name, "", ""
 
 
@@ -496,6 +620,7 @@ def process_row(raw_row: dict, row_index: int, cfg: dict) -> dict:
             if "megnevez" in str(k).strip().lower() and str(v).strip():
                 name = str(v).strip()
                 break
+    original_name = name  # eredeti cellartalom a validációs modálhoz
     pack = str(raw_row.get("Kiszerelés", "")).strip()
     price = raw_row.get("Ár", "")
     szin = str(raw_row.get("Szín", "")).strip() if extract_szin else ""
@@ -600,10 +725,18 @@ def process_row(raw_row: dict, row_index: int, cfg: dict) -> dict:
         effective_max_chars_line3 = max_chars_line3 if name.isupper() else max_chars_line3 + 2
 
     if max_lines == 4:
-        line1, line2, line3, line4, name_overflow = split_name_ditall(
-            name, max_chars=effective_max_chars, max_chars_line3=effective_max_chars_line3
-        )
-        overflow_msg = "A terméknév nem fér ki 4 sorban, kérjük javítsa."
+        if szin:
+            # Van szín → a 4. sor a szín foglalt, a névnek csak 3 sor jut
+            line1, line2, line3, name_overflow = split_name(
+                name, max_chars=effective_max_chars, max_chars_line3=effective_max_chars_line3
+            )
+            line4 = ""
+            overflow_msg = "A terméknév nem fér ki 3 sorban (4. sor a színé), kérjük javítsa."
+        else:
+            line1, line2, line3, line4, name_overflow = split_name_ditall(
+                name, max_chars=effective_max_chars, max_chars_line3=effective_max_chars_line3
+            )
+            overflow_msg = "A terméknév nem fér ki 4 sorban, kérjük javítsa."
     else:
         line1, line2, line3, name_overflow = split_name(
             name, max_chars=effective_max_chars, max_chars_line3=effective_max_chars_line3
@@ -645,5 +778,5 @@ def process_row(raw_row: dict, row_index: int, cfg: dict) -> dict:
         "processed": processed,
         "hibak": hibak,
         "excel_sor": row_index + 2,  # +2: 1-es indexelés + fejléc sor
-        "termek": line1 or name,
+        "termek": original_name or line1,
     }

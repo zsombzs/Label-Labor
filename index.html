@@ -6,7 +6,7 @@
   <title>Label Labor</title>
   <link rel="icon" type="image/png" href="assets/main_icon.png">
   <link rel="stylesheet" href="style.min.css">
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="vendor/lucide.min.js"></script>
 </head>
 <body>
 
@@ -285,6 +285,8 @@
                   <label for="contactMessage"></label>
                   <textarea id="contactMessage" name="message" required placeholder="Üzenet" rows="6" data-lang="contact-message"></textarea>
                 </div>
+                <!-- Honeypot a botok ellen: emberi látogató nem látja, nem tölti ki -->
+                <input type="text" id="contactGotcha" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0;">
                 <button type="submit" class="contact-submit-btn" data-lang="contact-submit">Küldés</button>
               </form>
             </div>

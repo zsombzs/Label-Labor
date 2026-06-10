@@ -1,6 +1,24 @@
-const API_URL = "https://labelgenerator-production.up.railway.app";
-/* const API_URL = "http://localhost:8000"; */
-const INTERNAL_API_KEY = "REMOVED_SECRET";
+// Lokális teszt (Live Server) esetén automatikusan a helyi backendet hívjuk
+const API_URL = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+  ? "http://localhost:8000"
+  : "https://labelgenerator-production.up.railway.app";
+// ── Auth: bejelentkezés ellenőrzése ──
+const AUTH_TOKEN = sessionStorage.getItem("llToken");
+if (!AUTH_TOKEN || AUTH_TOKEN === "undefined") window.location.replace("/");
+
+function authHeaders() {
+  return { "Content-Type": "application/json", "Authorization": "Bearer " + AUTH_TOKEN };
+}
+
+function handleAuthFailure(response) {
+  if (response.status === 401) {
+    sessionStorage.removeItem("llToken");
+    alert("A munkamenet lejárt, kérjük jelentkezzen be újra.");
+    window.location.replace("/");
+    return true;
+  }
+  return false;
+}
 
 const COMPANY_USERNAME = 'DITALL';
 let validatedData = null; // Validált adatok tárolása (logo-váltásnál ne fussanak újra)
@@ -146,9 +164,11 @@ async function validateWithAgent(data, onComplete) {
     // Elküldjük a nyers adatokat → backend elvégzi a makró munkáját
     const response = await fetch(`${API_URL}/api/process-labels`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-API-Key": INTERNAL_API_KEY },
+      headers: authHeaders(),
       body: JSON.stringify({ rows: data, subpage: "ditall" })
     });
+
+    if (handleAuthFailure(response)) return;
 
     if (!response.ok) {
       // Ha a backend nem elérhető, simán renderelünk az eredeti adatokkal
@@ -200,7 +220,7 @@ function showValidationModal(validationResult, onComplete) {
   manualisIssues.forEach(issue => {
     const card = document.createElement("div");
     card.className = "issue-card";
-    card.innerHTML = `<div class="product-name">${issue.excel_sor - 1}. termék — ${issue.termek}</div>`;
+    card.innerHTML = `<div class="product-name">${issue.excel_sor - 1}. termék — ${escapeAttr(issue.termek)}</div>`;
 
     issue.hibak.forEach((hiba, hibaIdx) => {
       const item = document.createElement("div");
@@ -210,11 +230,11 @@ function showValidationModal(validationResult, onComplete) {
       const maxLenAttr = maxLen ? ` maxlength="${maxLen}"` : "";
 
       item.innerHTML = `
-        <div class="field-label">${issue.excel_sor - 1}. termék, ${hiba.oszlop} oszlop</div>
-        <div class="error-text">${hiba.hiba}</div>
+        <div class="field-label">${issue.excel_sor - 1}. termék, ${escapeAttr(hiba.oszlop)} oszlop</div>
+        <div class="error-text">${escapeAttr(hiba.hiba)}</div>
         <div class="fix-row">
           <input type="text"
-            value="${hiba.javitott || hiba.eredeti}"
+            value="${escapeAttr(hiba.javitott || hiba.eredeti)}"
             id="${inputId}"${maxLenAttr}
             placeholder="Javított érték...">
           <button class="accept-btn"
@@ -325,6 +345,13 @@ function getLineMaxLength(colKey) {
   return null;
 }
 
+function normalizePrice(val) {
+  // A 0 bármilyen formáját (0, "0", "0.00", "0,00", "0 Ft") üresként kezeljük —
+  // ilyenkor kézzel írják rá az árat a címkére
+  const num = parseFloat(String(val ?? "").replace(",", "."));
+  return (!isNaN(num) && num === 0) ? "" : (val ?? "");
+}
+
 function formatPrice(price) {
   if (price === null || price === undefined || price === "") return "";
   const num = parseInt(price, 10);
@@ -333,7 +360,8 @@ function formatPrice(price) {
 }
 
 function formatKiszereles(kisz) {
-  return String(kisz).replace(/m2/gi, 'm<sup>2</sup>');
+  // Előbb escape (XSS védelem), utána a m2 → m<sup>2</sup> formázás
+  return escapeAttr(String(kisz)).replace(/m2/gi, 'm<sup>2</sup>');
 }
 
 let totalLabelsGenerated = 0;
@@ -344,7 +372,7 @@ function buildNormalLabel(div, row, logo) {
   const secondLineText = (row["Második_sor"] || "").substring(0, 20);
   const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 24);
   const kiszereles = row["Kiszerelés"] || "";
-  const ar = row["Ár"] || "";
+  const ar = normalizePrice(row["Ár"]) || "";
   const ftPerL = row["Ft/l"] || "";
   const ftPerKg = row["Ft/kg"] || "";
   const ftPerM2 = row["Ft/m2"] || "";
@@ -374,11 +402,11 @@ function buildNormalLabel(div, row, logo) {
   const szin = row["Szín"] || "";
   const negyedikSor = row["Negyedik_sor"] || "";
   if (szin) {
-    line4Content = `Szín: <strong>${szin}</strong>`;
+    line4Content = `Szín: <strong>${escapeAttr(szin)}</strong>`;
   } else if (cikkszam) {
-    line4Content = ("cikkszám: " + cikkszam).substring(0, 24);
+    line4Content = escapeAttr(("cikkszám: " + cikkszam).substring(0, 24));
   } else if (negyedikSor) {
-    line4Content = negyedikSor.substring(0, 24);
+    line4Content = escapeAttr(negyedikSor.substring(0, 24));
   }
 
   // Ha nincs szín és nincs cikkszám, a terméknév vastag betűs (kiemelés fallback)
@@ -389,9 +417,9 @@ function buildNormalLabel(div, row, logo) {
 
   div.innerHTML = `
     <img src="${logo.src}" class="logo ${logo.cssClass}">
-    <div class="line1" style="font-weight:${nameWeight}">${line1}</div>
-    <div class="line2" style="font-weight:${nameWeight}">${secondLineText}</div>
-    <div class="line3" style="font-weight:${nameWeight}">${thirdLineText}</div>
+    <div class="line1" style="font-weight:${nameWeight}">${escapeAttr(line1)}</div>
+    <div class="line2" style="font-weight:${nameWeight}">${escapeAttr(secondLineText)}</div>
+    <div class="line3" style="font-weight:${nameWeight}">${escapeAttr(thirdLineText)}</div>
     <div class="kiszereles">${formatKiszereles(kiszereles)}</div>
     <div class="line4" style="${line4Style}">${line4Content}</div>
     <div class="barcode-container">
@@ -399,11 +427,11 @@ function buildNormalLabel(div, row, logo) {
     </div>
     <div class="bottom">
       <div class="price-box1">
-        <span class="amount">${price}</span>
+        <span class="amount">${escapeAttr(price)}</span>
         <span class="unit">,- Ft</span>
       </div>
       <div class="price-box2">
-        <span class="amount">${pricePerUnit}</span>
+        <span class="amount">${escapeAttr(pricePerUnit)}</span>
         <span class="unit">${unitLabel ? ",- " + formatKiszereles(unitLabel) : ""}</span>
       </div>
     </div>
@@ -417,8 +445,8 @@ function buildSaleLabel(div, row, logo) {
   const secondLineText = (row["Második_sor"] || "").substring(0, 20);
   const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 24);
   const kiszereles = row["Kiszerelés"] || "";
-  const ar = row["Ár"] || "";
-  const akciosAr = row["Akciós_ár"] || "";
+  const ar = normalizePrice(row["Ár"]) || "";
+  const akciosAr = normalizePrice(row["Akciós_ár"]) || "";
 
   const origNum = parseFloat(String(ar).replace(",", "."));
   const saleNum = parseFloat(String(akciosAr).replace(",", "."));
@@ -442,22 +470,22 @@ function buildSaleLabel(div, row, logo) {
 
   div.innerHTML = `
     <img src="${logo.src}" class="logo ${logoSmClass}">
-    <div class="line1">${line1}</div>
-    <div class="line2">${secondLineText}</div>
-    <div class="line3">${thirdLineText}</div>
+    <div class="line1">${escapeAttr(line1)}</div>
+    <div class="line2">${escapeAttr(secondLineText)}</div>
+    <div class="line3">${escapeAttr(thirdLineText)}</div>
     <div class="barcode-container">
       <svg class="barcode"></svg>
     </div>
     <div class="sale-info-row">
-      <span class="sale-cikk">${(row["Cikkszám"] || "").substring(0, 12)}</span>
+      <span class="sale-cikk">${escapeAttr((row["Cikkszám"] || "").substring(0, 12))}</span>
       <span class="sale-kiszeres">${formatKiszereles(kiszereles)}</span>
     </div>
     <div class="price-box-orig">
-      <span class="original-price">${formatPrice(ar)},- Ft</span>
+      <span class="original-price">${escapeAttr(formatPrice(ar))},- Ft</span>
       <span class="pct">${discountPct}</span>
     </div>
     <div class="price-box-sale">
-      <span class="amount">${formatPrice(akciosAr)}</span>
+      <span class="amount">${escapeAttr(formatPrice(akciosAr))}</span>
       <span class="unit">,- Ft</span>
     </div>
     ${saleUnitLabel ? `<div class="sale-unit-price">${saleUnitPrice ? saleUnitPrice + ",-&nbsp;" : ""}${saleUnitLabel}</div>` : ""}
@@ -560,11 +588,8 @@ async function updateLabelCount(count) {
   try {
     const response = await fetch(`${API_URL}/api/update-label-count`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-Key": INTERNAL_API_KEY,
-      },
-      body: JSON.stringify({ username, count }),
+      headers: authHeaders(),
+      body: JSON.stringify({ count }),
     });
 
     if (response.ok) {
@@ -589,7 +614,7 @@ async function loadCompanyLabelCount() {
   if (!username) return;
 
   try {
-    const response = await fetch(`${API_URL}/api/company-label-count/${username}`);
+    const response = await fetch(`${API_URL}/api/company-label-count`, { headers: authHeaders() });
     if (response.ok) {
       const data = await response.json();
       updateDisplayedCount(data.count);
@@ -771,7 +796,8 @@ function escapeAttr(str) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function openDataTable() {

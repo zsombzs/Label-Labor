@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 import bcrypt
 import uvicorn
 import resend
+import jwt
+import html
 from datetime import datetime, timezone, timedelta
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "agent"))
@@ -26,18 +28,62 @@ resend.api_key = os.getenv("RESEND_API_KEY")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-limiter = Limiter(key_func=get_remote_address)
+def client_ip(request: Request) -> str:
+    """Valódi kliens IP a Railway proxy mögött.
+    Az X-Forwarded-For utolsó elemét a Railway edge proxy fűzi hozzá,
+    azt a kliens nem tudja hamisítani."""
+    xff = request.headers.get("x-forwarded-for")
+    if xff:
+        return xff.split(",")[-1].strip()
+    return get_remote_address(request)
 
-app = FastAPI()
+
+limiter = Limiter(key_func=client_ip)
+
+# Éles környezetben (Railway) nincs Swagger / OpenAPI séma
+_IS_PRODUCTION = bool(os.getenv("RAILWAY_ENVIRONMENT_NAME") or os.getenv("RAILWAY_ENVIRONMENT"))
+
+app = FastAPI(
+    docs_url=None if _IS_PRODUCTION else "/docs",
+    redoc_url=None,
+    openapi_url=None if _IS_PRODUCTION else "/openapi.json",
+)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-_api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
-_INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY")
+# ── JWT auth ──
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY környezeti változó hiányzik — állítsd be a Railway-en!")
 
-async def require_api_key(api_key: str = Security(_api_key_header)):
-    if not api_key or api_key != _INTERNAL_API_KEY:
-        raise HTTPException(status_code=403, detail="Érvénytelen API kulcs")
+TOKEN_LIFETIME_HOURS = 12
+
+def create_token(username: str) -> str:
+    payload = {
+        "sub": username,
+        "exp": datetime.now(timezone.utc) + timedelta(hours=TOKEN_LIFETIME_HOURS),
+        "iat": datetime.now(timezone.utc),
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
+
+_auth_header = APIKeyHeader(name="Authorization", auto_error=False)
+
+async def require_user(authorization: str = Security(_auth_header)) -> str:
+    """Ellenőrzi a Bearer tokent, és visszaadja a bejelentkezett usernamet."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Bejelentkezés szükséges")
+    token = authorization[len("Bearer "):]
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="A munkamenet lejárt, jelentkezz be újra")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Érvénytelen token")
+    username = payload.get("sub")
+    if not username:
+        raise HTTPException(status_code=401, detail="Érvénytelen token")
+    return username
 
 
 def send_label_notification(username: str, count: int, new_company_total: int):
@@ -50,15 +96,17 @@ def send_label_notification(username: str, count: int, new_company_total: int):
         budapest_tz = timezone(timedelta(hours=1))
         now = datetime.now(budapest_tz).strftime("%Y.%m.%d. %H:%M")
 
+        safe_username = html.escape(username)
+
         resend.Emails.send({
             "from": "Label Labor <noreply@labellabor.com>",
             "to": ["zsombor.labellabor@gmail.com"],
-            "subject": f"Label Labor — {username} generált {count} címkét",
+            "subject": f"Label Labor — {safe_username} generált {count} címkét",
             "html": f"""
                 <h2>Label Labor — Új címke generálás</h2>
                 <p><strong>Időpont:</strong> {now}</p>
                 <hr>
-                <p><strong>Cég:</strong> {username}</p>
+                <p><strong>Cég:</strong> {safe_username}</p>
                 <p><strong>Most generált:</strong> {count} címke</p>
                 <p><strong>Cég összesen:</strong> {new_company_total} címke</p>
                 <hr>
@@ -70,21 +118,27 @@ def send_label_notification(username: str, count: int, new_company_total: int):
         print(f"Email notification error: {e}")
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://labellabor.com",
-        "https://www.labellabor.com",
-        "https://cimkegenerator.netlify.app",
+_ALLOWED_ORIGINS = [
+    "https://labellabor.com",
+    "https://www.labellabor.com",
+    "https://cimkegenerator.netlify.app",
+]
+if not _IS_PRODUCTION:
+    # Lokális fejlesztéshez (Live Server) — élesben nem engedélyezett
+    _ALLOWED_ORIGINS += [
         "http://localhost:3000",
         "http://localhost:5500",
         "http://localhost:5501",
         "http://127.0.0.1:5500",
-        "http://127.0.0.1:5501"
-    ],
+        "http://127.0.0.1:5501",
+    ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "X-API-Key"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 
@@ -101,7 +155,6 @@ class LoginRequest(BaseModel):
 
 
 class LabelCountUpdate(BaseModel):
-    username: str
     count: int
 
     @field_validator("count")
@@ -140,7 +193,7 @@ class CompanySearchRequest(BaseModel):
 
 @app.post("/api/process-labels")
 @limiter.limit("20/minute")
-def process_labels(request: Request, req: LabelProcessRequest, _=Depends(require_api_key)):
+def process_labels(request: Request, req: LabelProcessRequest, username: str = Depends(require_user)):
     try:
         result = process_and_validate(req.rows, subpage=req.subpage)
 
@@ -164,7 +217,7 @@ def process_labels_options():
 
 @app.post("/api/search-company")
 @limiter.limit("10/minute")
-def search_company_endpoint(request: Request, req: CompanySearchRequest, _=Depends(require_api_key)):
+def search_company_endpoint(request: Request, req: CompanySearchRequest, username: str = Depends(require_user)):
     try:
         from web_search import search_company_products
         result = search_company_products(req.company_name)
@@ -218,7 +271,10 @@ def login(request: Request, req: LoginRequest):
         if not bcrypt.checkpw(req.password.encode("utf-8"), password_hash.encode("utf-8")):
             raise HTTPException(status_code=401, detail="Hibás felhasználónév vagy jelszó")
 
-        return {"redirect_url": user["redirect_url"]}
+        return {
+            "redirect_url": user["redirect_url"],
+            "token": create_token(user["username"]),
+        }
 
     except HTTPException:
         raise
@@ -229,11 +285,11 @@ def login(request: Request, req: LoginRequest):
 
 @app.post("/api/update-label-count")
 @limiter.limit("30/minute")
-def update_label_count(request: Request, req: LabelCountUpdate, background_tasks: BackgroundTasks, _=Depends(require_api_key)):
+def update_label_count(request: Request, req: LabelCountUpdate, background_tasks: BackgroundTasks, username: str = Depends(require_user)):
     try:
         response = supabase.table("companies")\
             .select("label_count")\
-            .eq("username", req.username)\
+            .eq("username", username)\
             .execute()
 
         if not response.data or len(response.data) == 0:
@@ -244,10 +300,10 @@ def update_label_count(request: Request, req: LabelCountUpdate, background_tasks
 
         supabase.table("companies")\
             .update({"label_count": new_count})\
-            .eq("username", req.username)\
+            .eq("username", username)\
             .execute()
 
-        background_tasks.add_task(send_label_notification, req.username, req.count, new_count)
+        background_tasks.add_task(send_label_notification, username, req.count, new_count)
 
         return {"success": True, "new_count": new_count}
 
@@ -277,9 +333,9 @@ def get_total_label_count(request: Request):
         raise HTTPException(status_code=500, detail="Szerverhiba")
 
 
-@app.get("/api/company-label-count/{username}")
+@app.get("/api/company-label-count")
 @limiter.limit("60/minute")
-def get_company_label_count(request: Request, username: str):
+def get_company_label_count(request: Request, username: str = Depends(require_user)):
     try:
         response = supabase.table("companies")\
             .select("label_count")\

@@ -1,6 +1,24 @@
-const API_URL = "https://labelgenerator-production.up.railway.app";
-/* const API_URL = "http://localhost:8000"; */
-const INTERNAL_API_KEY = "REMOVED_SECRET";
+// Lokális teszt (Live Server) esetén automatikusan a helyi backendet hívjuk
+const API_URL = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+  ? "http://localhost:8000"
+  : "https://labelgenerator-production.up.railway.app";
+// ── Auth: bejelentkezés ellenőrzése ──
+const AUTH_TOKEN = sessionStorage.getItem("llToken");
+if (!AUTH_TOKEN || AUTH_TOKEN === "undefined") window.location.replace("/");
+
+function authHeaders() {
+  return { "Content-Type": "application/json", "Authorization": "Bearer " + AUTH_TOKEN };
+}
+
+function handleAuthFailure(response) {
+  if (response.status === 401) {
+    sessionStorage.removeItem("llToken");
+    alert("A munkamenet lejárt, kérjük jelentkezzen be újra.");
+    window.location.replace("/");
+    return true;
+  }
+  return false;
+}
 
 const COMPANY_USERNAME = 'RITZER';
 let validatedData = null;
@@ -110,9 +128,11 @@ async function validateWithAgent(data, onComplete) {
   try {
     const response = await fetch(`${API_URL}/api/process-labels`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-API-Key": INTERNAL_API_KEY },
+      headers: authHeaders(),
       body: JSON.stringify({ rows: data, subpage: "ritzer" })
     });
+
+    if (handleAuthFailure(response)) return;
 
     if (!response.ok) {
       console.warn("Backend nem elérhető, feldolgozás kihagyva");
@@ -164,7 +184,7 @@ function showValidationModal(validationResult, onComplete) {
   validationResult.issues.forEach(issue => {
     const card = document.createElement("div");
     card.className = "issue-card";
-    card.innerHTML = `<div class="product-name">${issue.excel_sor - 1}. termék — ${issue.termek}</div>`;
+    card.innerHTML = `<div class="product-name">${issue.excel_sor - 1}. termék — ${escapeAttr(issue.termek)}</div>`;
 
     issue.hibak.forEach((hiba, hibaIdx) => {
       const item = document.createElement("div");
@@ -172,11 +192,11 @@ function showValidationModal(validationResult, onComplete) {
       const inputId = `fix_${issue.row_index}_${hibaIdx}`;
 
       item.innerHTML = `
-        <div class="field-label">${issue.excel_sor - 1}. termék, ${hiba.oszlop} oszlop</div>
-        <div class="error-text">${hiba.hiba}</div>
+        <div class="field-label">${issue.excel_sor - 1}. termék, ${escapeAttr(hiba.oszlop)} oszlop</div>
+        <div class="error-text">${escapeAttr(hiba.hiba)}</div>
         <div class="fix-row">
           <input type="text"
-            value="${hiba.javitott || hiba.eredeti}"
+            value="${escapeAttr(hiba.javitott || hiba.eredeti)}"
             id="${inputId}"
             placeholder="Javított érték...">
           <button class="accept-btn"
@@ -350,22 +370,22 @@ function renderLabels(data) {
 
     div.innerHTML = `
       <img src="${logo.src}" class="logo ${logo.cssClass}">
-      <div class="line1">${line1}</div>
-      <div class="line2">${secondLineText}</div>
-      <div class="line3">${thirdLineText}</div>
-      <div class="kiszereles">${kiszereles}</div>
-      <div class="line4">${row["Cikkszám"] ? "cikkszám: " + padCikkszam(row["Cikkszám"]) : ""}</div>
+      <div class="line1">${escapeAttr(line1)}</div>
+      <div class="line2">${escapeAttr(secondLineText)}</div>
+      <div class="line3">${escapeAttr(thirdLineText)}</div>
+      <div class="kiszereles">${escapeAttr(kiszereles)}</div>
+      <div class="line4">${row["Cikkszám"] ? escapeAttr("cikkszám: " + padCikkszam(row["Cikkszám"])) : ""}</div>
       <div class="barcode-container">
         <svg class="barcode"></svg>
       </div>
       <div class="bottom">
         <div class="price-box1">
-          <span class="amount">${price}</span>
+          <span class="amount">${escapeAttr(price)}</span>
           <span class="unit">,- Ft</span>
         </div>
         <div class="price-box2">
-          <span class="amount">${pricePerUnit}</span>
-          <span class="unit">${unitLabel ? ",- " + unitLabel : ""}</span>
+          <span class="amount">${escapeAttr(pricePerUnit)}</span>
+          <span class="unit">${unitLabel ? ",- " + escapeAttr(unitLabel) : ""}</span>
         </div>
       </div>
     `;
@@ -424,8 +444,8 @@ async function updateLabelCount(count) {
   try {
     const response = await fetch(`${API_URL}/api/update-label-count`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-API-Key": INTERNAL_API_KEY },
-      body: JSON.stringify({ username, count }),
+      headers: authHeaders(),
+      body: JSON.stringify({ count }),
     });
     if (response.ok) {
       const data = await response.json();
@@ -447,7 +467,7 @@ async function loadCompanyLabelCount() {
   const username = getUsername();
   if (!username) return;
   try {
-    const response = await fetch(`${API_URL}/api/company-label-count/${username}`);
+    const response = await fetch(`${API_URL}/api/company-label-count`, { headers: authHeaders() });
     if (response.ok) {
       const data = await response.json();
       updateDisplayedCount(data.count);
@@ -608,7 +628,8 @@ function escapeAttr(str) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function openDataTable() {

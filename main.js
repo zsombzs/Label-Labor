@@ -1,4 +1,7 @@
-const API_URL = "https://labelgenerator-production.up.railway.app";
+// Lokális teszt (Live Server) esetén automatikusan a helyi backendet hívjuk
+const API_URL = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+  ? "http://localhost:8000"
+  : "https://labelgenerator-production.up.railway.app";
 
 let isCounterAnimating = false;
 
@@ -103,7 +106,12 @@ async function handleLogin(e) {
     }
 
     const data = await res.json();
+    if (!data.token) {
+      showNotification('Szerverhiba: a backend nem adott vissza tokent (régi verzió fut?)', 'error');
+      return;
+    }
     sessionStorage.setItem('currentUsername', username);
+    sessionStorage.setItem('llToken', data.token);
     showNotification(translations[currentLang]['login-success'], 'success');
     closeLoginModal();
 
@@ -126,6 +134,13 @@ async function handleContactForm(e) {
   const company = document.getElementById('contactCompany').value;
   const message = document.getElementById('contactMessage').value;
 
+  // Honeypot: ha a rejtett mezőt kitöltötték, bot — csendben eldobjuk
+  const gotcha = document.getElementById('contactGotcha')?.value;
+  if (gotcha) {
+    document.getElementById('contactForm').reset();
+    return;
+  }
+
   const submitBtn = document.querySelector('.contact-submit-btn');
   const originalText = submitBtn.textContent;
   submitBtn.textContent = 'Sending...';
@@ -136,13 +151,7 @@ async function handleContactForm(e) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, company, message, _replyto: email }),
-    }).catch(() =>
-      fetch(`${API_URL}/api/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, company, message }),
-      })
-    );
+    });
 
     if (response.ok) {
       showNotification(translations[currentLang]['contact-success'], 'success');

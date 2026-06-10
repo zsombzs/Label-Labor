@@ -601,9 +601,9 @@ body {
 
 /* logo-b: manuálisan megadott logo mérete */
 .logo-b {
-  width: 67px;
+  width: 42px;
   position: absolute;
-  top: 8px;
+  top: 7px;
   right: 9px;
 }
 
@@ -616,7 +616,7 @@ body {
 }
 
 .logo-b-sm {
-  width: 67px;
+  width: 42px;
   position: absolute;
   top: 7px;
   right: 9px;

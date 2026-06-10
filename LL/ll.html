@@ -6,16 +6,15 @@
   <link rel="icon" type="image/png" href="assets/icon.png">
   <link rel="shortcut icon" type="image/png" href="assets/icon.png">
   <link rel="apple-touch-icon" href="assets/icon.png">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvg/dist/browser/canvg.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="../vendor/html2pdf.bundle.min.js"></script>
+  <script src="../vendor/JsBarcode.all.min.js"></script>
+  <script src="../vendor/lucide.min.js"></script>
   <link rel="stylesheet" href="ll.css" />
 </head>
 <body>
   <div class="cim-container">
-    <h1 class="focim">Label Labor címkéi</h1>
+    <h1 class="focim">Festékbolt címkéi</h1>
   </div>
   <div class="main-container">
     <!-- Bal oldali oszlop -->
@@ -49,13 +48,13 @@
           <input type="radio" name="labelType" value="B">
           <span></span>B logo
         </label>
-        <label class="circle-radio">
+<!--         <label class="circle-radio">
           <input type="radio" name="labelType" value="C">
           <span></span>nincs logo
-        </label>
+        </label> -->
       </div>
       <!-- Árváltozás detektor szekció -->
-      <div class="arvaltozas-section">
+<!--       <div class="arvaltozas-section">
         <div class="arvaltozas-toggle" id="arvaltozasToggle">
           <span class="arvaltozas-toggle-label">Árváltozás detektor</span>
           <button class="arv-reset-btn" id="arvResetBtn" title="Visszaállítás">↺</button>
@@ -81,7 +80,7 @@
             Változott termékek generálása
           </button>
         </div>
-      </div>
+      </div> -->
 
       <div class="company-search-section" style="display:none"><!-- IDEIGLENESEN ELREJTVE -->
         <div class="search-header">Minta címkék generálása</div>

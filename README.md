@@ -1,6 +1,6 @@
-# Label Labor 🏷️
+# Label Labor
 
-A web application for paint store owners that turns an Excel price list into print-ready shelf labels (PDF) — with EAN-13 barcodes, unit price calculations, and an AI-assisted data validation step.
+A web application for small and medium-sized businesses that turns an Excel price list into print-ready shelf labels (PDF) — with EAN-13 barcodes, unit price calculations, and an AI-assisted data validation step.
 
 Built as a real product with paying customers: each client gets a branded sub-page tailored to their label layout and Excel format.
 
@@ -10,7 +10,7 @@ Built as a real product with paying customers: each client gets a branded sub-pa
 
 1. The store owner logs in and lands on their company-specific generator page.
 2. They upload their `.xlsx` price list (drag & drop supported).
-3. A validation agent checks every row — unit formats, price consistency, EAN-13 checksums, text overflow — and proposes fixes the user can accept, edit, or skip.
+3. A validation agent checks every row - unit formats, price consistency, EAN-13 checksums, text overflow — and proposes fixes the user can accept, edit, or skip.
 4. Labels are rendered in the browser (live preview) and exported as a print-ready A4 PDF.
 
 ## Features

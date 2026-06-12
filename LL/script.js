@@ -22,7 +22,6 @@ function handleAuthFailure(response) {
 
 const COMPANY_USERNAME = 'L_L';
 let validatedData = null; // Validált adatok tárolása (logo-váltásnál ne fussanak újra)
-let companyLogoBase64 = null; // Keresett cég logoja (base64 data URL)
 let rawData = null; // Nyers Excel adatok (táblázat előnézethez)
 
 function getUsername() {
@@ -32,9 +31,8 @@ function getUsername() {
 function getSelectedLogo() {
   const selectedType = document.querySelector('input[name="labelType"]:checked').value;
   if (selectedType === "A") {
-    // AI logo: keresett cég logója (ha van), egyébként piros.png
     return {
-      src: companyLogoBase64 || "assets/icon_1.png",
+      src: "assets/icon_1.png",
       cssClass: "logo-a"
     };
   } else if (selectedType === "B") {
@@ -558,7 +556,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("downloadBtn").disabled = true;
   document.querySelector("#downloadBtn").addEventListener("click", generatePDF);
   document.querySelector("#sablonBtn").addEventListener("click", downloadTemplate);
-  document.querySelector("#searchCompanyBtn").addEventListener("click", searchCompany);
   document.getElementById("tablePreviewBtn").addEventListener("click", openDataTable);
 document.getElementById("dataTableCloseBtn").addEventListener("click", closeDataTable);
   document.getElementById("dataTableSaveBtn").addEventListener("click", saveAndGenerate);
@@ -716,111 +713,6 @@ function downloadTemplate() {
 }
 
 // =============================================================================
-// CÉG KERESÉS - termékek keresése az interneten
-// =============================================================================
-
-async function searchCompany() {
-  const input = document.getElementById("companyNameInput");
-  const statusEl = document.getElementById("searchStatus");
-  const companyName = input.value.trim();
-
-  if (!companyName) {
-    statusEl.textContent = "Kérem adja meg a cég nevét!";
-    statusEl.style.color = "#ff8080";
-    return;
-  }
-
-  // Loading state
-  statusEl.textContent = "Keresés folyamatban... (ez akár 15-20 másodpercig is tarthat)";
-  statusEl.style.color = "#f6bd60";
-  document.getElementById("searchCompanyBtn").disabled = true;
-
-  const loadingOverlay = document.getElementById("loadingOverlay");
-  loadingOverlay.classList.add("active");
-
-  try {
-    const response = await fetch(`${API_URL}/api/search-company`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify({ company_name: companyName })
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    const result = await response.json();
-
-    loadingOverlay.classList.remove("active");
-
-    if (!result.products || result.products.length === 0) {
-      statusEl.textContent = "Nem találtunk termékeket. Próbáljon más cégnevet!";
-      statusEl.style.color = "#ff8080";
-      document.getElementById("searchCompanyBtn").disabled = false;
-      return;
-    }
-
-    // Logo beállítása (ha van)
-    if (result.logo_base64) {
-      companyLogoBase64 = result.logo_base64;
-      statusEl.textContent = `${result.products.length} termék és logó találva!`;
-    } else {
-      companyLogoBase64 = null;
-      statusEl.textContent = `${result.products.length} termék találva (logó nem található).`;
-    }
-    statusEl.style.color = "#4caf50";
-
-    // Forrás linkek megjelenítése
-    const linksEl = document.getElementById("searchLinks");
-    linksEl.innerHTML = "";
-    const titleEl = document.createElement("div");
-    titleEl.className = "search-links-title";
-    titleEl.textContent = "Forrás linkek:";
-    linksEl.appendChild(titleEl);
-
-    if (result.logo_url) {
-      const item = document.createElement("div");
-      item.className = "search-link-item";
-      item.innerHTML = `<span class="search-link-badge logo-badge">logó</span><a href="${safeLinkUrl(result.logo_url)}" target="_blank" rel="noopener">${escapeAttr(result.logo_url)}</a>`;
-      linksEl.appendChild(item);
-    }
-    (result.source_urls || []).forEach(url => {
-      const item = document.createElement("div");
-      item.className = "search-link-item";
-      item.innerHTML = `<span class="search-link-badge">forrás</span><a href="${safeLinkUrl(url)}" target="_blank" rel="noopener">${escapeAttr(url)}</a>`;
-      linksEl.appendChild(item);
-    });
-
-    // Minta cikkszámok és EAN-13 kódok (max 6 termékhez)
-    const mintaCikkszamok = ["100001", "100002", "100003", "100004", "100005", "100006"];
-    const mintaEAN13 = ["8711347001576", "8711347000012", "8711347000050", "8711347000067", "8711347000111", "8711347000135"];
-
-    // Átalakítás az agent által várt formátumra
-    const rows = result.products.map((p, i) => ({
-      "Megnevezés": p["Megnevezés"] || "",
-      "Kiszerelés": p["Kiszerelés"] || "",
-      "Ár": p["Ár"] || "",
-      "EAN-13": mintaEAN13[i] || "",
-      "Cikkszám": mintaCikkszamok[i] || ""
-    }));
-
-    // Meglévő validációs pipeline-ba tápláljuk
-    rawData = rows.map(r => ({ ...r })); // Nyers adatok mentése előnézethez
-    validateWithAgent(rows, (correctedData) => {
-      validatedData = correctedData;
-      renderLabels(correctedData);
-    });
-
-  } catch (err) {
-    console.error("Cég keresési hiba:", err);
-    loadingOverlay.classList.remove("active");
-    statusEl.textContent = "Hiba történt a keresés során. Próbálja újra!";
-    statusEl.style.color = "#ff8080";
-  } finally {
-    document.getElementById("searchCompanyBtn").disabled = false;
-  }
-}
-// =============================================================================
 // ADATOK ELŐNÉZETE - szerkeszthető táblázat
 // =============================================================================
 
@@ -883,11 +775,6 @@ function getTableCellValue(colKey, rowIndex) {
   if (pRow && pRow[colKey] !== undefined && pRow[colKey] !== "") return String(pRow[colKey]);
   if (rRow && rRow[colKey] !== undefined && rRow[colKey] !== "") return String(rRow[colKey]);
   return "";
-}
-
-function safeLinkUrl(url) {
-  const u = String(url || "");
-  return (u.startsWith("https://") || u.startsWith("http://")) ? escapeAttr(u) : "#";
 }
 
 function escapeAttr(str) {

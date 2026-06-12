@@ -177,20 +177,6 @@ class LabelProcessRequest(BaseModel):
         return v
 
 
-class CompanySearchRequest(BaseModel):
-    company_name: str
-
-    @field_validator("company_name")
-    @classmethod
-    def validate_company_name(cls, v: str) -> str:
-        v = v.strip()
-        if not v:
-            raise ValueError("Cégnév nem lehet üres")
-        if len(v) > 100:
-            raise ValueError("Cégnév maximum 100 karakter lehet")
-        return v
-
-
 @app.post("/api/process-labels")
 @limiter.limit("20/minute")
 def process_labels(request: Request, req: LabelProcessRequest, username: str = Depends(require_user)):
@@ -212,25 +198,6 @@ def process_labels(request: Request, req: LabelProcessRequest, username: str = D
 
 @app.options("/api/process-labels")
 def process_labels_options():
-    return {"message": "OK"}
-
-
-@app.post("/api/search-company")
-@limiter.limit("10/minute")
-def search_company_endpoint(request: Request, req: CompanySearchRequest, username: str = Depends(require_user)):
-    try:
-        from web_search import search_company_products
-        result = search_company_products(req.company_name)
-        return result
-    except Exception as e:
-        print(f"Search company error: {e}")
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="Szerverhiba a keresés során")
-
-
-@app.options("/api/search-company")
-def search_company_options():
     return {"message": "OK"}
 
 

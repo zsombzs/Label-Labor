@@ -70,26 +70,19 @@ Generated, print-ready labels:
 └── vendor/              # Vendored frontend libraries
 ```
 
-## Running locally
+## Configuration & deployment
 
-```bash
-pip install -r requirements.txt -r agent/requirements.txt
-cp .env.example .env   # fill in your keys
-python main.py         # API on http://localhost:8000
-```
+The API (FastAPI) is deployed on Railway; the frontend is static — vanilla HTML/CSS/JS with no runtime build step. Everything is configured through environment variables, so no secrets ever live in the code:
 
-Required environment variables:
+| Variable | Purpose |
+|---|---|
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | PostgreSQL access (users, label data) |
+| `SECRET_KEY` | JWT signing |
+| `ANTHROPIC_API_KEY` | the Claude validation agent |
+| `RESEND_API_KEY` | transactional email (optional) |
+| `FRONTEND_URL` | CORS origin |
 
-```
-SUPABASE_URL=            # Supabase project URL
-SUPABASE_SERVICE_ROLE_KEY=
-SECRET_KEY=              # JWT signing key
-ANTHROPIC_API_KEY=       # for the validation agent
-RESEND_API_KEY=          # transactional email (optional)
-FRONTEND_URL=            # CORS origin
-```
-
-Serve the frontend with any static server (e.g. `python -m http.server`) and open `index.html`.
+Backend dependencies are split between the API (`requirements.txt`) and the AI agent (`agent/requirements.txt`); frontend assets are minified with Terser + csso.
 
 ## License
 

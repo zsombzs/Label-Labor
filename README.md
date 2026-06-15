@@ -4,13 +4,27 @@ A web application for small and medium-sized businesses that turns an Excel pric
 
 Built as a real product with paying customers: each client gets a branded sub-page tailored to their label layout and Excel format.
 
+> A portfolio project based on a real, live product. The code is public for review, but it is **not** open-source — see [License](#license).
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/landing.png" width="800" alt="Landing page" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/generator.png" width="400" alt="Generator page with Excel upload and live label preview" />
+  <img src="docs/screenshots/validation.png" width="400" alt="AI validation modal with suggested fixes" />
+</p>
+
+Generated, print-ready labels:
+
 ![Generated labels](assets/labels.jpg)
 
 ## How it works
 
 1. The store owner logs in and lands on their company-specific generator page.
 2. They upload their `.xlsx` price list (drag & drop supported).
-3. A validation agent checks every row - unit formats, price consistency, EAN-13 checksums, text overflow — and proposes fixes the user can accept, edit, or skip.
+3. A validation agent checks every row — unit formats, price consistency, EAN-13 checksums, text overflow — and proposes fixes the user can accept, edit, or skip.
 4. Labels are rendered in the browser (live preview) and exported as a print-ready A4 PDF.
 
 ## Features
@@ -76,6 +90,12 @@ FRONTEND_URL=            # CORS origin
 ```
 
 Serve the frontend with any static server (e.g. `python -m http.server`) and open `index.html`.
+
+## License
+
+© 2026 Zsombor Galgóczi. **All rights reserved.**
+
+This repository is **source-available for portfolio and evaluation purposes only**. You are welcome to read the code, but copying, modifying, redistributing, or reusing it — in whole or in part — requires prior written permission. See [LICENSE](LICENSE) for the full terms.
 
 ---
 

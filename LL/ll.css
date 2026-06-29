@@ -1433,7 +1433,7 @@ body {
 .cimbi-undo { margin-left: auto; background: none; border: none; color: #1D4ED8; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
 .cimbi-undo svg { width: 15px; height: 15px; color: #1D4ED8; }
 
-.cimbi-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 14px 10px; }
+.cimbi-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px; }
 .cimbi-chip { font-size: 13px; padding: 6px 11px; border: 1px solid #E2E0DA; border-radius: 999px; background: #F5F4F0; color: #5A5A5A; cursor: pointer; }
 .cimbi-chip:hover { background: #ebe9e3; }
 

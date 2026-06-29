@@ -15,5 +15,8 @@ node_modules/
 
 # Claude
 CLAUDE.md
+FEJLESZTESI_ALLAPOT.md
 
 design_preview.html
+
+.claude/

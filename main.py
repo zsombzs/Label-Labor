@@ -18,6 +18,7 @@ from datetime import datetime, timezone, timedelta
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "agent"))
 from validator_agent import process_and_validate
+from command_parser import parse_label_command
 
 load_dotenv()
 
@@ -177,6 +178,58 @@ class LabelProcessRequest(BaseModel):
         return v
 
 
+class CorrectionRecord(BaseModel):
+    """Egy validációs döntés a korrekciós naplóhoz (Roadmap 0. fázis)."""
+    oszlop: str
+    eredeti: str = ""
+    ai_javaslat: str = ""
+    vegso_ertek: str = ""
+    action: str  # accepted | edited | unchanged | skipped
+    termek: str = ""
+    excel_sor: int | None = None
+    hiba_leiras: str = ""
+
+
+class CorrectionLogRequest(BaseModel):
+    subpage: str = "standard"
+    corrections: list[CorrectionRecord]
+
+    @field_validator("corrections")
+    @classmethod
+    def limit_corrections(cls, v: list) -> list:
+        if len(v) > 1000:
+            raise ValueError("Egyszerre maximum 1000 korrekció naplózható")
+        return v
+
+
+class LabelCommandRequest(BaseModel):
+    """Cimbi chat (1. fázis): természetes nyelvű címke-parancs."""
+    subpage: str = "standard"
+    message: str
+    # A betöltött címkék tömör listája (sorszám-feloldáshoz). Best-effort, opcionális.
+    labels: list | None = None
+
+    @field_validator("message")
+    @classmethod
+    def msg_ok(cls, v: str) -> str:
+        v = (v or "").strip()
+        if not v:
+            raise ValueError("Üres parancs")
+        if len(v) > 500:
+            raise ValueError("Túl hosszú parancs (max 500 karakter)")
+        return v
+
+    @field_validator("labels")
+    @classmethod
+    def labels_ok(cls, v):
+        if v is None:
+            return v
+        # Méret-korlát: a parser amúgy is 150-re vág, de itt is védünk.
+        if len(v) > 1000:
+            return v[:1000]
+        return v
+
+
 @app.post("/api/process-labels")
 @limiter.limit("20/minute")
 def process_labels(request: Request, req: LabelProcessRequest, username: str = Depends(require_user)):
@@ -198,6 +251,58 @@ def process_labels(request: Request, req: LabelProcessRequest, username: str = D
 
 @app.options("/api/process-labels")
 def process_labels_options():
+    return {"message": "OK"}
+
+
+@app.post("/api/log-corrections")
+@limiter.limit("30/minute")
+def log_corrections(request: Request, req: CorrectionLogRequest, username: str = Depends(require_user)):
+    """Korrekciós napló (Roadmap 0. fázis): a validációs modal döntéseit tanulási
+    adatként menti. Best-effort — hiba esetén sem blokkolja a felhasználói folyamatot."""
+    if not req.corrections:
+        return {"success": True, "logged": 0}
+    try:
+        rows = [{
+            "company": username,
+            "subpage": (req.subpage or "")[:50],
+            "oszlop": (c.oszlop or "")[:50],
+            "eredeti": (c.eredeti or "")[:300],
+            "ai_javaslat": (c.ai_javaslat or "")[:300],
+            "vegso_ertek": (c.vegso_ertek or "")[:300],
+            "action": (c.action or "")[:20],
+            "termek": (c.termek or "")[:300],
+            "excel_sor": c.excel_sor,
+            "hiba_leiras": (c.hiba_leiras or "")[:500],
+        } for c in req.corrections]
+
+        supabase.table("corrections").insert(rows).execute()
+        return {"success": True, "logged": len(rows)}
+    except Exception as e:
+        # A naplózás nem kritikus — ne dobjunk 500-at a felhasználóra.
+        print(f"Log corrections error: {e}")
+        return {"success": False, "logged": 0}
+
+
+@app.options("/api/log-corrections")
+def log_corrections_options():
+    return {"message": "OK"}
+
+
+@app.post("/api/label-command")
+@limiter.limit("20/minute")
+def label_command(request: Request, req: LabelCommandRequest, username: str = Depends(require_user)):
+    """Cimbi chat (1. fázis): a természetes nyelvű parancsot strukturált intentté fordítja.
+    A frontend alkalmazza az intentet (előnézet + visszavonás miatt)."""
+    try:
+        intent = parse_label_command(req.message, labels=req.labels)
+        return {"intent": intent}
+    except Exception as e:
+        print(f"Label command error: {e}")
+        raise HTTPException(status_code=500, detail="Szerverhiba a parancs értelmezésekor")
+
+
+@app.options("/api/label-command")
+def label_command_options():
     return {"message": "OK"}
 
 

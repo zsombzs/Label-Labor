@@ -29,21 +29,16 @@
         <button class="lang-btn active" data-lang-code="hu">HU</button>
       </div>
       <button class="btn-login" id="openLoginBtn" data-lang="nav-login">Bejelentkezés</button>
+      <button class="hamburger-menu" aria-label="Menü" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
     </div>
   </header>
 
-  <!-- ══════════ MOBILE NAV ══════════ -->
-  <nav class="mobile-navigation">
-    <span class="current-page-title" data-lang="about">Bemutatkozás</span>
-    <button class="hamburger-menu" aria-label="Menü">
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-    </button>
-  </nav>
-
   <!-- ══════════ MOBILE MENU OVERLAY ══════════ -->
-  <div class="mobile-menu-overlay">
+  <div class="mobile-menu-overlay" id="mobileMenu">
     <div class="mobile-menu-content">
       <button class="mobile-menu-close" aria-label="Bezárás">×</button>
       <ul class="mobile-menu-list">
@@ -71,9 +66,11 @@
             <h1 class="hero-title" data-lang="hero-title">Professzionális <span>polccímkék</span><br>percek alatt</h1>
             <p class="hero-desc" data-lang="about-intro">A legtöbb boltban problémát jelent a polccímkék gyors, költséghatékony és egységes előállítása. A Label Labor erre kínál egyszerű megoldást.</p>
             <div class="hero-actions">
-              <button class="btn-cta-primary" id="heroLoginBtn" data-lang="nav-login">Bejelentkezés</button>
+              <a href="#arajanlat" class="btn-cta-primary hero-cta-mobile" data-lang="pricing-cta">Ajánlatot kérek</a>
+              <button class="btn-cta-primary hero-cta-desktop" id="heroLoginBtn" data-lang="nav-login">Bejelentkezés</button>
               <a href="#pelda-cimkek" class="btn-cta-secondary" data-lang="cta-examples-btn">Példa megtekintése</a>
             </div>
+            <p class="hero-mobile-note" data-lang="mobile-app-notice">A polccímke-szerkesztő jelenleg asztali gépen vagy laptopon érhető el. Telefonon megnézheti a bemutatót, és lent árajánlatot kérhet.</p>
           </div>
           <div class="hero-badge-stack">
             <div class="hero-badge hero-badge--blue">
@@ -156,7 +153,11 @@
           <!-- Jobb: Görgethető használati útmutató -->
           <div class="steps-section">
             <h2 data-lang="user-guide">Használati útmutató</h2>
-            <div class="steps-list steps-scrollable">
+            <button type="button" class="steps-toggle" id="stepsToggle" aria-expanded="false" aria-controls="stepsList">
+              <span class="steps-toggle-label" data-lang="steps-toggle-show">Útmutató megnyitása</span>
+              <svg class="steps-toggle-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="steps-list steps-scrollable collapsed" id="stepsList">
 
               <div class="step-item">
                 <div class="step-number">1/8</div>

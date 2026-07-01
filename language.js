@@ -3,6 +3,7 @@ const translations = {
     en: {
       'desktop-only': 'Desktop Only',
       'desktop-warning': 'Label Labor is currently only available on desktop/laptop.<br>If using a computer, please increase the window size!',
+      'mobile-app-notice': 'The label editor currently runs on a desktop or laptop. On your phone you can browse the demo and request a quote below.',
       'about': 'About us',
       'nav-login': 'Login',
       'nav-what-is': 'What is it?',
@@ -16,6 +17,8 @@ const translations = {
       'all-labels': 'All generated shelf labels: ',
       'demo-video': 'Tutorial Video',
       'user-guide': 'User Guide',
+      'steps-toggle-show': 'Open the guide',
+      'steps-toggle-hide': 'Close the guide',
       'step1-title': 'Login',
       'step1-desc': 'Log in on the main page using the username and password you received.',
 
@@ -125,6 +128,7 @@ const translations = {
     hu: {
       'desktop-only': 'Desktop Only',
       'desktop-warning': 'A Label Labor jelenleg csak asztali számítógépen/laptopon érhető el.<br>Ha számítógépen használja, növelje az ablak méretét!',
+      'mobile-app-notice': 'A polccímke-szerkesztő jelenleg asztali gépen vagy laptopon érhető el. Telefonon megnézheti a bemutatót, és lent árajánlatot kérhet.',
       'about': 'Bemutatkozás',
       'nav-login': 'Bejelentkezés',
       'nav-what-is': 'Mi ez?',
@@ -138,6 +142,8 @@ const translations = {
       'all-labels': 'Összes generált polccímke: ',
       'demo-video': 'Bemutató videó',
       'user-guide': 'Használati útmutató',
+      'steps-toggle-show': 'Útmutató megnyitása',
+      'steps-toggle-hide': 'Útmutató bezárása',
 
       'step1-title': 'Bejelentkezés',
       'step1-desc': 'Lépjen be a főoldalon a kapott felhasználónévvel és jelszóval.',

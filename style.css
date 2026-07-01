@@ -281,36 +281,18 @@ body {
 .nav-link.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; background: var(--blue-light); }
 
 /* ══════════════════════════════════
-   MOBILE NAVIGATION
+   MOBILE MENU (hamburger + overlay)
 ══════════════════════════════════ */
-.mobile-navigation {
-  display: none;
-  position: fixed;
-  top: 68px; left: 0; right: 0;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  z-index: 99;
-  padding: .75rem 1.5rem;
-  justify-content: space-between;
-  align-items: center;
-  height: 52px;
-}
-
-.current-page-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text);
-}
-
 .hamburger-menu {
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: .4rem;
-  display: flex;
+  padding: .6rem;
+  display: none; /* desktopon rejtve – a mobil media query mutatja */
   flex-direction: column;
   gap: 5px;
   z-index: 101;
+  margin-left: .15rem;
 }
 
 .hamburger-line {
@@ -1287,95 +1269,14 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
 ══════════════════════════════════ */
 @media (max-width: 1024px) {
   .header-container  { padding: .75rem 1.25rem; height: 62px; }
-  .header-container h1 { font-size: 1.25rem; }
   .header-center     { display: none; }
-  .navigation-menu   { display: none; }
-  .mobile-navigation { display: flex; top: 62px; height: 50px; }
   .mobile-menu-overlay { display: block; }
-
-  #page-content {
-    margin-top: 112px;
-    margin-bottom: 50px;
-    min-height: auto;
-    padding: 0 .25rem;
-    overflow-y: visible;
-  }
 
   .content-grid { grid-template-columns: 1fr; gap: 1.5rem; }
   .video-wrapper { position: relative !important; top: auto !important; }
   .video-section { margin-bottom: 1.5rem; }
 
-  /* About mobile */
-  .about-intro-box { padding: 1.5rem 1.25rem; margin-bottom: 1.5rem; }
-  .about-intro-box .page-title { font-size: 1.75rem; padding-bottom: .9rem; }
-  .about-intro  { font-size: 1.05rem; line-height: 1.85; }
-  .benefits-title { font-size: 1.45rem; margin-bottom: 1.25rem; margin-top: 1.25rem; }
-
-  .benefits-list {
-    grid-template-columns: 1fr;
-    gap: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .benefits-list li {
-    border-radius: 0;
-    border-left: none;
-    border-bottom: 1px solid var(--border);
-    box-shadow: none;
-    background: transparent;
-    padding: 1rem 1rem 1rem 2.5rem;
-    position: relative;
-    display: block;
-    font-size: 1.02rem;
-  }
-
-  .benefits-list li:last-child { border-bottom: none; }
-
-  .benefits-list li::before {
-    content: '✓';
-    position: absolute;
-    left: .6rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--blue);
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-
-  .benefits-list li:hover { background: var(--blue-light); transform: none; box-shadow: none; }
-
   /* Contact mobile */
-  .form-location-hint-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .75rem;
-    margin: 1rem 0;
-    padding: 1rem 1.25rem;
-    background: var(--blue-light);
-    border: 1px solid var(--blue-mid);
-    border-radius: var(--radius);
-  }
-
-  .form-location-hint  { color: var(--text); font-size: .95rem; line-height: 1.6; text-align: center; margin: 0; }
-
-  .scroll-to-form-btn {
-    background: var(--blue);
-    color: var(--white);
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: .75rem 1.5rem;
-    font-size: .95rem;
-    font-weight: 600;
-    cursor: pointer;
-    min-height: 48px;
-    font-family: 'Segoe UI', 'Calibri', sans-serif;
-    transition: background .2s;
-  }
-
-  .scroll-to-form-btn:hover { background: var(--blue-hover); }
-
   .contact-grid  { grid-template-columns: 1fr; display: flex; flex-direction: column; gap: 2rem; }
   .contact-left  { order: 2; }
   .contact-right { order: 1; }
@@ -1392,14 +1293,6 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
   .step-number { align-self: center; width: 50px; height: 50px; font-size: .9rem; }
   .step-content h3 { text-align: center; font-size: 1.1rem; }
   .step-content p  { font-size: .95rem; }
-
-  /* PDF mobile */
-  .pdf-wrapper     { height: auto; min-height: calc(100vh - 162px); }
-  .pdf-container   { min-height: calc(100vh - 162px); height: auto; }
-  .pdf-container iframe { height: calc(100vh - 162px); min-height: 500px; }
-
-  /* Stats hide */
-  .stats-container { display: none; }
 
   /* Notifications */
   .custom-notification { width: 90%; max-width: 320px; }
@@ -1427,25 +1320,10 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
 ══════════════════════════════════ */
 @media (max-width: 768px) {
   .header-container    { padding: .6rem 1rem; height: 56px; }
-  .header-container h1 { font-size: 1.1rem; }
-  .lang-btn            { font-size: .78rem; padding: 5px 10px; }
-  .mobile-navigation   { padding: .6rem 1rem; top: 56px; height: 48px; }
-  .current-page-title  { font-size: .9rem; }
   .logo-icon           { height: 1.75rem; }
-
-  #page-content {
-    margin-top: 104px;
-    margin-bottom: 44px;
-  }
 
   .page-wrapper { padding: 1rem .75rem; }
   .page-title   { font-size: 1.5rem; margin-bottom: 1.25rem; }
-
-  .about-intro-box { padding: 1.25rem .9rem; }
-  .about-intro-box .page-title { font-size: 1.5rem; }
-  .about-intro  { font-size: .97rem; }
-  .benefits-title { font-size: 1.35rem; }
-  .benefits-list li { font-size: .97rem; }
 
   .contact-form { padding: 1.5rem 1rem; }
   .form-group input,
@@ -1459,17 +1337,12 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
   .step-content h3 { font-size: .97rem; }
   .step-content p  { font-size: .87rem; }
 
-  .footer-container { padding: 0 1rem; height: 44px; }
   .contacts { font-size: .8rem; }
 
   .custom-notification { width: 88%; max-width: 300px; }
   .custom-notification.show { right: 6%; }
 
   .mobile-menu-link { font-size: 1rem; padding: 1rem .75rem; }
-
-  .pdf-wrapper   { min-height: calc(100vh - 148px); }
-  .pdf-container { min-height: calc(100vh - 148px); }
-  .pdf-container iframe { height: calc(100vh - 148px); min-height: 450px; }
 
   /* Login modal — small phone */
   .login-container { width: min(88vw, 280px); height: 178px; }
@@ -1641,12 +1514,28 @@ html { scroll-padding-top: 82px; }
 /* Alternate section background */
 .section-alt { background: var(--surface); }
 
-/* Secondary CTA as anchor link */
-a.btn-cta-secondary {
+/* CTA as anchor link */
+a.btn-cta-secondary,
+a.btn-cta-primary {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Mobil/desktop CTA váltás a heróban + mobil értesítő sáv */
+.hero-cta-mobile { display: none; }
+
+.hero-mobile-note {
+  display: none;
+  margin-top: 1rem;
+  padding: .7rem .9rem;
+  background: var(--blue-light);
+  border-left: 3px solid var(--blue);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: .9rem;
+  line-height: 1.5;
+  color: var(--text-sec);
 }
 
 /* ── LABELS PREVIEW ── */
@@ -1741,6 +1630,43 @@ a.btn-cta-secondary {
 }
 .steps-scrollable::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
+/* ── Használati útmutató – lenyitható blokk (csak telefonon aktív) ── */
+.steps-toggle {
+  display: none; /* desktopon nincs toggle – a lista mindig látszik */
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .9rem 1.1rem;
+  margin-bottom: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--blue);
+  cursor: pointer;
+  transition: background .2s, box-shadow .2s;
+}
+
+.steps-toggle:hover { background: var(--blue-light); }
+
+.steps-toggle-chevron {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform .25s ease;
+}
+
+.steps-toggle[aria-expanded="true"] .steps-toggle-chevron { transform: rotate(180deg); }
+
+@media (max-width: 768px) {
+  .steps-toggle { display: flex; }
+  .steps-list.collapsed { display: none; }
+}
+
 /* ── STATIC FOOTER ── */
 .footer-static {
   background: var(--surface);
@@ -1762,28 +1688,43 @@ a.btn-cta-secondary {
 
 /* ── RESPONSIVE — single-page ── */
 @media (max-width: 1024px) {
-  html { scroll-padding-top: 120px; }
+  html { scroll-padding-top: 78px; }
 
   .footer-analytics-note { display: none; }
 
+  /* Egyetlen fix header sáv (62px) – a külön mobil nav sáv megszűnt */
   #main-content {
-    margin-top: 112px;
-    min-height: calc(100vh - 112px - 44px);
+    margin-top: 62px;
+    min-height: calc(100vh - 62px - 44px);
   }
 
   .header-nav { display: none; }
+
+  /* Hamburger a fő headerben; a login a menüben él, ezért a headerből kivesszük */
+  .hamburger-menu { display: flex; }
+  .btn-login { display: none; }
+
+  /* Mobilon a login zsákutca → elsődleges CTA az árajánlat-kérés */
+  .hero-cta-desktop { display: none; }
+  .hero-cta-mobile  { display: inline-flex; }
+  .hero-mobile-note { display: block; }
+
+  /* A beágyazott görgetődoboz (scroll-trap) feloldása – a lépések folyjanak természetesen */
+  .steps-scrollable {
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
+  }
 
   .labels-preview-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
-  html { scroll-padding-top: 110px; }
+  html { scroll-padding-top: 70px; }
 
-  #main-content { margin-top: 104px; }
+  #main-content { margin-top: 56px; }
 
   .page-section { padding: 2rem 0; }
-
-  .btn-login { font-size: .8rem; padding: 7px 14px; }
 }
 
 /* ══════════════════════════════════
@@ -2166,16 +2107,15 @@ body.dark-mode .info-strip { color: var(--green); }
   .pricing-banner { padding: 1.25rem; }
   .pricing-banner-price { font-size: 2rem; }
 
-  .hero-badge { padding: .75rem 1rem; }
-  .hero-badge-num { font-size: 2.2rem; }
-  .hero-badge-label { font-size: .75rem; }
+  /* Telefonon csak az élő számláló badge marad – a statikus "100+" redundáns */
+  .hero-badge-stack .hero-badge:not(.hero-badge--blue) { display: none; }
+  .hero-badge--blue { width: 100%; }
+  .hero-badge { padding: .9rem 1rem; }
+  .hero-badge-num { font-size: 2.4rem; }
+  .hero-badge-label { font-size: .8rem; }
 
-  /* Login modal — small phone */
-  .login-container { width: min(88vw, 280px); height: 178px; }
-  .label-logo      { width: 50px; }
-  .barcode-container { width: 108px; }
-  .price-box .amount { font-size: 17px; }
-  .login-mobile-msg { font-size: .75rem; }
+  /* Nagyobb, könnyebben tapintható nyelvváltó gombok */
+  .lang-btn { padding: 9px 14px; font-size: .82rem; }
 }
 
 /* ══════════════════════════════════

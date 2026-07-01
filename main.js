@@ -203,13 +203,15 @@ function initMobileMenu() {
   function closeMenu() {
     hamburger.classList.remove('active');
     overlay.classList.remove('active');
+    hamburger.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
   }
 
   hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    overlay.classList.toggle('active');
-    document.body.style.overflow = overlay.classList.contains('active') ? 'hidden' : '';
+    const open = overlay.classList.toggle('active');
+    hamburger.classList.toggle('active', open);
+    hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    document.body.style.overflow = open ? 'hidden' : '';
   });
 
   closeBtn?.addEventListener('click', closeMenu);
@@ -226,6 +228,27 @@ function initMobileMenu() {
     e.preventDefault();
     closeMenu();
     openLoginModal();
+  });
+}
+
+// ── Használati útmutató lenyitása (telefon) ──
+function initStepsToggle() {
+  const btn = document.getElementById('stepsToggle');
+  const list = document.getElementById('stepsList');
+  if (!btn || !list) return;
+  const label = btn.querySelector('.steps-toggle-label');
+
+  btn.addEventListener('click', () => {
+    const expanded = !list.classList.toggle('collapsed');
+    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    const key = expanded ? 'steps-toggle-hide' : 'steps-toggle-show';
+    if (label) {
+      label.setAttribute('data-lang', key);
+      if (typeof translations !== 'undefined' && typeof currentLang !== 'undefined'
+          && translations[currentLang] && translations[currentLang][key]) {
+        label.textContent = translations[currentLang][key];
+      }
+    }
   });
 }
 
@@ -256,6 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Scroll spy
   initScrollSpy();
+
+  // Használati útmutató lenyitása (telefon)
+  initStepsToggle();
 
   // Zoom into cursor on labels preview image (desktop only)
   if (window.matchMedia('(hover: hover)').matches) {

@@ -996,7 +996,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!thread.dataset.greeted) { greet(); thread.dataset.greeted = "1"; }
     input.focus();
   }
-  function closePanel() { panel.classList.remove("open"); panel.setAttribute("aria-hidden", "true"); document.body.classList.remove("cimbi-open"); clearHighlight("cimbi-diff"); clearHighlight("cimbi-diff-applied"); clearHighlight("cimbi-review"); }
+  function closePanel() { if (panel.contains(document.activeElement)) launcher.focus(); panel.classList.remove("open"); panel.setAttribute("aria-hidden", "true"); document.body.classList.remove("cimbi-open"); clearHighlight("cimbi-diff"); clearHighlight("cimbi-diff-applied"); clearHighlight("cimbi-review"); }
   launcher.addEventListener("click", openPanel);
   closeBtn.addEventListener("click", closePanel);
 

@@ -46,7 +46,10 @@
         <li><a href="#miert" class="mobile-menu-link" data-lang="what-is">Mi az a Label Labor?</a></li>
         <li><a href="#pelda-cimkek" class="mobile-menu-link" data-lang="demo-labels">Példa polccímkék</a></li>
         <li><a href="#arajanlat" class="mobile-menu-link" data-lang="contact-request">Árajánlat</a></li>
-        <li><a href="#" class="mobile-menu-link" id="mobileLoginBtn" data-lang="nav-login">Bejelentkezés</a></li>
+        <li class="mobile-menu-lang">
+          <button class="lang-btn" data-lang-code="en">EN</button>
+          <button class="lang-btn active" data-lang-code="hu">HU</button>
+        </li>
       </ul>
     </div>
   </div>
@@ -67,7 +70,6 @@
             <p class="hero-desc" data-lang="about-intro">A legtöbb boltban problémát jelent a polccímkék gyors, költséghatékony és egységes előállítása. A Label Labor erre kínál egyszerű megoldást.</p>
             <div class="hero-actions">
               <a href="#arajanlat" class="btn-cta-primary hero-cta-mobile" data-lang="pricing-cta">Ajánlatot kérek</a>
-              <button class="btn-cta-primary hero-cta-desktop" id="heroLoginBtn" data-lang="nav-login">Bejelentkezés</button>
               <a href="#pelda-cimkek" class="btn-cta-secondary" data-lang="cta-examples-btn">Példa megtekintése</a>
             </div>
             <p class="hero-mobile-note" data-lang="mobile-app-notice">A polccímke-szerkesztő jelenleg asztali gépen vagy laptopon érhető el. Telefonon megnézheti a bemutatót, és lent árajánlatot kérhet.</p>
@@ -315,6 +317,11 @@
 
   </main>
 
+  <!-- ══════════ STICKY MOBIL CTA SÁV (csak mobil/tablet) ══════════ -->
+  <div class="mobile-cta-bar" id="mobileCtaBar">
+    <a href="#arajanlat" class="btn-cta-primary mobile-cta-btn" data-lang="pricing-cta">Ajánlatot kérek</a>
+  </div>
+
   <!-- ══════════ FOOTER ══════════ -->
   <footer class="footer-static">
     <p class="contacts"><span data-lang="contact-footer-pre">Kapcsolat: </span><a href="mailto:info@labellabor.com">info@labellabor.com</a></p>
@@ -350,6 +357,7 @@
             </div>
           </div>
         </div>
+        <a href="#arajanlat" class="login-quote-link" id="loginQuoteLink" data-lang="pricing-cta">Ajánlatot kérek</a>
         <button type="submit" class="login-button" data-lang="login">Bejelentkezés</button>
       </form>
     </div>

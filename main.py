@@ -2,6 +2,7 @@ import os
 import sys
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Request, Depends, Security
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, field_validator
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -141,6 +142,37 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
+
+
+# ── Biztonsági HTTP fejlécek (SEC-01) ──
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    if _IS_PRODUCTION:
+        # Az API nem szolgál ki HTML-t — a legszigorúbb CSP mehet.
+        # (Dev-ben nem küldjük, hogy a /docs Swagger UI működjön.)
+        response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+    return response
+
+
+# ── Kérés-testméret limit (SEC-04): 500 sor bőven belefér 2 MB-ba ──
+MAX_BODY_BYTES = 2 * 1024 * 1024
+
+@app.middleware("http")
+async def limit_body_size(request: Request, call_next):
+    content_length = request.headers.get("content-length")
+    if content_length:
+        try:
+            if int(content_length) > MAX_BODY_BYTES:
+                return JSONResponse(status_code=413, content={"detail": "Túl nagy kérés (max 2 MB)"})
+        except ValueError:
+            return JSONResponse(status_code=400, content={"detail": "Érvénytelen Content-Length"})
+    return await call_next(request)
 
 
 class LoginRequest(BaseModel):

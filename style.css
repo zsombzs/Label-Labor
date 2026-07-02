@@ -1523,8 +1523,7 @@ a.btn-cta-primary {
   justify-content: center;
 }
 
-/* Mobil/desktop CTA váltás a heróban + mobil értesítő sáv */
-.hero-cta-mobile { display: none; }
+/* Hero CTA: az „Ajánlatot kérek" minden nézetben látszik */
 
 .hero-mobile-note {
   display: none;
@@ -1704,9 +1703,7 @@ a.btn-cta-primary {
   .hamburger-menu { display: flex; }
   .btn-login { display: none; }
 
-  /* Mobilon a login zsákutca → elsődleges CTA az árajánlat-kérés */
-  .hero-cta-desktop { display: none; }
-  .hero-cta-mobile  { display: inline-flex; }
+  /* Mobil értesítő sáv a hero alatt */
   .hero-mobile-note { display: block; }
 
   /* A beágyazott görgetődoboz (scroll-trap) feloldása – a lépések folyjanak természetesen */
@@ -2199,4 +2196,370 @@ body.dark-mode .info-strip { color: var(--green); }
   font-size: 1.15rem;
   font-weight: 800;
   color: var(--blue);
+}
+
+/* ═══════════════════════════════════════════════
+   MOBIL ÚJRADESIGN — telefonra tervezett élmény
+   A fájl végén áll, így minden korábbi max-width
+   szabályt felülír. Desktop (≥1025px) érintetlen.
+   ─────────────────────────────────────────────── */
+
+/* Sticky alsó CTA sáv + login modal quote link — desktopon rejtve */
+.mobile-cta-bar   { display: none; }
+.login-quote-link { display: none; }
+
+/* ══════════ ≤1024px — mobil/tablet váz ══════════ */
+@media (max-width: 1024px) {
+
+  a, button { -webkit-tap-highlight-color: rgba(29, 78, 216, .15); }
+
+  /* A sticky CTA sáv helyét a footer alsó paddingje adja,
+     így nem marad háttérszínű üres sáv a lap alján */
+
+  /* ── Sticky alsó CTA sáv ── */
+  .mobile-cta-bar {
+    display: block;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 90;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, .10);
+    transition: transform .3s ease;
+  }
+
+  .mobile-cta-bar.is-hidden { transform: translateY(110%); }
+
+  .mobile-cta-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 52px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: var(--radius);
+  }
+
+  .mobile-cta-btn:active {
+    background: var(--blue-hover);
+    transform: scale(.98);
+  }
+
+  /* ── Hamburger: 48×48px tap-target ── */
+  .hamburger-menu {
+    min-width: 48px;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    padding: .5rem;
+  }
+
+  /* ── Teljes képernyős mobil menü ── */
+  .mobile-menu-content {
+    width: 100%;
+    max-width: none;
+    padding: 1.25rem 16px;
+  }
+
+  .mobile-menu-close {
+    width: 48px;
+    height: 48px;
+    font-size: 1.9rem;
+  }
+
+  .mobile-menu-list { margin-top: 4.25rem; }
+
+  .mobile-menu-link {
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    padding: .75rem .75rem;
+    font-size: 1.2rem;
+  }
+
+  /* EN/HU váltó a menüben — nagy gombok */
+  .mobile-menu-lang {
+    display: flex;
+    gap: 10px;
+    padding: 1.25rem .75rem;
+    border-bottom: none;
+  }
+
+  .mobile-menu-lang .lang-btn {
+    flex: 1;
+    min-height: 48px;
+    font-size: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+  }
+
+  .mobile-menu-lang .lang-btn.active {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+
+  /* ── Footer: olvasható, analytics-megjegyzés visszahozva ──
+     Az alsó padding a sticky CTA sáv (~72px) helyét is fedezi,
+     a footer fehér háttere pedig kitölti a lap alját. */
+  .footer-static {
+    padding: 1.5rem 16px calc(44px + env(safe-area-inset-bottom));
+  }
+
+  .contacts { font-size: 1rem; }
+  .contacts a { padding: .75rem .25rem; display: inline-block; }
+
+  .footer-analytics-note {
+    display: block;
+    position: static;
+    transform: none;
+    margin-top: .5rem;
+    font-size: .82rem;
+    opacity: .85;
+  }
+
+  /* ── Login modal: ne legyen levágva, quote link a form felé ── */
+  .login-container {
+    height: auto;
+    min-height: 210px;
+  }
+
+  .label-content {
+    height: auto;
+    padding-bottom: 76px; /* hely az abszolút pozíciójú vonalkód-sornak */
+  }
+
+  .login-mobile-msg {
+    font-size: .95rem;
+    line-height: 1.5;
+    padding-right: 58px; /* logó mellett ne fusson el */
+  }
+
+  .login-quote-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 52px;
+    background: var(--blue);
+    color: #fff;
+    border-radius: var(--radius);
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background .2s;
+  }
+
+  .login-quote-link:active { background: var(--blue-hover); transform: scale(.98); }
+}
+
+/* ══════════ ≤768px — telefon tipográfia és layout ══════════ */
+@media (max-width: 768px) {
+
+  /* ── Levegős szekciók, 16px gutter ── */
+  .page-section { padding: 3rem 0; }
+  .page-wrapper { padding: .25rem 16px; }
+
+  /* ── Hero ── */
+  .hero-section {
+    padding: 1.75rem 1.25rem;
+    border-radius: var(--radius-lg);
+    gap: 1.25rem;
+  }
+
+  .hero-title {
+    font-size: 1.9rem;
+    line-height: 1.22;
+    letter-spacing: -.3px;
+    margin-bottom: .85rem;
+  }
+
+  .hero-desc {
+    font-size: 17px;
+    line-height: 1.55;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-actions { flex-direction: column; gap: 10px; }
+
+  .btn-cta-primary,
+  .btn-cta-secondary {
+    width: 100%;
+    min-height: 52px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+  }
+
+  .btn-cta-primary:active  { background: var(--blue-hover); transform: scale(.98); }
+  .btn-cta-secondary:active { background: var(--blue-light); transform: scale(.98); }
+
+  .hero-mobile-note {
+    font-size: .95rem;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  /* Mindkét badge látszik: kompakt kártyapár a CTA alatt */
+  .hero-badge-stack .hero-badge:not(.hero-badge--blue) { display: block; }
+  .hero-badge-stack { flex-direction: row; gap: 10px; }
+
+  .hero-badge {
+    flex: 1;
+    min-width: 0;
+    padding: .9rem .6rem;
+  }
+
+  .hero-badge-num   { font-size: 1.7rem; }
+  .hero-badge-label { font-size: .85rem; margin-top: .3rem; }
+
+  /* Header EN/HU váltó: nagyobb tap-target az 56px-es headerben */
+  .language-switcher .lang-btn { padding: 12px 16px; font-size: .9rem; }
+
+  /* ── Előny kártyák ── */
+  .section-eyebrow { font-size: .85rem; }
+
+  .section-lead {
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .benefit-card {
+    padding: 1rem 1.1rem;
+    gap: .9rem;
+    border-radius: var(--radius);
+  }
+
+  .benefit-card-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .benefit-card-icon i { width: 24px; height: 24px; }
+
+  .benefit-card p {
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-sec);
+  }
+
+  /* ── Árazás banner ── */
+  .pricing-banner {
+    padding: 1.5rem 1.25rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .pricing-banner-text h3 { font-size: 1.25rem; }
+
+  .pricing-banner-text p {
+    font-size: 17px;
+    line-height: 1.5;
+    opacity: .95;
+  }
+
+  .pricing-banner-price { font-size: 2.1rem; }
+
+  .btn-cta-white {
+    min-height: 52px;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .btn-cta-white:active { background: var(--blue-light); transform: scale(.98); }
+
+  /* ── #miert: videó + útmutató ── */
+  .video-section h2,
+  .steps-section h2 { font-size: 1.35rem; }
+
+  .steps-toggle {
+    min-height: 52px;
+    font-size: 1.05rem;
+    padding: .9rem 1.25rem;
+  }
+
+  .steps-toggle:active { background: var(--blue-light); }
+
+  .step-content h3 { font-size: 1.1rem; }
+
+  .step-content p {
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .step-content p ul li { font-size: .95rem; }
+
+  /* ── #pelda-cimkek ── */
+  .section-heading { font-size: 1.5rem; }
+
+  .label-preview-header {
+    min-height: 52px;
+    padding: .9rem 1rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .label-preview-header:active { background: var(--blue-light); }
+
+  .label-preview-header svg { width: 1.35rem; height: 1.35rem; }
+
+  .label-preview-caption {
+    font-size: .95rem;
+    padding: .8rem 1rem;
+    line-height: 1.5;
+  }
+
+  /* ── #arajanlat: űrlap előre, nagy mezők ── */
+  .contact-left  { order: 1; }
+  .contact-right { order: 2; }
+
+  .contact-grid { gap: 1.5rem; }
+
+  .page-title { font-size: 1.6rem; line-height: 1.3; }
+
+  .contact-form {
+    padding: 1.5rem 1.1rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .form-group { margin-bottom: 1rem; }
+
+  .form-group input,
+  .form-group textarea {
+    font-size: 17px; /* ≥16px: iOS nem zoomol rá */
+    min-height: 52px;
+    padding: .9rem 1rem;
+  }
+
+  .form-group textarea { min-height: 140px; }
+
+  .form-group input::placeholder,
+  .form-group textarea::placeholder {
+    color: #6B6B6B;
+    opacity: 1;
+  }
+
+  .contact-submit-btn {
+    min-height: 56px;
+    font-size: 1.1rem;
+  }
+
+  .contact-submit-btn:active { background: var(--blue-hover); transform: scale(.98); }
+
+  .contact-subtitle { font-size: 1.15rem; }
+
+  .contact-text {
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .contact-benefits-list li {
+    font-size: 16px;
+    line-height: 1.5;
+    padding: .85rem 1rem;
+  }
 }

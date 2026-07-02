@@ -196,7 +196,6 @@ function initMobileMenu() {
   const hamburger = document.querySelector('.hamburger-menu');
   const overlay   = document.querySelector('.mobile-menu-overlay');
   const closeBtn  = document.querySelector('.mobile-menu-close');
-  const mobileLoginBtn = document.getElementById('mobileLoginBtn');
 
   if (!hamburger || !overlay) return;
 
@@ -220,14 +219,8 @@ function initMobileMenu() {
     if (e.target === overlay) closeMenu();
   });
 
-  document.querySelectorAll('.mobile-menu-link:not(#mobileLoginBtn)').forEach(link => {
+  document.querySelectorAll('.mobile-menu-link').forEach(link => {
     link.addEventListener('click', closeMenu);
-  });
-
-  mobileLoginBtn?.addEventListener('click', e => {
-    e.preventDefault();
-    closeMenu();
-    openLoginModal();
   });
 }
 
@@ -252,11 +245,28 @@ function initStepsToggle() {
   });
 }
 
+// ── Sticky mobil CTA sáv — elrejtés, amikor az árajánlat szekció látszik ──
+function initMobileCtaBar() {
+  const bar = document.getElementById('mobileCtaBar');
+  const target = document.getElementById('arajanlat');
+  if (!bar || !target) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      bar.classList.toggle('is-hidden', entry.isIntersecting);
+    });
+  }, {
+    rootMargin: '0px 0px -20% 0px',
+    threshold: 0,
+  });
+
+  observer.observe(target);
+}
+
 // ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
   // Login modal triggers
   document.getElementById('openLoginBtn')?.addEventListener('click', openLoginModal);
-  document.getElementById('heroLoginBtn')?.addEventListener('click', openLoginModal);
   document.getElementById('loginModalClose')?.addEventListener('click', closeLoginModal);
   document.getElementById('loginModal')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) closeLoginModal();
@@ -264,6 +274,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeLoginModal();
   });
+  // Mobil: a login modalból az árajánlat űrlaphoz irányítunk
+  document.getElementById('loginQuoteLink')?.addEventListener('click', closeLoginModal);
 
   // Label counter
   const counterElement = document.getElementById('totalLabelCount');
@@ -282,6 +294,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Használati útmutató lenyitása (telefon)
   initStepsToggle();
+
+  // Sticky mobil CTA sáv
+  initMobileCtaBar();
 
   // Zoom into cursor on labels preview image (desktop only)
   if (window.matchMedia('(hover: hover)').matches) {

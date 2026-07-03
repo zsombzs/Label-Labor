@@ -13,9 +13,9 @@ __pycache__/
 # Node
 node_modules/
 
-# Claude
-CLAUDE.md
-FEJLESZTESI_ALLAPOT.md
+# Markdown dokumentumok — csak a README publikus, minden más .md privát
+*.md
+!README.md
 
 design_preview.html
 

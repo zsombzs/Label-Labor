@@ -5,7 +5,7 @@ html {
 
 body {
   font-family: Arial, sans-serif;
-  background-color: #e8dfd3;
+  background-color: #E0E0E0;
   margin:0;
   padding:0;
   height: 100%;
@@ -19,9 +19,9 @@ body {
   justify-content: center;
   align-items: center;
   font-weight: bold;
-  background-color: #4a3728;
-  border-bottom: 4px solid #2e2118;
-  border-top: 4px solid #2e2118;
+  background-color: #1A1A1A;
+  border-bottom: 4px solid #1A1A1A;
+  border-top: 4px solid #1A1A1A;
   width: 100%;
   padding: 2%;
 }
@@ -32,7 +32,7 @@ body {
   font-weight: bold;
   text-align: center;
   margin: 0;
-  color: #E8A530;
+  color: #FDF0CB;
 }
 
 .main-container {
@@ -48,7 +48,7 @@ body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  border-right: 4px solid #2e2118;
+  border-right: 4px solid #1A1A1A;
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
@@ -56,17 +56,17 @@ body {
 }
 
 .left-panel.drag-over {
-  background-color: #5c4535;
-  border-right-color: #E8A530;
-  outline: 3px dashed #E8A530;
+  background-color: #2D2D2D;
+  border-right-color: #FDF0CB;
+  outline: 3px dashed #FDF0CB;
   outline-offset: -6px;
 }
 
 .btn {
   width: 100%;
   border: none;
-  border-top: #2e2118 2px solid;
-  border-bottom: #2e2118 2px solid;
+  border-top: #1A1A1A 2px solid;
+  border-bottom: #1A1A1A 2px solid;
   font-size: calc(16px + 0.3vw);
   font-weight: 800;
   line-height: 1.2;
@@ -75,7 +75,7 @@ body {
   cursor: pointer;
   display: inline-block;
   text-align: center;
-  color: #f0ece6;
+  color: #F0F0F0;
   transition: transform 0.2s, background 0.2s;
 }
 
@@ -100,10 +100,11 @@ body {
 
 
 .btn:nth-of-type(1) {
-  background: #4a3728;
+  background: #1A1A1A;
 }
 .btn:nth-of-type(1):hover {
-  background: #E8A530;
+  background: #FDF0CB;
+  color: #1A1A1A;
 }
 
 .controls1 {
@@ -112,10 +113,10 @@ body {
   margin-top: 20px;
   font-weight: bold;
   font-size: calc(16px + 0.5vw);
-  background-color: #6B5440;
+  background-color: #3A3A3A;
   padding-top: 5.5%;
   padding-bottom: 8%;
-  border-top: 4px solid #2e2118;
+  border-top: 4px solid #1A1A1A;
 }
 
 .controls2 {
@@ -123,7 +124,7 @@ body {
   justify-content: center;
   font-weight: bold;
   font-size: calc(16px + 0.5vw);
-  background-color: #6B5440;
+  background-color: #3A3A3A;
   padding-bottom: 8%;
 }
 
@@ -147,14 +148,14 @@ body {
 .info-icon {
   width: 22px;
   height: 22px;
-  color: #E8961E;
+  color: #FDF0CB;
   cursor: help;
   flex-shrink: 0;
   transition: color 0.2s, transform 0.2s;
 }
 
 .info-tooltip-wrapper:hover .info-icon {
-  color: #f0b040;
+  color: #FDF0CB;
   transform: scale(1.15);
 }
 
@@ -208,7 +209,7 @@ body {
   justify-content: center;
   font-weight: bold;
   font-size: calc(16px + 0.5vw);
-  background-color: #6B5440;
+  background-color: #3A3A3A;
   padding-bottom: 8%;
 }
 
@@ -217,9 +218,9 @@ body {
   justify-content: center;
   font-weight: bold;
   font-size: calc(16px + 0.5vw);
-  background-color: #6B5440;
+  background-color: #3A3A3A;
   padding-bottom: 5.5%;
-  border-bottom: 4px solid #2e2118;
+  border-bottom: 4px solid #1A1A1A;
 }
 
 .downloading-bar {
@@ -228,10 +229,10 @@ body {
   gap: 40px;
   font-weight: bold;
   font-size: calc(16px + 0.2vw);
-  background-color: #6B5440;
+  background-color: #3A3A3A;
   padding: 4%;
-  border-top: 4px solid #2e2118;
-  border-bottom: 4px solid #2e2118;
+  border-top: 4px solid #1A1A1A;
+  border-bottom: 4px solid #1A1A1A;
 }
 
 /* Progress bar*/
@@ -240,15 +241,15 @@ body {
     margin-left: 5%;
     margin-right: 5%;
     height: 25px;
-    background-color: #4a3728;
-    border: 2px solid #2e2118;
+    background-color: #1A1A1A;
+    border: 2px solid #1A1A1A;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
     position: relative;
     font-family: Arial, sans-serif;
     font-weight: bold;
-    color: #f0ece6;
+    color: #F0F0F0;
     text-align: center;
     justify-content: center;
     line-height: 25px;
@@ -257,7 +258,7 @@ body {
   #progressBar {
     height: 100%;
     width: 0%;
-    background-color: #E8A530;
+    background-color: #FDF0CB;
     border-radius: 8px 0 0 8px;
     transition: width 0.1s linear;
     position: relative;
@@ -301,9 +302,9 @@ body {
   padding-top: 2%;
   padding-bottom: 2%;
   font-weight: bold;
-  background-color: #5a4230;
-  border-top: 4px solid #2e2118;
-  border-bottom: 4px solid #2e2118;
+  background-color: #383838;
+  border-top: 4px solid #1A1A1A;
+  border-bottom: 4px solid #1A1A1A;
   width: 100%;
 }
 
@@ -311,12 +312,12 @@ body {
   font-size: calc(16px + 1.5vw);
   text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
   font-weight: bold;
-  color: #f0ece6;
+  color: #F0F0F0;
 }
 
 .company-stats-number {
   font-weight: 800;
-  color: #E8A530;
+  color: #FDF0CB;
   margin-left: 5px;
 }
 
@@ -334,9 +335,9 @@ body {
   box-sizing: border-box;
   font-weight: bold;
   font-size: calc(16px + 0.2vw);
-  background-color: #6B5440;
-  border-top: 4px solid #2e2118;
-  border-bottom: 4px solid #2e2118;
+  background-color: #3A3A3A;
+  border-top: 4px solid #1A1A1A;
+  border-bottom: 4px solid #1A1A1A;
   width: 100%;
 }
 
@@ -345,7 +346,7 @@ body {
   text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
   font-weight: bold;
   margin: 0;
-  color: #f0ece6;
+  color: #F0F0F0;
 }
 
 .page-wrapper {
@@ -360,8 +361,9 @@ body {
   transform-origin: top center;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: repeat(3, 62.7mm);
+  grid-template-columns: repeat(3, 62.67mm);
   grid-template-rows: repeat(7, 39.7mm);
+  gap: 1mm;
   padding: 1mm;
   margin: 0;
   background-color: white;
@@ -393,7 +395,7 @@ body {
 }
 
 .label {
-  width: 62.7mm;
+  width: 62.67mm;
   height: 39.7mm;
   border: 1px solid #000000;
   padding: 1mm;
@@ -412,13 +414,13 @@ body {
   gap: 80px;
   font-weight: bold;
   font-size: calc(16px + 0.3vw);
-  background-color: #6B5440;
+  background-color: #3A3A3A;
   padding: 3%;
-  border-top: 2px solid #2e2118;
-  border-bottom: 2px solid #2e2118;
+  border-top: 2px solid #1A1A1A;
+  border-bottom: 2px solid #1A1A1A;
   margin-top: 4%;
   margin-bottom: 4%;
-  color: #f0ece6;
+  color: #F0F0F0;
 }
 
 .circle-radio input {
@@ -429,7 +431,7 @@ body {
   display: inline-block;
   width: 30px;
   height: 30px;
-  border: 3px solid #E8A530;
+  border: 3px solid #FDF0CB;
   border-radius: 50%;
   margin-right: 10px;
   vertical-align: middle;
@@ -438,7 +440,7 @@ body {
 }
 
 .circle-radio input:checked + span {
-  background-color: #E8A530;
+  background-color: #FDF0CB;
 }
 
 .circle-radio {
@@ -487,9 +489,9 @@ body {
 
 .line4 {
   font-family: Calibri, sans-serif;
-  font-size: 8.5pt;
+  font-size: 10.5pt;
   position: absolute;
-  top: 77.5px;
+  top: 70px;
   left: 5px;
 }
 
@@ -571,6 +573,263 @@ body {
   font-family: Calibri, sans-serif;
   font-weight: bold;
 }
+
+/* =============================================================================
+   AKCIÓS CÍMKE
+   ============================================================================= */
+
+.logo-a-sm {
+  width: 44px;
+  top: 6px;
+  right: 5px;
+}
+
+.logo-b-sm {
+  width: 50px;
+  top: 6px;
+  right: 5px;
+}
+
+.price-box-orig {
+  display: flex;
+  align-items: stretch;
+  position: absolute;
+  background-color: #fff;
+  box-sizing: border-box;
+  border: 0.5px solid #222;
+  width: 100px;
+  height: 28px;
+  bottom: calc(4mm + 36px);
+  right: 3mm;
+  overflow: hidden;
+}
+
+.price-box-orig .pct {
+  flex: 0 0 33%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 10pt;
+  color: #e00000;
+  border-left: 0.5px solid #bbb;
+  font-family: Calibri, sans-serif;
+  white-space: nowrap;
+  letter-spacing: -0.3px;
+}
+
+.price-box-orig .original-price {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 9.5pt;
+  font-weight: normal;
+  font-family: Calibri, sans-serif;
+  padding: 0 3px;
+  position: relative;
+  white-space: nowrap;
+}
+
+.price-box-orig .original-price::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 3px;
+  top: 50%;
+  border-top: 1.5px solid #e00000;
+  pointer-events: none;
+}
+
+.price-box-sale {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: absolute;
+  background-color: #fff;
+  box-sizing: border-box;
+  border: 0.5px solid #222;
+  width: 100px;
+  height: 36px;
+  padding: 0 2px;
+  font-weight: bold;
+  bottom: 4mm;
+  right: 3mm;
+}
+
+.price-box-sale .amount {
+  flex: 1;
+  font-size: 15pt;
+  text-align: right;
+  flex-shrink: 0;
+  min-width: 60px;
+  font-family: Calibri, sans-serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.price-box-sale .unit {
+  text-align: right;
+  white-space: nowrap;
+  font-size: 15pt;
+  font-family: Calibri, sans-serif;
+}
+
+.sale-info-row {
+  position: absolute;
+  bottom: calc(4mm + 36px);
+  left: 0;
+  width: calc(100% - 3mm - 100px);
+  height: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+
+.sale-cikk {
+  font-family: Calibri, sans-serif;
+  font-size: 9pt;
+  font-weight: normal;
+  line-height: 1;
+}
+
+.sale-kiszeres {
+  font-family: Calibri, sans-serif;
+  font-size: 10pt;
+  font-weight: bold;
+  text-align: right;
+  line-height: 1;
+}
+
+.sale-unit-price {
+  font-family: Calibri, sans-serif;
+  font-size: 7.5pt;
+  font-weight: normal;
+  position: absolute;
+  bottom: 22mm;
+  right: 3mm;
+  text-align: right;
+  line-height: 1;
+}
+
+/* =============================================================================
+   HELYBEN SZERKESZTÉS (címkére kattintás)
+   ============================================================================= */
+
+.label.label-editing { outline: 2px solid #1D4ED8; outline-offset: 1px; z-index: 5; }
+
+/* Látható "Szerkesztés" gomb – hoverre a címke közepén jelenik meg */
+.label-edit-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  background: #1D4ED8;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.label:hover .label-edit-btn { opacity: 1; pointer-events: auto; }
+.label-edit-btn:hover { background: #1E40AF; }
+.label.label-editing .label-edit-btn { display: none; }
+
+/* Látható Kész / Mégse gombok szerkesztés közben – a címke alatt lebegve */
+.label-edit-actions {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+.label-edit-actions button {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.label-edit-actions .lea-done { background: #059669; color: #fff; }
+.label-edit-actions .lea-done:hover { background: #047857; }
+.label-edit-actions .lea-cancel { background: #555555; color: #fff; }
+.label-edit-actions .lea-cancel:hover { background: #666666; }
+.label [data-edit][contenteditable="true"] {
+  background: rgba(29, 78, 216, 0.08);
+  outline: 1px dashed rgba(29, 78, 216, 0.55);
+  border-radius: 2px;
+  cursor: text;
+}
+.label [data-edit][contenteditable="true"]:focus { background: rgba(29, 78, 216, 0.16); outline-style: solid; }
+.inline-edit-toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px);
+  background: #1C1C1C; color: #fff; border-radius: 10px; padding: 10px 16px;
+  display: flex; align-items: center; gap: 14px;
+  font-family: Arial, sans-serif; font-size: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  z-index: 1500; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.inline-edit-toast.show { opacity: 1; transform: translate(-50%, 0); }
+.inline-edit-toast button { background: none; border: none; color: #8FB4FF; font-weight: 700; font-size: 14px; cursor: pointer; }
+.inline-edit-toast button:hover { color: #b9d2ff; }
+
+/* Edit mód: az ÜRES mezők is kattinthatók/szerkeszthetők (a sorok abszolút pozícionáltak,
+   ezért a min-méret nem tolja el a többi elemet). */
+.label-editing [data-edit][contenteditable="true"]:empty {
+  min-width: 42px;
+  min-height: 15px;
+  text-align: center;
+}
+/* Üres mezők placeholder szövege edit módban (kattintható filler boxok) */
+.label-editing .line1[contenteditable="true"]:empty::before { content: "megnevezés 1"; }
+.label-editing .line2[contenteditable="true"]:empty::before { content: "megnevezés 2"; }
+.label-editing .line3[contenteditable="true"]:empty::before { content: "megnevezés 3"; }
+.label-editing [data-edit="Kiszerelés"][contenteditable="true"]:empty::before { content: "kiszerelés"; }
+.label-editing .price-box1 .amount[contenteditable="true"]:empty::before { content: "ár"; }
+.label-editing [data-edit="Cikkszám"][contenteditable="true"]:empty::before { content: "cikkszám"; }
+.label-editing [data-edit="Akciós_ár"][contenteditable="true"]:empty::before { content: "akciós ár"; }
+/* Az összes üres-mező placeholder közös stílusa */
+.label-editing .line1[contenteditable="true"]:empty::before,
+.label-editing .line2[contenteditable="true"]:empty::before,
+.label-editing .line3[contenteditable="true"]:empty::before,
+.label-editing [data-edit="Kiszerelés"][contenteditable="true"]:empty::before,
+.label-editing .price-box1 .amount[contenteditable="true"]:empty::before,
+.label-editing [data-edit="Cikkszám"][contenteditable="true"]:empty::before,
+.label-editing [data-edit="Akciós_ár"][contenteditable="true"]:empty::before {
+  font-style: italic;
+  color: rgba(29, 78, 216, 0.45);
+}
+/* Az inline spanek (cikkszám, akciós eredeti ár) inline-block → üresen is kattintható filler box */
+.label-editing [data-edit="Cikkszám"][contenteditable="true"],
+.label-editing .line4-val[contenteditable="true"],
+.label-editing .original-price [data-edit="Ár"][contenteditable="true"] {
+  display: inline-block;
+  vertical-align: middle;
+}
+.label-editing [data-edit="Cikkszám"][contenteditable="true"]:empty,
+.label-editing .original-price [data-edit="Ár"][contenteditable="true"]:empty {
+  min-width: 50px;
+  min-height: 14px;
+}
 /* =============================================================================
    BETÖLTÉSI ANIMÁCIÓ
    ============================================================================= */
@@ -595,15 +854,15 @@ body {
 
 .loading-content {
   text-align: center;
-  color: #f0ece6;
+  color: #F0F0F0;
 }
 
 .spinner {
   width: 80px;
   height: 80px;
   margin: 0 auto 30px;
-  border: 8px solid rgba(232, 165, 48, 0.3);
-  border-top: 8px solid #E8A530;
+  border: 8px solid rgba(253, 240, 203, 0.3);
+  border-top: 8px solid #FDF0CB;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -616,14 +875,14 @@ body {
 .loading-text {
   font-size: 24px;
   font-weight: bold;
-  color: #E8A530;
+  color: #FDF0CB;
   margin-bottom: 10px;
   animation: pulse 1.5s ease-in-out infinite;
 }
 
 .loading-subtext {
   font-size: 16px;
-  color: #f0ece6;
+  color: #F0F0F0;
   opacity: 0.8;
 }
 
@@ -652,22 +911,22 @@ body {
 }
 
 .validation-modal {
-  background: #4a3728;
-  border: 4px solid #2e2118;
+  background: #1A1A1A;
+  border: 4px solid #1A1A1A;
   border-radius: 12px;
   padding: 24px;
   max-width: 600px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
-  color: #f0ece6;
+  color: #F0F0F0;
   font-family: Arial, sans-serif;
 }
 
 .validation-modal h2 {
   margin: 0 0 16px 0;
   font-size: 20px;
-  color: #E8A530;
+  color: #FDF0CB;
   text-align: center;
 }
 
@@ -679,8 +938,8 @@ body {
 }
 
 .issue-card {
-  background: rgba(107, 84, 64, 0.5);
-  border: 2px solid #6B5440;
+  background: rgba(72, 72, 72, 0.5);
+  border: 2px solid #3A3A3A;
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 12px;
@@ -688,14 +947,14 @@ body {
 
 .product-name {
   font-weight: bold;
-  color: #E8A530;
+  color: #FDF0CB;
   margin-bottom: 8px;
   font-size: 14px;
 }
 
 .issue-item {
-  background: rgba(46, 33, 24, 0.5);
-  border-left: 3px solid #E8A530;
+  background: rgba(27, 27, 27, 0.5);
+  border-left: 3px solid #FDF0CB;
   padding: 8px 12px;
   margin: 8px 0;
   border-radius: 4px;
@@ -703,14 +962,14 @@ body {
 
 .field-label {
   font-size: 12px;
-  color: #E8A530;
+  color: #FDF0CB;
   font-weight: bold;
   margin-bottom: 4px;
 }
 
 .error-text {
   font-size: 13px;
-  color: #E8A530;
+  color: #FDF0CB;
   margin-bottom: 8px;
 }
 
@@ -723,10 +982,10 @@ body {
 .fix-row input {
   flex: 1;
   padding: 8px;
-  background: #2e2118;
-  border: 2px solid #6B5440;
+  background: #1A1A1A;
+  border: 2px solid #3A3A3A;
   border-radius: 4px;
-  color: #f0ece6;
+  color: #F0F0F0;
   font-size: 13px;
 }
 
@@ -737,8 +996,8 @@ body {
 
 .accept-btn {
   padding: 8px 16px;
-  background: #E8A530;
-  color: #ffffff;
+  background: #FDF0CB;
+  color: #1A1A1A;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -747,7 +1006,7 @@ body {
 }
 
 .accept-btn:hover:not(:disabled) {
-  background: #c98d20;
+  background: #E6D296;
 }
 
 .accept-btn:disabled {
@@ -805,9 +1064,9 @@ body {
 }
 
 .table-preview-btn {
-  background: #4a3728;
-  color: #E8A530;
-  border: 2px solid #E8A530;
+  background: #1A1A1A;
+  color: #FDF0CB;
+  border: 2px solid #FDF0CB;
   border-radius: 6px;
   padding: 10px 22px;
   font-size: calc(14px + 0.2vw);
@@ -818,8 +1077,8 @@ body {
 }
 
 .table-preview-btn:hover {
-  background: #E8A530;
-  color: #4a3728;
+  background: #FDF0CB;
+  color: #1A1A1A;
 }
 
 .data-table-overlay {
@@ -838,8 +1097,8 @@ body {
 }
 
 .data-table-modal {
-  background: #4a3728;
-  border: 4px solid #2e2118;
+  background: #1A1A1A;
+  border: 4px solid #1A1A1A;
   border-radius: 12px;
   padding: 24px;
   width: 95vw;
@@ -848,7 +1107,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  color: #f0ece6;
+  color: #F0F0F0;
   font-family: Arial, sans-serif;
 }
 
@@ -862,13 +1121,13 @@ body {
 .data-table-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #E8A530;
+  color: #FDF0CB;
 }
 
 .data-table-close-btn {
   background: transparent;
-  color: #f0ece6;
-  border: 2px solid #6B5440;
+  color: #F0F0F0;
+  border: 2px solid #3A3A3A;
   border-radius: 6px;
   padding: 6px 12px;
   font-weight: bold;
@@ -885,7 +1144,7 @@ body {
   overflow: auto;
   flex: 1;
   min-height: 0;
-  border: 2px solid #6B5440;
+  border: 2px solid #3A3A3A;
   border-radius: 6px;
 }
 
@@ -897,8 +1156,8 @@ body {
 }
 
 .data-preview-table th {
-  background: #6B5440;
-  color: #E8A530;
+  background: #3A3A3A;
+  color: #FDF0CB;
   font-weight: bold;
   padding: 8px 10px;
   text-align: left;
@@ -906,35 +1165,35 @@ body {
   position: sticky;
   top: 0;
   z-index: 1;
-  border-right: 1px solid #4a3728;
-  border-bottom: 2px solid #4a3728;
+  border-right: 1px solid #1A1A1A;
+  border-bottom: 2px solid #1A1A1A;
 }
 
 .data-preview-table th.col-readonly {
-  color: #c8b8a8;
+  color: #AAAAAA;
   font-style: italic;
 }
 
 .data-preview-table td {
   padding: 4px 6px;
-  border-right: 1px solid #6B5440;
-  border-bottom: 1px solid #6B5440;
+  border-right: 1px solid #3A3A3A;
+  border-bottom: 1px solid #3A3A3A;
   vertical-align: middle;
   white-space: nowrap;
 }
 
 .data-preview-table tr:nth-child(even) td {
-  background: rgba(74, 55, 40, 0.5);
+  background: rgba(46, 46, 46, 0.5);
 }
 
 .table-cell-input {
   width: auto;
   min-width: 60px;
   padding: 4px 6px;
-  border: 1px solid #6B5440;
+  border: 1px solid #3A3A3A;
   border-radius: 3px;
-  background: #f0ece6;
-  color: #4a3728;
+  background: #F0F0F0;
+  color: #1A1A1A;
   font-size: 12px;
   font-family: Arial, sans-serif;
   box-sizing: border-box;
@@ -942,16 +1201,16 @@ body {
 
 .table-cell-input:focus {
   outline: none;
-  border-color: #E8A530;
+  border-color: #FDF0CB;
 }
 
 .table-cell-input:hover {
-  background: #ffe5a0;
+  background: #F3EAD7;
 }
 
 .cell-readonly {
-  background: rgba(74, 55, 40, 0.5);
-  color: #c8b8a8;
+  background: rgba(46, 46, 46, 0.5);
+  color: #AAAAAA;
   font-style: italic;
   white-space: nowrap;
   padding: 4px 8px;
@@ -964,8 +1223,8 @@ body {
 }
 
 .data-table-save-btn {
-  background: #E8A530;
-  color: #4a3728;
+  background: #FDF0CB;
+  color: #1A1A1A;
   border: none;
   border-radius: 6px;
   padding: 12px 32px;
@@ -977,7 +1236,7 @@ body {
 }
 
 .data-table-save-btn:hover {
-  background: #f0c060;
+  background: #FDF0CB;
 }
 
 /* Custom Alert Modal */
@@ -994,8 +1253,8 @@ body {
   display: flex;
 }
 .custom-alert-modal {
-  background: #4a3728;
-  border: 2px solid #E8A530;
+  background: #1A1A1A;
+  border: 2px solid #FDF0CB;
   border-radius: 10px;
   min-width: 380px;
   max-width: 560px;
@@ -1008,28 +1267,28 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 14px 18px 10px 18px;
-  border-bottom: 1px solid #E8A530;
+  border-bottom: 1px solid #FDF0CB;
 }
 .custom-alert-title {
-  color: #E8A530;
+  color: #FDF0CB;
   font-weight: bold;
   font-size: 16px;
 }
 .custom-alert-close {
   background: none;
   border: none;
-  color: #E8A530;
+  color: #FDF0CB;
   font-size: 18px;
   cursor: pointer;
   padding: 0 4px;
   line-height: 1;
 }
 .custom-alert-close:hover {
-  color: #f0c060;
+  color: #FDF0CB;
 }
 .custom-alert-message {
   padding: 22px 24px 18px 24px;
-  color: #f0ece6;
+  color: #F0F0F0;
   font-size: 15px;
   white-space: pre-wrap;
   line-height: 1.6;
@@ -1041,8 +1300,8 @@ body {
   padding: 10px 18px 18px 18px;
 }
 .custom-alert-ok {
-  background: #E8A530;
-  color: #4a3728;
+  background: #FDF0CB;
+  color: #1A1A1A;
   border: none;
   border-radius: 6px;
   padding: 8px 28px;
@@ -1053,7 +1312,7 @@ body {
   transition: background 0.2s;
 }
 .custom-alert-ok:hover {
-  background: #f0c060;
+  background: #FDF0CB;
 }
 
 /* ===== Cimbi segéd ===== */
@@ -1084,7 +1343,7 @@ body {
 .cimbi-header svg { width: 32px; height: 32px; flex-shrink: 0; }
 .cimbi-id { flex: 1; min-width: 0; }
 .cimbi-name { font-weight: 800; font-size: 15px; color: #1C1C1C; line-height: 1.1; }
-.cimbi-sub { font-size: 12px; color: #5A5A5A; }
+.cimbi-sub { font-size: 12px; color: #3A3A3A; }
 .cimbi-note { font-size: 11px; line-height: 1.4; color: #8A8A8A; background: #FAF9F6; padding: 7px 14px; border-bottom: 1px solid #EDEBE5; text-align: center; }
 .cimbi-close { margin-left: auto; background: none; border: none; cursor: pointer; color: #888; display: flex; }
 .cimbi-close svg { width: 18px; height: 18px; }
@@ -1100,7 +1359,7 @@ body {
 .cimbi-card-head svg { width: 18px; height: 18px; color: #1D4ED8; }
 .cimbi-card-title { font-size: 14px; font-weight: 700; color: #1C1C1C; }
 .cimbi-card-tag { margin-left: auto; font-size: 11px; color: #9a9a9a; text-transform: uppercase; letter-spacing: 0.04em; }
-.cimbi-card-row { display: flex; justify-content: space-between; font-size: 13px; color: #5A5A5A; padding: 3px 0; }
+.cimbi-card-row { display: flex; justify-content: space-between; font-size: 13px; color: #3A3A3A; padding: 3px 0; }
 .cimbi-card-row b { color: #1C1C1C; font-weight: 600; }
 .cimbi-card-actions { display: flex; gap: 8px; margin-top: 12px; }
 .cimbi-apply { flex: 1; background: #1D4ED8; color: #fff; border: none; border-radius: 8px; padding: 9px 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
@@ -1114,7 +1373,7 @@ body {
 .cimbi-undo svg { width: 15px; height: 15px; color: #1D4ED8; }
 
 .cimbi-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px; }
-.cimbi-chip { font-size: 13px; padding: 6px 11px; border: 1px solid #E2E0DA; border-radius: 999px; background: #F5F4F0; color: #5A5A5A; cursor: pointer; }
+.cimbi-chip { font-size: 13px; padding: 6px 11px; border: 1px solid #E2E0DA; border-radius: 999px; background: #F5F4F0; color: #3A3A3A; cursor: pointer; }
 .cimbi-chip:hover { background: #ebe9e3; }
 
 .cimbi-input { display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid #EDEBE5; }
@@ -1126,7 +1385,7 @@ body {
 /* Cimbi: „Mit tudsz?" súgó – rövid felsorolás */
 .cimbi-help-list { margin: 6px 0; padding-left: 18px; }
 .cimbi-help-list li { margin: 2px 0; }
-.cimbi-help-foot { display: block; margin-top: 4px; color: #5A5A5A; font-size: 13px; }
+.cimbi-help-foot { display: block; margin-top: 4px; color: #3A3A3A; font-size: 13px; }
 
 /* Cimbi: címke-sorszám jelvény (csak képernyőn, a PDF-be nem kerül bele) */
 .cimbi-label-num {

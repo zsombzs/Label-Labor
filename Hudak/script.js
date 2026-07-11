@@ -253,8 +253,7 @@ function showValidationModal(validationResult, onComplete) {
             id="${inputId}"
             placeholder="Javított érték...">
           <button class="accept-btn"
-            id="btn_${inputId}"
-            onclick="acceptFix(${issue.row_index}, '${hiba.oszlop}', '${inputId}')">
+            id="btn_${inputId}">
             ✓
           </button>
         </div>
@@ -270,6 +269,14 @@ function showValidationModal(validationResult, onComplete) {
           if (!input.disabled && currentValue !== originalValue) {
             window.acceptFix(issue.row_index, hiba.oszlop, inputId);
           }
+        });
+      }
+
+      // Accept gomb: inline onclick helyett eseményfigyelő (XSS-mentes, azonos hívás)
+      const acceptBtn = item.querySelector('.accept-btn');
+      if (acceptBtn) {
+        acceptBtn.addEventListener('click', () => {
+          window.acceptFix(issue.row_index, hiba.oszlop, inputId);
         });
       }
 
@@ -366,6 +373,13 @@ window.acceptFix = function acceptFix(rowIndex, oszlop, inputId) {
   }
 }
 
+function normalizePrice(val) {
+  // A 0 bármilyen formáját (0, "0", "0.00", "0,00", "0 Ft") üresként kezeljük —
+  // ilyenkor kézzel írják rá az árat a címkére
+  const num = parseFloat(String(val ?? "").replace(",", "."));
+  return (!isNaN(num) && num === 0) ? "" : (val ?? "");
+}
+
 function formatPrice(price) {
   if (price === null || price === undefined || price === "") return "";
   const num = parseInt(price, 10);
@@ -375,6 +389,109 @@ function formatPrice(price) {
 
 let totalLabelsGenerated = 0;
 let uploadedFileName = null;
+
+function buildNormalLabel(div, row, logo) {
+  const line1 = (row["Első_sor"] || "").substring(0, 20);
+  const secondLineText = (row["Második_sor"] || "").substring(0, 20);
+  const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 20);
+  const kiszereles = row["Kiszerelés"] || "";
+  const ar = normalizePrice(row["Ár"]) || "";
+  const ftPerL = row["Ft/l"] || "";
+  const ftPerKg = row["Ft/kg"] || "";
+
+  let price = "";
+  let pricePerUnit = "";
+  let unitLabel = "";
+  if (/db$/i.test(kiszereles)) {
+    unitLabel = "Ft/db";
+    if (ar !== "") { pricePerUnit = formatPrice(ar); price = formatPrice(ar); }
+  } else {
+    if (ar !== "") {
+      price = formatPrice(ar);
+      if (ftPerL !== "") { pricePerUnit = formatPrice(ftPerL); unitLabel = "Ft/l"; }
+      else if (ftPerKg !== "") { pricePerUnit = formatPrice(ftPerKg); unitLabel = "Ft/kg"; }
+    } else {
+      if (/ml|l/i.test(kiszereles)) unitLabel = "Ft/l";
+      else if (/g|kg/i.test(kiszereles)) unitLabel = "Ft/kg";
+    }
+  }
+
+  div.innerHTML = `
+    <img src="${logo.src}" class="logo ${logo.cssClass}">
+    <div class="line1" data-edit="Első_sor">${escapeAttr(line1)}</div>
+    <div class="line2" data-edit="Második_sor">${escapeAttr(secondLineText)}</div>
+    <div class="line3" data-edit="Harmadik_sor">${escapeAttr(thirdLineText)}</div>
+    <div class="kiszereles" data-edit="Kiszerelés">${escapeAttr(kiszereles)}</div>
+    <div class="line4">cikkszám: <span class="line4-val" data-edit="Cikkszám">${escapeAttr((row["Cikkszám"] || "").toString().substring(0, 14))}</span></div>
+    <div class="barcode-container">
+      <svg class="barcode"></svg>
+    </div>
+    <div class="bottom">
+        <div class="price-box1">
+        <span class="amount" data-edit="Ár">${escapeAttr(price)}</span>
+        <span class="unit">,- Ft</span>
+        </div>
+        <div class="price-box2">
+          <span class="amount">${escapeAttr(pricePerUnit)}</span>
+          <span class="unit">${unitLabel ? ",- " + escapeAttr(unitLabel) : ""}</span>
+        </div>
+    </div>
+  `;
+}
+
+function buildSaleLabel(div, row, logo) {
+  div.classList.add("label-sale");
+
+  const line1 = (row["Első_sor"] || "").substring(0, 20);
+  const secondLineText = (row["Második_sor"] || "").substring(0, 20);
+  const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 20);
+  const kiszereles = row["Kiszerelés"] || "";
+  const ar = normalizePrice(row["Ár"]) || "";
+  const akciosAr = normalizePrice(row["Akciós_ár"]) || "";
+
+  const origNum = parseFloat(String(ar).replace(",", "."));
+  const saleNum = parseFloat(String(akciosAr).replace(",", "."));
+  let discountPct = "";
+  if (!isNaN(origNum) && !isNaN(saleNum) && origNum > 0 && saleNum < origNum) {
+    discountPct = "-" + Math.round((origNum - saleNum) / origNum * 100) + "%";
+  }
+
+  let saleUnitPrice = "";
+  let saleUnitLabel = "";
+  if (/db$/i.test(kiszereles)) {
+    saleUnitLabel = "Ft/db";
+    saleUnitPrice = formatPrice(akciosAr);
+  } else {
+    const { ftl, ftkg } = recalculateUnitPrice(kiszereles, akciosAr);
+    if (ftl) { saleUnitPrice = formatPrice(ftl); saleUnitLabel = "Ft/l"; }
+    else if (ftkg) { saleUnitPrice = formatPrice(ftkg); saleUnitLabel = "Ft/kg"; }
+  }
+
+  const logoSmClass = logo.cssClass === "logo-a" ? "logo-a-sm" : "logo-b-sm";
+
+  div.innerHTML = `
+    <img src="${logo.src}" class="logo ${logoSmClass}">
+    <div class="line1" data-edit="Első_sor">${escapeAttr(line1)}</div>
+    <div class="line2" data-edit="Második_sor">${escapeAttr(secondLineText)}</div>
+    <div class="line3" data-edit="Harmadik_sor">${escapeAttr(thirdLineText)}</div>
+    <div class="barcode-container">
+      <svg class="barcode"></svg>
+    </div>
+    <div class="sale-info-row">
+      <span class="sale-cikk" data-edit="Cikkszám">${escapeAttr((row["Cikkszám"] || "").toString().substring(0, 12))}</span>
+      <span class="sale-kiszeres" data-edit="Kiszerelés">${escapeAttr(kiszereles)}</span>
+    </div>
+    <div class="price-box-orig">
+      <span class="original-price"><span data-edit="Ár">${escapeAttr(formatPrice(ar))}</span>,- Ft</span>
+      <span class="pct">${discountPct}</span>
+    </div>
+    <div class="price-box-sale">
+      <span class="amount" data-edit="Akciós_ár">${escapeAttr(formatPrice(akciosAr))}</span>
+      <span class="unit">,- Ft</span>
+    </div>
+    ${saleUnitLabel ? `<div class="sale-unit-price">${saleUnitPrice ? saleUnitPrice + ",-&nbsp;" : ""}${saleUnitLabel}</div>` : ""}
+  `;
+}
 
 function renderLabels(data) {
     const container = document.getElementById("labels");
@@ -397,67 +514,26 @@ function renderLabels(data) {
 
       const logo = getSelectedLogo();
 
-      const line1 = (row["Első_sor"] || "").substring(0, 20);
-      const secondLineText = (row["Második_sor"] || "").substring(0, 20);
-      const thirdLineText = (row["Harmadik_sor"] || "").substring(0, 20);
-      const kiszereles = row["Kiszerelés"] || "";
-      const ar = row["Ár"] || "";
-      const ftPerL = row["Ft/l"] || "";
-      const ftPerKg = row["Ft/kg"] || "";
+      // Akciós címke: ha van érvényes Ár ÉS Akciós_ár → akciós formátum
+      const rowAr = row["Ár"] || "";
+      const rowArNum = parseFloat(String(rowAr).replace(",", "."));
+      const akciosAr = row["Akciós_ár"] || "";
+      const akciosArNum = parseFloat(String(akciosAr).replace(",", "."));
+      const arIsValid = rowAr !== "" && !isNaN(rowArNum) && rowArNum > 0;
+      const akciosIsValid = akciosAr !== "" && !isNaN(akciosArNum) && akciosArNum > 0;
 
-      let price = "";
-      let pricePerUnit = "";
-      let unitLabel = "";
-      if (/db$/i.test(kiszereles)) {
-        unitLabel = "Ft/db";
-        if (ar !== "") {
-          pricePerUnit = formatPrice(ar);
-          price = formatPrice(ar);
-        } else {
-          pricePerUnit = "";
-          price = "";
-        }
+      const isSale = arIsValid && akciosIsValid;
+
+      // Ha csak akciós ár van, azt sima árként jelenítjük meg
+      const renderRow = (!arIsValid && akciosIsValid)
+        ? { ...row, "Ár": akciosAr, "Akciós_ár": "" }
+        : row;
+
+      if (isSale) {
+        buildSaleLabel(div, renderRow, logo);
       } else {
-        if (ar !== "") {
-          price = formatPrice(ar);
-          if (ftPerL !== "") {
-            pricePerUnit = formatPrice(ftPerL);
-            unitLabel = "Ft/l";
-          } else if (ftPerKg !== "") {
-            pricePerUnit = formatPrice(ftPerKg);
-            unitLabel = "Ft/kg";
-          }
-        } else {
-          price = "";
-          if (kiszereles.match(/ml|l/i)) {
-            unitLabel = "Ft/l";
-          } else if (kiszereles.match(/g|kg/i)) {
-            unitLabel = "Ft/kg";
-          }
-        }
+        buildNormalLabel(div, renderRow, logo);
       }
-
-      div.innerHTML = `
-        <img src="${logo.src}" class="logo ${logo.cssClass}">
-        <div class="line1">${escapeAttr(line1)}</div>
-        <div class="line2">${escapeAttr(secondLineText)}</div>
-        <div class="line3">${escapeAttr(thirdLineText)}</div>
-        <div class="kiszereles">${escapeAttr(kiszereles)}</div>
-        <div class="line4">${escapeAttr(("cikkszám: " + (row["Cikkszám"] || "")).substring(0, 24))}</div>
-        <div class="barcode-container">
-          <svg class="barcode"></svg>
-        </div>
-        <div class="bottom">
-            <div class="price-box1">
-            <span class="amount">${escapeAttr(price)}</span>
-            <span class="unit">,- Ft</span>
-            </div>
-            <div class="price-box2">
-              <span class="amount">${escapeAttr(pricePerUnit)}</span>
-              <span class="unit">${unitLabel ? ",- " + escapeAttr(unitLabel) : ""}</span>
-            </div>
-        </div>
-      `;
 
       pageDiv.appendChild(div);
 
@@ -477,6 +553,10 @@ function renderLabels(data) {
           console.warn(`Hibás vonalkód (${eanCode}), kihagyva`);
           barcodeSVG.remove();
         }
+      } else {
+        // Nincs EAN → töröljük az üres SVG-t, különben alapméretre (~300×150) tágul, és
+        // letakarja a bal oldali szövegmezőket → nem kattinthatók szerkesztéskor.
+        barcodeSVG.remove();
       }
 
       // Cimbi: sorszám-jelvény (csak képernyőn; PDF-ből kizárva – lásd createPDF ignoreElements)
@@ -484,6 +564,13 @@ function renderLabels(data) {
       numBadge.className = "cimbi-label-num";
       numBadge.textContent = index + 1;
       div.appendChild(numBadge);
+
+      // Látható "Szerkesztés" gomb (hoverre jelenik meg; PDF-ből kizárva)
+      const editBtn = document.createElement("button");
+      editBtn.type = "button";
+      editBtn.className = "label-edit-btn";
+      editBtn.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Szerkesztés</span>';
+      div.appendChild(editBtn);
     });
 
   const labelText = document.querySelector('.upload-label-text');
@@ -586,7 +673,7 @@ function generatePDF() {
       // Frissítjük a címkeszámot
       updateLabelCount(totalLabelsGenerated);
 
-      progressBar.style.backgroundColor = "#f6bd60";
+      progressBar.style.backgroundColor = "#F2BF6B";
       progressBar.style.width = "0%";
 
       setTimeout(() => {
@@ -602,6 +689,7 @@ function generatePDF() {
 }
 
 function createPDF() {
+  if (typeof window.inlineEditFlush === "function") window.inlineEditFlush(); // nyitott helyben-szerkesztés lezárása
   document.querySelectorAll("svg.barcode").forEach(svg => {
     const svgData = new XMLSerializer().serializeToString(svg);
     const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
@@ -618,7 +706,7 @@ function createPDF() {
     margin: 0,
     filename: "hudak_cimkek.pdf",
     image: { type: 'jpeg', quality: 0.8 },
-    html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff', ignoreElements: (el) => el.classList && el.classList.contains('cimbi-label-num') },
+    html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff', ignoreElements: (el) => el.classList && (el.classList.contains('cimbi-label-num') || el.classList.contains('label-edit-btn') || el.classList.contains('label-edit-actions')) },
     jsPDF: { unit: 'mm', format: 'A4', orientation: 'portrait' },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
@@ -639,7 +727,11 @@ function createPDF() {
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        pdf.text(pageText, pageWidth / 2, pageHeight - 3, { align: 'center' });
+        if (i === 1) {
+          pdf.text(pageText, pageWidth / 2, pageHeight - 3, { align: 'center' });
+        } else {
+          pdf.text(pageText, pageWidth / 2, 6, { align: 'center' });
+        }
       }
     })
     .save();
@@ -776,6 +868,7 @@ function saveAndGenerate() {
       .filter(s => s).join(" ").trim(),
     "Kiszerelés": row["Kiszerelés"] || "",
     "Ár": row["Ár"] || "",
+    "Akciós_ár": row["Akciós_ár"] || "",
     "EAN-13": row["EAN-13"] || "",
     "Cikkszám": row["Cikkszám"] || "",
   }));
@@ -906,7 +999,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // =============================================================================
 (function initCimbi() {
   const SUBPAGE = "hudak";
-  const HAS_SALE = false; // van-e akciós címke-formátum ezen az oldalon
+  const HAS_SALE = true; // van-e akciós címke-formátum ezen az oldalon
   const launcher = document.getElementById("cimbiLauncher");
   const panel = document.getElementById("cimbiPanel");
   const closeBtn = document.getElementById("cimbiClose");
@@ -1555,4 +1648,182 @@ document.addEventListener("DOMContentLoaded", function () {
     if (cmd === "__help__") { addUser("Mit tudsz?"); showHelp(); }
     else { handleCommand(cmd); }
   });
+})();
+
+// =============================================================================
+// HELYBEN SZERKESZTÉS – dupla katt egy címkén → a mezők szerkeszthetők (EAN-13 kivételével)
+// Ugyanazt a validatedData-t írja, mint a data-tábla és Cimbi. Előnézet helyett azonnal,
+// de van undo (snapshot). Ár/Kiszerelés/Akciós_ár módosításnál újraszámolja az egységárat.
+// =============================================================================
+(function initInlineEdit() {
+  const labelsEl = document.getElementById("labels");
+  if (!labelsEl) return;
+  const PRICE_FIELDS = ["Ár", "Akciós_ár"];
+  const RECALC_FIELDS = ["Ár", "Akciós_ár", "Kiszerelés"];
+  let editingIndex = null;
+  let undoSnapshot = null;
+
+  function parsePriceLocal(v) { const n = parseFloat(String(v == null ? "" : v).replace(/\s/g, "").replace(",", ".")); return isNaN(n) ? null : n; }
+  function labelEls() { return labelsEl.querySelectorAll(".label"); }
+  function placeCaretEnd(el) { try { const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); } catch (_) {} }
+
+  function enterEdit(labelEl) {
+    if (editingIndex !== null) commitEdit();
+    const idx = Array.prototype.indexOf.call(labelEls(), labelEl);
+    if (idx < 0 || !validatedData || !validatedData[idx]) return;
+    undoSnapshot = JSON.parse(JSON.stringify(validatedData));
+    editingIndex = idx;
+    labelEl.classList.add("label-editing");
+    labelEl.querySelectorAll("[data-edit]").forEach(el => {
+      el.setAttribute("contenteditable", "true");
+      el.spellcheck = false;
+      const field = el.dataset.edit;
+      if (PRICE_FIELDS.includes(field)) {
+        const raw = parsePriceLocal(validatedData[idx][field]);
+        el.textContent = raw == null ? "" : String(Math.round(raw));
+      }
+    });
+    labelEl.addEventListener("keydown", onKeydown);
+    labelEl.addEventListener("paste", onPaste);
+    labelEl.addEventListener("mousedown", onFieldMouseDown);
+    document.addEventListener("mousedown", onDocMouseDown, true);
+    addActionBar(labelEl);
+  }
+
+  // Látható Kész / Mégse gombok a szerkesztett címkén (a rejtett Enter/Escape mellé)
+  function addActionBar(labelEl) {
+    if (labelEl.querySelector(".label-edit-actions")) return;
+    const bar = document.createElement("div");
+    bar.className = "label-edit-actions";
+    bar.innerHTML = '<button type="button" class="lea-done">✓ Kész</button><button type="button" class="lea-cancel">✕ Mégse</button>';
+    bar.querySelector(".lea-done").addEventListener("click", () => commitEdit());
+    bar.querySelector(".lea-cancel").addEventListener("click", () => cancelEdit());
+    labelEl.appendChild(bar);
+  }
+
+  function readInto(idx, labelEl) {
+    let changed = false, recalc = false;
+    labelEl.querySelectorAll("[data-edit]").forEach(el => {
+      const field = el.dataset.edit;
+      let val = (el.textContent || "").replace(/\s+/g, " ").trim();
+      if (PRICE_FIELDS.includes(field)) {
+        if (val !== "") { const p = parsePriceLocal(val); val = (p == null) ? String(validatedData[idx][field] == null ? "" : validatedData[idx][field]) : String(Math.round(p)); }
+      }
+      const cur = String(validatedData[idx][field] == null ? "" : validatedData[idx][field]);
+      if (cur !== val) { validatedData[idx][field] = val; changed = true; if (RECALC_FIELDS.includes(field)) recalc = true; }
+    });
+    if (recalc && typeof recalculateUnitPrice === "function") {
+      const u = recalculateUnitPrice(validatedData[idx]["Kiszerelés"], validatedData[idx]["Ár"]);
+      validatedData[idx]["Ft/l"] = u.ftl; validatedData[idx]["Ft/kg"] = u.ftkg;
+      if ("ftm2" in u) validatedData[idx]["Ft/m2"] = u.ftm2;
+    }
+    return changed;
+  }
+
+  function cleanup(labelEl) {
+    if (!labelEl) return;
+    labelEl.removeEventListener("keydown", onKeydown);
+    labelEl.removeEventListener("paste", onPaste);
+    labelEl.removeEventListener("mousedown", onFieldMouseDown);
+    document.removeEventListener("mousedown", onDocMouseDown, true);
+    const bar = labelEl.querySelector(".label-edit-actions");
+    if (bar) bar.remove();
+  }
+
+  function commitEdit() {
+    if (editingIndex === null) return;
+    const idx = editingIndex; editingIndex = null;
+    const labelEl = labelEls()[idx];
+    if (!labelEl) return;
+    cleanup(labelEl);
+    const changed = readInto(idx, labelEl);
+    renderLabels(validatedData);
+    if (changed) { showUndoToast(); flashEdited(idx); } else undoSnapshot = null;
+  }
+
+  function cancelEdit() {
+    if (editingIndex === null) return;
+    const labelEl = labelEls()[editingIndex];
+    cleanup(labelEl); editingIndex = null; undoSnapshot = null;
+    renderLabels(validatedData);
+  }
+
+  function onKeydown(e) {
+    if (e.key === "Enter") { e.preventDefault(); commitEdit(); }
+    else if (e.key === "Escape") { e.preventDefault(); cancelEdit(); }
+  }
+  // Üres mezőbe (ahol csak a ::before placeholder látszik) kattintva a böngésző nem
+  // mindig teszi be a kurzort – ezért üres mezőnél kézzel fókuszálunk és a végére állunk.
+  function onFieldMouseDown(e) {
+    const el = e.target.closest("[data-edit]");
+    if (!el) return;
+    if ((el.textContent || "").trim() === "") {
+      e.preventDefault();
+      el.focus();
+      placeCaretEnd(el);
+    }
+  }
+  // A szerkesztésből CSAK akkor lépünk ki, ha a címkén KÍVÜL kattintunk.
+  // A címkén belüli kattintás (akár nem szerkeszthető részre is) edit módban tart.
+  function onDocMouseDown(e) {
+    if (editingIndex === null) return;
+    const labelEl = labelEls()[editingIndex];
+    if (labelEl && labelEl.contains(e.target)) return;
+    commitEdit();
+  }
+  function onPaste(e) {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData("text");
+    document.execCommand("insertText", false, text.replace(/\s+/g, " "));
+  }
+
+  labelsEl.addEventListener("dblclick", (e) => {
+    const labelEl = e.target.closest(".label");
+    if (!labelEl || !labelsEl.contains(labelEl)) return;
+    const idx = Array.prototype.indexOf.call(labelEls(), labelEl);
+    if (editingIndex !== idx) enterEdit(labelEl);
+    const editEl = e.target.closest("[data-edit]");
+    const focusEl = editEl || labelEl.querySelector("[data-edit]");
+    if (focusEl) { focusEl.focus(); placeCaretEnd(focusEl); }
+  });
+
+  // Egy kattintás a látható "Szerkesztés" gombra → szerkesztés indítása
+  labelsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".label-edit-btn");
+    if (!btn) return;
+    const labelEl = btn.closest(".label");
+    if (!labelEl || !labelsEl.contains(labelEl)) return;
+    const idx = Array.prototype.indexOf.call(labelEls(), labelEl);
+    if (editingIndex !== idx) enterEdit(labelEl);
+    const focusEl = labelEl.querySelector("[data-edit]");
+    if (focusEl) { focusEl.focus(); placeCaretEnd(focusEl); }
+  });
+
+  // ---- Undo toast ----
+  let toast = null, toastTimer = null;
+  function hideToast() { if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; } if (toast) { toast.remove(); toast = null; } }
+  function showUndoToast() {
+    hideToast();
+    toast = document.createElement("div");
+    toast.className = "inline-edit-toast";
+    toast.innerHTML = '<span>Címke frissítve</span><button type="button">Visszavonás</button>';
+    toast.querySelector("button").addEventListener("click", () => {
+      if (undoSnapshot) { validatedData = undoSnapshot; undoSnapshot = null; renderLabels(validatedData); }
+      hideToast();
+    });
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add("show"));
+    toastTimer = setTimeout(hideToast, 6000);
+  }
+
+  // Zöld effekt a sikeresen szerkesztett címke körül (mint amikor Cimbi módosít)
+  function flashEdited(idx) {
+    const el = labelEls()[idx];
+    if (!el) return;
+    el.classList.add("cimbi-diff-applied");
+    setTimeout(() => { const e2 = labelEls()[idx]; if (e2) e2.classList.remove("cimbi-diff-applied"); }, 1500);
+  }
+
+  // PDF előtt zárjuk le a nyitott szerkesztést
+  window.inlineEditFlush = () => { if (editingIndex !== null) commitEdit(); };
 })();

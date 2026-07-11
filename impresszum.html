@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impresszum - Label Labor</title>
+  <meta name="description" content="A Label Labor szolgáltatás üzemeltetőjének adatai.">
+  <link rel="icon" type="image/png" href="assets/main_icon.png">
+  <link rel="stylesheet" href="style.min.css">
+  <style>
+    .legal-page { min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); }
+    .legal-header {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      padding: 0 1.5rem; height: 64px;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+    }
+    .legal-header .logo { display: flex; align-items: center; gap: .5rem; font-weight: 800; font-size: 1.15rem; color: var(--text); text-decoration: none; }
+    .legal-header .logo img { height: 30px; width: auto; }
+    .legal-header .logo span { color: var(--blue); }
+    .legal-header .back-link { font-size: .9rem; color: var(--blue); text-decoration: none; font-weight: 600; white-space: nowrap; }
+    .legal-header .back-link:hover { text-decoration: underline; }
+    .legal-main { flex: 1; width: 100%; max-width: 720px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; box-sizing: border-box; }
+    .legal-main h1 { font-size: 2rem; color: var(--text); margin: 0 0 .4rem; }
+    .legal-updated { color: var(--text-muted); font-size: .85rem; margin: 0 0 2rem; }
+    .legal-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.5rem 1.75rem; box-shadow: var(--shadow-sm); margin-bottom: 1.25rem;
+    }
+    .legal-card h2 { font-size: 1.05rem; color: var(--blue); margin: 0 0 1rem; }
+    .data-row { display: flex; flex-wrap: wrap; gap: .25rem 1rem; padding: .55rem 0; border-bottom: 1px solid var(--border); }
+    .data-row:last-child { border-bottom: none; }
+    .data-label { flex: 0 0 180px; color: var(--text-sec); font-size: .92rem; }
+    .data-value { flex: 1; min-width: 200px; color: var(--text); font-weight: 600; font-size: .95rem; }
+    .data-value a { color: var(--blue); text-decoration: none; }
+    .data-value a:hover { text-decoration: underline; }
+    .legal-footer { background: var(--surface); border-top: 1px solid var(--border); padding: 1.1rem 1.5rem; text-align: center; }
+    .legal-footer a { color: var(--blue); text-decoration: none; margin: 0 .5rem; font-size: .9rem; }
+    .legal-footer a:hover { text-decoration: underline; }
+    .legal-footer .sep { color: var(--border); }
+    @media (max-width: 600px) { .data-label { flex-basis: 100%; } .legal-main h1 { font-size: 1.6rem; } }
+  </style>
+</head>
+<body>
+  <div class="legal-page">
+    <header class="legal-header">
+      <a href="index.html" class="logo"><img src="assets/main_icon.png" alt="">Label<span>Labor</span></a>
+      <a href="index.html" class="back-link">← Vissza a főoldalra</a>
+    </header>
+
+    <main class="legal-main">
+      <h1>Impresszum</h1>
+
+      <section class="legal-card">
+        <h2>A szolgáltató adatai</h2>
+        <div class="data-row">
+          <span class="data-label">Név</span>
+          <span class="data-value">Galgóczi Zsombor egyéni vállalkozó</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Székhely és levelezési cím</span>
+          <span class="data-value">2049 Diósd, Ferenc utca 16., Magyarország</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Nyilvántartási szám</span>
+          <span class="data-value">61201949</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Nyilvántartást vezető hatóság</span>
+          <span class="data-value">Belügyminisztérium (Egyéni Vállalkozók Nyilvántartása)</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Adószám</span>
+          <span class="data-value">91465566-1-33</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Kamarai tagság</span>
+          <span class="data-value">Pest Vármegyei Kereskedelmi és Iparkamara</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">E-mail</span>
+          <span class="data-value"><a href="mailto:info@labellabor.com">info@labellabor.com</a></span>
+        </div>
+      </section>
+
+      <section class="legal-card">
+        <h2>Tárhelyszolgáltatók</h2>
+        <div class="data-row">
+          <span class="data-label">Weboldal (frontend, CDN)</span>
+          <span class="data-value">Netlify, Inc. - 101 2nd Street, San Francisco, CA 94105, USA · <a href="mailto:support@netlify.com">support@netlify.com</a> · <a href="https://www.netlify.com">netlify.com</a></span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Alkalmazás / API (backend)</span>
+          <span class="data-value">Railway Corp. - 548 Market St, PMB 68956, San Francisco, CA 94104, USA · <a href="https://railway.app">railway.app</a></span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Adatbázis</span>
+          <span class="data-value">Supabase, Inc. - 65 Chulia Street, #38-02/03 OCBC Centre, Singapore 049513 · <a href="https://supabase.com">supabase.com</a></span>
+        </div>
+      </section>
+
+      <section class="legal-card">
+        <h2>További tudnivalók</h2>
+        <div class="data-row">
+          <span class="data-label">Tevékenység</span>
+          <span class="data-value">Polccímke-generáló szoftver (SaaS) üzemeltetése kiskereskedelmi egységek részére</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">Adatkezelés</span>
+          <span class="data-value">A személyes adatok kezeléséről az <a href="adatkezeles.html">Adatkezelési tájékoztató</a> ad részletes tájékoztatást.</span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="legal-footer">
+      <a href="index.html">Főoldal</a><span class="sep">·</span>
+      <a href="impresszum.html">Impresszum</a><span class="sep">·</span>
+      <a href="adatkezeles.html">Adatkezelési tájékoztató</a><span class="sep">·</span>
+      <a href="aszf.html">ÁSZF</a>
+    </footer>
+  </div>
+</body>
+</html>

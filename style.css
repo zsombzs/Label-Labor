@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   LABEL LABOR — style.css (redesign)
+   LABEL LABOR - style.css (redesign)
    ─────────────────────────────────────────────── */
 
 /* ── RESET ── */
@@ -288,7 +288,7 @@ body {
   border: none;
   cursor: pointer;
   padding: .6rem;
-  display: none; /* desktopon rejtve – a mobil media query mutatja */
+  display: none; /* desktopon rejtve - a mobil media query mutatja */
   flex-direction: column;
   gap: 5px;
   z-index: 101;
@@ -1264,7 +1264,7 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
 }
 
 /* ══════════════════════════════════
-   RESPONSIVE — Tablet / Mobile
+   RESPONSIVE - Tablet / Mobile
    ≤ 1024px
 ══════════════════════════════════ */
 @media (max-width: 1024px) {
@@ -1298,7 +1298,7 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
   .custom-notification { width: 90%; max-width: 320px; }
   .custom-notification.show { right: 5%; }
 
-  /* Login modal — tablet/mobile */
+  /* Login modal - tablet/mobile */
   .login-container { width: min(85vw, 370px); height: 235px; }
   .label-logo      { width: 65px; }
   .barcode-container { width: 142px; }
@@ -1316,7 +1316,7 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
 }
 
 /* ══════════════════════════════════
-   RESPONSIVE — Small mobile ≤ 768px
+   RESPONSIVE - Small mobile ≤ 768px
 ══════════════════════════════════ */
 @media (max-width: 768px) {
   .header-container    { padding: .6rem 1rem; height: 56px; }
@@ -1344,7 +1344,7 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
 
   .mobile-menu-link { font-size: 1rem; padding: 1rem .75rem; }
 
-  /* Login modal — small phone */
+  /* Login modal - small phone */
   .login-container { width: min(88vw, 280px); height: 178px; }
   .label-logo      { width: 50px; }
   .barcode-container { width: 108px; }
@@ -1353,7 +1353,7 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
 }
 
 /* ══════════════════════════════════
-   RESPONSIVE — Tablet 481–1024px
+   RESPONSIVE - Tablet 481-1024px
 ══════════════════════════════════ */
 @media (min-width: 481px) and (max-width: 1024px) {
   .header-container h1 { font-size: 1.4rem; }
@@ -1375,8 +1375,8 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
 }
 
 /* ══════════════════════════════════
-   RESPONSIVE — Smaller desktop
-   1025–1199px
+   RESPONSIVE - Smaller desktop
+   1025-1199px
 ══════════════════════════════════ */
 @media (min-width: 1025px) and (max-width: 1199px) {
   .content-grid  { grid-template-columns: 1fr; gap: 1.5rem; }
@@ -1392,7 +1392,7 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
 }
 
 /* ══════════════════════════════════
-   RESPONSIVE — Large desktop ≥ 1441px
+   RESPONSIVE - Large desktop ≥ 1441px
 ══════════════════════════════════ */
 @media (min-width: 1441px) {
   .login-container { width: 550px; height: 300px; }
@@ -1407,7 +1407,7 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
 }
 
 /* ══════════════════════════════════
-   RESPONSIVE — Very large ≥ 2559px
+   RESPONSIVE - Very large ≥ 2559px
 ══════════════════════════════════ */
 @media (min-width: 2559px) {
   .login-container { width: 850px; height: 450px; }
@@ -1435,7 +1435,7 @@ input:focus { border-bottom: 2px solid var(--blue); background: transparent; }
    static footer
 ══════════════════════════════════ */
 
-/* Anchor scroll offset — sticky header */
+/* Anchor scroll offset - sticky header */
 html { scroll-padding-top: 82px; }
 
 /* Header logo */
@@ -1502,7 +1502,7 @@ html { scroll-padding-top: 82px; }
 }
 .btn-login:hover { background: var(--blue-hover); }
 
-/* Main content wrapper — single scrollable page */
+/* Main content wrapper - single scrollable page */
 #main-content {
   margin-top: 68px;
   min-height: calc(100vh - 68px - 52px);
@@ -1629,9 +1629,9 @@ a.btn-cta-primary {
 }
 .steps-scrollable::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-/* ── Használati útmutató – lenyitható blokk (csak telefonon aktív) ── */
+/* ── Használati útmutató - lenyitható blokk (csak telefonon aktív) ── */
 .steps-toggle {
-  display: none; /* desktopon nincs toggle – a lista mindig látszik */
+  display: none; /* desktopon nincs toggle - a lista mindig látszik */
   width: 100%;
   align-items: center;
   justify-content: space-between;
@@ -1685,13 +1685,13 @@ a.btn-cta-primary {
   opacity: 0.55;
 }
 
-/* ── RESPONSIVE — single-page ── */
+/* ── RESPONSIVE - single-page ── */
 @media (max-width: 1024px) {
   html { scroll-padding-top: 78px; }
 
   .footer-analytics-note { display: none; }
 
-  /* Egyetlen fix header sáv (62px) – a külön mobil nav sáv megszűnt */
+  /* Egyetlen fix header sáv (62px) - a külön mobil nav sáv megszűnt */
   #main-content {
     margin-top: 62px;
     min-height: calc(100vh - 62px - 44px);
@@ -1706,7 +1706,7 @@ a.btn-cta-primary {
   /* Mobil értesítő sáv a hero alatt */
   .hero-mobile-note { display: block; }
 
-  /* A beágyazott görgetődoboz (scroll-trap) feloldása – a lépések folyjanak természetesen */
+  /* A beágyazott görgetődoboz (scroll-trap) feloldása - a lépések folyjanak természetesen */
   .steps-scrollable {
     max-height: none;
     overflow-y: visible;
@@ -1725,7 +1725,7 @@ a.btn-cta-primary {
 }
 
 /* ══════════════════════════════════
-   ABOUT PAGE — NEW LAYOUT
+   ABOUT PAGE - NEW LAYOUT
 ══════════════════════════════════ */
 
 /* Hero */
@@ -1955,7 +1955,7 @@ body.dark-mode .info-strip { color: var(--green); }
   line-height: 1.55;
 }
 
-/* How it works — 3 steps */
+/* How it works - 3 steps */
 .howto-steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -2091,7 +2091,7 @@ body.dark-mode .info-strip { color: var(--green); }
   .hero-actions { gap: .6rem; }
   .btn-cta-primary, .btn-cta-secondary { padding: 10px 20px; font-size: .95rem; width: 100%; text-align: center; }
 
-  /* 1. Benefit kártyák – vízszintes (ikon bal, szöveg jobb) */
+  /* 1. Benefit kártyák - vízszintes (ikon bal, szöveg jobb) */
   .benefit-cards-grid { grid-template-columns: 1fr; gap: .5rem; }
   .benefit-card { display: flex; flex-direction: row; align-items: center; gap: 1rem; padding: 1rem 1.1rem; }
   .benefit-card-icon { margin-bottom: 0; flex-shrink: 0; }
@@ -2100,11 +2100,11 @@ body.dark-mode .info-strip { color: var(--green); }
   .about-benefits-section, .about-howto-section { margin-bottom: 1.5rem; }
   .section-divider { margin: 1.5rem 0; }
 
-  /* 4. Pricing banner – nagyobb ár mobilon */
+  /* 4. Pricing banner - nagyobb ár mobilon */
   .pricing-banner { padding: 1.25rem; }
   .pricing-banner-price { font-size: 2rem; }
 
-  /* Telefonon csak az élő számláló badge marad – a statikus "100+" redundáns */
+  /* Telefonon csak az élő számláló badge marad - a statikus "100+" redundáns */
   .hero-badge-stack .hero-badge:not(.hero-badge--blue) { display: none; }
   .hero-badge--blue { width: 100%; }
   .hero-badge { padding: .9rem 1rem; }
@@ -2199,16 +2199,16 @@ body.dark-mode .info-strip { color: var(--green); }
 }
 
 /* ═══════════════════════════════════════════════
-   MOBIL ÚJRADESIGN — telefonra tervezett élmény
+   MOBIL ÚJRADESIGN - telefonra tervezett élmény
    A fájl végén áll, így minden korábbi max-width
    szabályt felülír. Desktop (≥1025px) érintetlen.
    ─────────────────────────────────────────────── */
 
-/* Sticky alsó CTA sáv + login modal quote link — desktopon rejtve */
+/* Sticky alsó CTA sáv + login modal quote link - desktopon rejtve */
 .mobile-cta-bar   { display: none; }
 .login-quote-link { display: none; }
 
-/* ══════════ ≤1024px — mobil/tablet váz ══════════ */
+/* ══════════ ≤1024px - mobil/tablet váz ══════════ */
 @media (max-width: 1024px) {
 
   a, button { -webkit-tap-highlight-color: rgba(29, 78, 216, .15); }
@@ -2279,7 +2279,7 @@ body.dark-mode .info-strip { color: var(--green); }
     font-size: 1.2rem;
   }
 
-  /* EN/HU váltó a menüben — nagy gombok */
+  /* EN/HU váltó a menüben - nagy gombok */
   .mobile-menu-lang {
     display: flex;
     gap: 10px;
@@ -2356,7 +2356,7 @@ body.dark-mode .info-strip { color: var(--green); }
   .login-quote-link:active { background: var(--blue-hover); transform: scale(.98); }
 }
 
-/* ══════════ ≤768px — telefon tipográfia és layout ══════════ */
+/* ══════════ ≤768px - telefon tipográfia és layout ══════════ */
 @media (max-width: 768px) {
 
   /* ── Levegős szekciók, 16px gutter ── */
@@ -2562,4 +2562,40 @@ body.dark-mode .info-strip { color: var(--green); }
     line-height: 1.5;
     padding: .85rem 1rem;
   }
+}
+
+/* ── Footer jogi linkek + kapcsolati adatvédelmi megjegyzés ── */
+.footer-legal { margin: .4rem 0 0; font-size: .82rem; }
+.footer-legal a { color: var(--text-sec); text-decoration: none; }
+.footer-legal a:hover { color: var(--blue); text-decoration: underline; }
+.footer-legal-sep { color: var(--border); margin: 0 .5rem; }
+.contact-privacy-note { margin: .75rem 0 0; font-size: .78rem; color: var(--text-muted); line-height: 1.5; text-align: center; }
+.contact-privacy-note a { color: var(--blue); text-decoration: none; }
+.contact-privacy-note a:hover { text-decoration: underline; }
+
+/* ── Footer egy sorban (kapcsolat + jogi linkek) ── */
+.footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .3rem .55rem; }
+.footer-inner .contacts { margin: 0; }
+.footer-legal-link { font-size: .82rem; color: var(--text-sec); text-decoration: none; }
+.footer-legal-link:hover { color: var(--blue); text-decoration: underline; }
+.footer-legal-sep { color: var(--border); margin: 0; }
+
+/* ── Footer copyright (bal oldal, az analitika-jelzés tükre) ── */
+.footer-copyright {
+  position: absolute;
+  top: 50%;
+  left: 1.2rem;
+  transform: translateY(-50%);
+  font-size: 0.68rem;
+  color: var(--text-sec);
+  opacity: 0.55;
+}
+@media (max-width: 1024px) { .footer-copyright { display: none; } }
+
+/* ── Footer mobilon: tiszta, központozott függőleges lista ── */
+@media (max-width: 600px) {
+  .footer-inner { flex-direction: column; gap: .15rem; }
+  .footer-inner .footer-legal-sep { display: none; }
+  .footer-inner .contacts a { padding: .45rem .25rem; }
+  .footer-inner .footer-legal-link { padding: .45rem .25rem; display: inline-block; }
 }

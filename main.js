@@ -134,7 +134,7 @@ async function handleContactForm(e) {
   const company = document.getElementById('contactCompany').value;
   const message = document.getElementById('contactMessage').value;
 
-  // Honeypot: ha a rejtett mezőt kitöltötték, bot — csendben eldobjuk
+  // Honeypot: ha a rejtett mezőt kitöltötték, bot - csendben eldobjuk
   const gotcha = document.getElementById('contactGotcha')?.value;
   if (gotcha) {
     document.getElementById('contactForm').reset();
@@ -168,7 +168,7 @@ async function handleContactForm(e) {
   }
 }
 
-// ── Scroll Spy — aktív nav link kiemelése görgetéskor ──
+// ── Scroll Spy - aktív nav link kiemelése görgetéskor ──
 function initScrollSpy() {
   const sections = document.querySelectorAll('.page-section[id]');
   const navLinks = document.querySelectorAll('.header-nav .nav-link');
@@ -245,7 +245,7 @@ function initStepsToggle() {
   });
 }
 
-// ── Sticky mobil CTA sáv — elrejtés, amikor az árajánlat szekció látszik ──
+// ── Sticky mobil CTA sáv - elrejtés, amikor az árajánlat szekció látszik ──
 function initMobileCtaBar() {
   const bar = document.getElementById('mobileCtaBar');
   const target = document.getElementById('arajanlat');

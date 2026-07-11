@@ -115,7 +115,7 @@ def send_label_notification(username: str, count: int, new_company_total: int):
                 <p><strong>Összes generált címke (minden cég):</strong> {total}</p>
             """
         })
-        print(f"Email notification sent: {username} +{count}")
+        print(f"Email notification sent (+{count})")
     except Exception as e:
         print(f"Email notification error: {e}")
 
@@ -268,7 +268,7 @@ def process_labels(request: Request, req: LabelProcessRequest, username: str = D
     try:
         result = process_and_validate(req.rows, subpage=req.subpage)
 
-        if result.get("issues"):
+        if not _IS_PRODUCTION and result.get("issues"):
             print(f"\n🔍 DEBUG - Returning {len(result['issues'])} issues to frontend:")
             for issue in result['issues'][:2]:
                 print(f"  Issue row {issue['row_index']}:")

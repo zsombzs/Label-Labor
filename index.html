@@ -55,7 +55,7 @@
   </div>
 
   <!-- ══════════════════════════════════
-       FŐOLDAL — egyetlen görgethető lap
+       FŐOLDAL - egyetlen görgethető lap
   ══════════════════════════════════ -->
   <main id="main-content">
 
@@ -131,7 +131,7 @@
       </div>
     </section>
 
-    <!-- ═══ MI AZ A LABEL LABOR — videó + útmutató ═══ -->
+    <!-- ═══ MI AZ A LABEL LABOR - videó + útmutató ═══ -->
     <section id="miert" class="page-section section-alt">
       <div class="page-wrapper info-page-wrapper">
         <div class="content-grid">
@@ -251,9 +251,9 @@
               </svg>
             </a>
             <div class="label-img-container">
-              <img src="assets/labels.jpg" alt="Generált polccímkék – teljes nyomtatási oldal" loading="lazy">
+              <img src="assets/labels.jpg" alt="Generált polccímkék - teljes nyomtatási oldal" loading="lazy">
             </div>
-            <div class="label-preview-caption" data-lang="examples-caption-1">Teljes nyomtatási oldal – így néz ki a kész PDF</div>
+            <div class="label-preview-caption" data-lang="examples-caption-1">Teljes nyomtatási oldal - így néz ki a kész PDF</div>
           </div>
           <div class="label-preview-card">
             <img src="assets/label.png" alt="Egy darab polccímke közelről" loading="lazy">
@@ -264,7 +264,7 @@
       </div>
     </section>
 
-    <!-- ═══ ÁRAJÁNLAT — kapcsolati űrlap ═══ -->
+    <!-- ═══ ÁRAJÁNLAT - kapcsolati űrlap ═══ -->
     <section id="arajanlat" class="page-section section-alt">
       <div class="page-wrapper">
         <div class="contact-container">
@@ -291,6 +291,9 @@
                 <!-- Honeypot a botok ellen: emberi látogató nem látja, nem tölti ki -->
                 <input type="text" id="contactGotcha" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0;">
                 <button type="submit" class="contact-submit-btn" data-lang="contact-submit">Küldés</button>
+                <p class="contact-privacy-note">
+                  <span data-lang="contact-privacy-pre">A Küldés gombra kattintva elfogadod az </span><a href="adatkezeles.html" target="_blank" rel="noopener" data-lang="contact-privacy-link">Adatkezelési tájékoztatót</a><span data-lang="contact-privacy-mid"> és az </span><a href="aszf.html" target="_blank" rel="noopener" data-lang="contact-terms-link">ÁSZF-et</a><span data-lang="contact-privacy-suf">.</span>
+                </p>
               </form>
             </div>
             <div class="contact-right">
@@ -324,7 +327,16 @@
 
   <!-- ══════════ FOOTER ══════════ -->
   <footer class="footer-static">
-    <p class="contacts"><span data-lang="contact-footer-pre">Kapcsolat: </span><a href="mailto:info@labellabor.com">info@labellabor.com</a></p>
+    <div class="footer-inner">
+      <p class="contacts"><span data-lang="contact-footer-pre">Kapcsolat: </span><a href="mailto:info@labellabor.com">info@labellabor.com</a></p>
+      <span class="footer-legal-sep">·</span>
+      <a href="impresszum.html" class="footer-legal-link" data-lang="footer-imprint">Impresszum</a>
+      <span class="footer-legal-sep">·</span>
+      <a href="adatkezeles.html" class="footer-legal-link" data-lang="footer-privacy">Adatkezelési tájékoztató</a>
+      <span class="footer-legal-sep">·</span>
+      <a href="aszf.html" class="footer-legal-link" data-lang="footer-terms">ÁSZF</a>
+    </div>
+    <span class="footer-copyright" data-lang="footer-copyright">© 2026 Label Labor - Minden jog fenntartva</span>
     <span class="footer-analytics-note" data-lang="footer-analytics">Anonim látogatottsági mérés: Cloudflare Analytics</span>
   </footer>
 

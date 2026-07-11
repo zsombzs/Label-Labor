@@ -32,7 +32,7 @@ const translations = {
       'step4-desc': 'Click the "Upload Excel File (.xlsx)" button and select your completed template.',
 
       'step5-title': 'Data validation and correction',
-      'step5-desc': 'For consistent labels, the system automatically corrects minor errors — just confirm them with the checkmark icon. If needed, you can also edit the data manually.<br><br><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"><div><span style="display:inline-block;width:14px;height:14px;background:#4caf50;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Green</strong> background — field marked as ready</div><div><span style="display:inline-flex;align-items:center;justify-content:center;background:#4caf50;color:#fff;border-radius:4px;width:20px;height:20px;font-size:12px;vertical-align:middle;margin-right:4px;">✓</span> Use the checkmark icon to confirm and mark as ready</div></div><strong>By the end of validation, all fields should have a green background.</strong>',
+      'step5-desc': 'For consistent labels, the system automatically corrects minor errors - just confirm them with the checkmark icon. If needed, you can also edit the data manually.<br><br><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"><div><span style="display:inline-block;width:14px;height:14px;background:#4caf50;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Green</strong> background - field marked as ready</div><div><span style="display:inline-flex;align-items:center;justify-content:center;background:#4caf50;color:#fff;border-radius:4px;width:20px;height:20px;font-size:12px;vertical-align:middle;margin-right:4px;">✓</span> Use the checkmark icon to confirm and mark as ready</div></div><strong>By the end of validation, all fields should have a green background.</strong>',
 
       'step6-title': 'Check shelf labels and select shelf label type',
       'step6-desc': 'Review the information displayed on the shelf labels, then select the appropriate shelf label type.',
@@ -41,10 +41,19 @@ const translations = {
       'step7-desc': 'Click the "View Data" button to open a table with all shelf label data. If necessary, you can edit any field. Click "Save and Generate" to regenerate the shelf labels with the updated changes.',
 
       'step8-title': 'Download and print shelf labels',
-      'step8-desc': 'Click the "Download PDF" button. If you want to generate new shelf labels, refresh the page before starting the process. You can print the downloaded labels.pdf document with any standard printer — just like any invoice or regular document.',
+      'step8-desc': 'Click the "Download PDF" button. If you want to generate new shelf labels, refresh the page before starting the process. You can print the downloaded labels.pdf document with any standard printer - just like any invoice or regular document.',
 
       'contact-footer-pre': 'Contact: ',
       'footer-analytics': 'Anonymous visit tracking: Cloudflare Analytics',
+      'footer-copyright': '© 2026 Label Labor - All rights reserved',
+      'footer-imprint': 'Imprint',
+      'footer-privacy': 'Privacy Policy',
+      'footer-terms': 'Terms (ÁSZF)',
+      'contact-privacy-pre': 'By clicking Send, you accept our ',
+      'contact-privacy-link': 'Privacy Policy',
+      'contact-privacy-mid': ' and our ',
+      'contact-terms-link': 'Terms (ÁSZF)',
+      'contact-privacy-suf': '.',
       'contact': 'Contact us',
       
       // About page
@@ -53,8 +62,8 @@ const translations = {
       'about-benefits-title': 'Benefits of using Label Labor:',
       'about-benefit-1': 'Hundreds of shelf labels in just minutes',
       'about-benefit-2': 'Saving time and money on shelf label creation',
-      'about-benefit-3': 'Shelf labels that can be printed on regular A4 paper — no need to buy expensive roll labels',
-      'about-benefit-4': 'Printing shelf labels even with a regular printer for invoices — no special roll label printer required',
+      'about-benefit-3': 'Shelf labels that can be printed on regular A4 paper - no need to buy expensive roll labels',
+      'about-benefit-4': 'Printing shelf labels even with a regular printer for invoices - no special roll label printer required',
       'about-benefit-5': 'Personalized shelf label formats',
       'about-benefit-6': 'Online support for introduction and usage',
       
@@ -81,7 +90,7 @@ const translations = {
     'form-location-hint': 'The quote request form can be found at the bottom of the page. Please fill it out according to the instructions provided.',
     'scroll-to-form': 'Go to Form',
 
-    // About page — new layout
+    // About page - new layout
     'hero-title': 'Professional <span>shelf labels</span><br>in minutes',
     'hero-total-label': 'shelf labels generated',
     'hero-badge-label': 'shelf labels in minutes',
@@ -94,7 +103,7 @@ const translations = {
     'card-fast-title': 'Fast',
     'card-fast-desc': 'Upload your spreadsheet and get 100+ printable shelf labels in seconds.',
     'card-cheap-title': 'Affordable',
-    'card-cheap-desc': 'Prints on standard A4 paper — no expensive specialty shelf labels needed.',
+    'card-cheap-desc': 'Prints on standard A4 paper - no expensive specialty shelf labels needed.',
     'card-printer-title': 'Any Printer',
     'card-printer-desc': 'Works with any home or office printer. Instantly, without setup.',
     'card-brand-title': 'Your Brand',
@@ -107,7 +116,7 @@ const translations = {
     'howto-title': '3 steps to your first print',
     'howto-lead': 'No installation needed, no registration required to try.',
     'howto1-title': 'Log in',
-    'howto1-desc': 'Enter your credentials — takes 10 seconds.',
+    'howto1-desc': 'Enter your credentials - takes 10 seconds.',
     'howto2-title': 'Upload Excel',
     'howto2-desc': 'Drop in your existing spreadsheet, or fill in the template.',
     'howto3-title': 'Print',
@@ -120,7 +129,7 @@ const translations = {
     'examples-eyebrow': 'Sample output <span class="new-text-badge">NEW</span>',
     'examples-heading': 'Here\'s what the result looks like',
     'examples-lead': 'Custom shelf labels, printed on A4 paper, cut and placed in the shelf rail.',
-    'examples-caption-1': 'Full print page — this is how the final PDF looks',
+    'examples-caption-1': 'Full print page - this is how the final PDF looks',
     'examples-caption-2': 'A single shelf label up close',
     'examples-download': 'Download PDF',
 
@@ -158,7 +167,7 @@ const translations = {
       'step4-desc': 'Kattintson az "Excel fájl feltöltése (.xlsx)" gombra, és válassza ki a kitöltött sablont.',
 
       'step5-title': 'Adatok ellenőrzése, javítása',
-      'step5-desc': 'Az egységes polccímkék érdekében a kisebb hibákat a rendszer kijavítja, csak a pipa ikonnal kell jóváhagyni. Ha szükséges, manuálisan is lehet módosítani az adatokat.<br><br><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"><div><span style="display:inline-block;width:14px;height:14px;background:#4caf50;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Zöld</strong> háttér — mező késznek jelölve</div><div><span style="display:inline-flex;align-items:center;justify-content:center;background:#4caf50;color:#fff;border-radius:4px;width:20px;height:20px;font-size:12px;vertical-align:middle;margin-right:4px;">✓</span> Pipa ikonnal lehet jóváhagyni és késznek jelölni</div></div><strong>Az adatellenőrzés legvégén az összes mező háttere legyen zöld.</strong>',
+      'step5-desc': 'Az egységes polccímkék érdekében a kisebb hibákat a rendszer kijavítja, csak a pipa ikonnal kell jóváhagyni. Ha szükséges, manuálisan is lehet módosítani az adatokat.<br><br><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"><div><span style="display:inline-block;width:14px;height:14px;background:#4caf50;border-radius:3px;vertical-align:middle;margin-right:6px;"></span> <strong>Zöld</strong> háttér - mező késznek jelölve</div><div><span style="display:inline-flex;align-items:center;justify-content:center;background:#4caf50;color:#fff;border-radius:4px;width:20px;height:20px;font-size:12px;vertical-align:middle;margin-right:4px;">✓</span> Pipa ikonnal lehet jóváhagyni és késznek jelölni</div></div><strong>Az adatellenőrzés legvégén az összes mező háttere legyen zöld.</strong>',
 
       'step6-title': 'Polcpolccímkék ellenőrzése és polccímke-típus választása',
       'step6-desc': 'Ellenőrizze a polccímkéken megjelenő adatokat, majd válassza ki a megfelelő polccímke-típust.',
@@ -167,10 +176,19 @@ const translations = {
       'step7-desc': 'Az "Adatok megtekintése" gombra kattintva megjelenik egy táblázat, benne az összes polccímke-adattal. Ha szükséges, lehet módosítani bármelyik adatot, a "Mentés és generálás" gombra kattintva pedig a rendszer ismét elkészíti a polccímkéket a friss változtatásokkal.',
 
       'step8-title': 'Polcpolccímkék letöltése és nyomtatása',
-      'step8-desc': 'Kattintson a "PDF letöltése" gombra. Ha új polccímkéket szeretne generálni, frissítsen rá az oldalra a folyamat megkezdése előtt. A letöltött cimkek.pdf dokumentumot bármilyen hagyományos nyomtatóval kinyomtathatja – ugyanúgy, mint egy számlát vagy más dokumentumot.',
+      'step8-desc': 'Kattintson a "PDF letöltése" gombra. Ha új polccímkéket szeretne generálni, frissítsen rá az oldalra a folyamat megkezdése előtt. A letöltött cimkek.pdf dokumentumot bármilyen hagyományos nyomtatóval kinyomtathatja - ugyanúgy, mint egy számlát vagy más dokumentumot.',
 
       'contact-footer-pre': 'Kapcsolat: ',
       'footer-analytics': 'Anonim látogatottsági mérés: Cloudflare Analytics',
+      'footer-copyright': '© 2026 Label Labor - Minden jog fenntartva',
+      'footer-imprint': 'Impresszum',
+      'footer-privacy': 'Adatkezelési tájékoztató',
+      'footer-terms': 'ÁSZF',
+      'contact-privacy-pre': 'A Küldés gombra kattintva elfogadod az ',
+      'contact-privacy-link': 'Adatkezelési tájékoztatót',
+      'contact-privacy-mid': ' és az ',
+      'contact-terms-link': 'ÁSZF-et',
+      'contact-privacy-suf': '.',
       'contact': 'Kapcsolat',
       
       // About page
@@ -207,7 +225,7 @@ const translations = {
       'form-location-hint': 'Az űrlap az oldal alján található. Kérjük, megadott útmutató alapján töltse ki.',
       'scroll-to-form': 'Ugrás az űrlaphoz',
 
-    // About page — new layout
+    // About page - new layout
     'hero-title': 'Professzionális <span>polccímkék</span><br>percek alatt',
     'hero-total-label': 'összes generált polccímke',
     'hero-badge-label': 'polccimke percek alatt',
@@ -220,7 +238,7 @@ const translations = {
     'card-fast-title': 'Gyors',
     'card-fast-desc': 'Töltse fel Excel-táblázatát és 100+ nyomtatható polccímkét kap másodpercek alatt.',
     'card-cheap-title': 'Olcsó',
-    'card-cheap-desc': 'Hagyományos A4-es papírra nyomtat – nincs szükség drága, speciális nyomtatóra vagy papírra.',
+    'card-cheap-desc': 'Hagyományos A4-es papírra nyomtat - nincs szükség drága, speciális nyomtatóra vagy papírra.',
     'card-printer-title': 'Bármilyen nyomtató',
     'card-printer-desc': 'Minden otthoni és irodai nyomtatóval működik. Azonnal, beállítás nélkül.',
     'card-brand-title': 'Saját arculat',
@@ -233,7 +251,7 @@ const translations = {
     'howto-title': '3 lépés az első nyomtatásig',
     'howto-lead': 'Nem kell semmit telepíteni, regisztrálni sem szükséges a kipróbáláshoz.',
     'howto1-title': 'Bejelentkezés',
-    'howto1-desc': 'Adja meg a hozzáférési adatait – ez 10 másodperc.',
+    'howto1-desc': 'Adja meg a hozzáférési adatait - ez 10 másodperc.',
     'howto2-title': 'Excel feltöltése',
     'howto2-desc': 'Húzza be a meglévő Excel-táblázatát, vagy töltse ki a sablont.',
     'howto3-title': 'Nyomtatás',
@@ -246,7 +264,7 @@ const translations = {
     'examples-eyebrow': 'Példa kimenet <span class="new-text-badge">ÚJ</span>',
     'examples-heading': 'Így néz ki a végeredmény',
     'examples-lead': 'Egyedi polccímkék, amelyek A4-es papírra nyomtatás után kivágva kerülnek a polcsínbe.',
-    'examples-caption-1': 'Teljes nyomtatási oldal – így néz ki a kész PDF',
+    'examples-caption-1': 'Teljes nyomtatási oldal - így néz ki a kész PDF',
     'examples-caption-2': 'Egyetlen polccímke közelről',
     'examples-download': 'PDF letöltése',
 

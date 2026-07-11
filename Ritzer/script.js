@@ -240,8 +240,7 @@ function showValidationModal(validationResult, onComplete) {
             id="${inputId}"
             placeholder="Javított érték...">
           <button class="accept-btn"
-            id="btn_${inputId}"
-            onclick="acceptFix(${issue.row_index}, '${hiba.oszlop}', '${inputId}')">
+            id="btn_${inputId}">
             ✓
           </button>
         </div>
@@ -255,6 +254,14 @@ function showValidationModal(validationResult, onComplete) {
           if (!input.disabled && currentValue !== originalValue) {
             window.acceptFix(issue.row_index, hiba.oszlop, inputId);
           }
+        });
+      }
+
+      // Accept gomb: inline onclick helyett eseményfigyelő (XSS-mentes, azonos hívás)
+      const acceptBtn = item.querySelector('.accept-btn');
+      if (acceptBtn) {
+        acceptBtn.addEventListener('click', () => {
+          window.acceptFix(issue.row_index, hiba.oszlop, inputId);
         });
       }
 

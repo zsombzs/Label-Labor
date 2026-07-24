@@ -1,0 +1,10 @@
+# Netlify biztonsági fejlécek - React frontend
+# A Vite a public/ tartalmát a dist/ gyökerébe másolja, így deploykor a helyén lesz.
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://labelgenerator-production.up.railway.app https://formspree.io https://cloudflareinsights.com; frame-src https://www.youtube.com https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io; frame-ancestors 'none'

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adatkezelési tájékoztató - Label Labor</title>
+  <meta name="description" content="A Label Labor weboldal adatkezelési tájékoztatója a GDPR szerint.">
+  <link rel="icon" type="image/png" href="assets/main_icon.png">
+  <link rel="stylesheet" href="style.min.css">
+  <style>
+    .legal-page { min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); }
+    .legal-header {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      padding: 0 1.5rem; height: 64px;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+    }
+    .legal-header .logo { display: flex; align-items: center; gap: .5rem; font-weight: 800; font-size: 1.15rem; color: var(--text); text-decoration: none; }
+    .legal-header .logo img { height: 30px; width: auto; }
+    .legal-header .logo span { color: var(--blue); }
+    .legal-header .back-link { font-size: .9rem; color: var(--blue); text-decoration: none; font-weight: 600; white-space: nowrap; }
+    .legal-header .back-link:hover { text-decoration: underline; }
+    .legal-main { flex: 1; width: 100%; max-width: 880px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; box-sizing: border-box; }
+    .legal-main h1 { font-size: 2rem; color: var(--text); margin: 0 0 1.2rem; }
+    .legal-intro { color: var(--text-sec); font-size: .97rem; line-height: 1.65; margin: 0 0 2rem; }
+    section.legal-section { margin-bottom: 2rem; }
+    section.legal-section > h2 {
+      font-size: 1.2rem; color: var(--text); margin: 0 0 .8rem;
+      padding-bottom: .4rem; border-bottom: 2px solid var(--blue-mid);
+    }
+    .legal-section p { color: var(--text-sec); font-size: .95rem; line-height: 1.65; margin: 0 0 .8rem; }
+    .legal-section ul { color: var(--text-sec); font-size: .95rem; line-height: 1.6; margin: 0 0 .8rem; padding-left: 1.3rem; }
+    .legal-section li { margin: .3rem 0; }
+    .legal-section strong { color: var(--text); }
+    .legal-section a { color: var(--blue); text-decoration: none; }
+    .legal-section a:hover { text-decoration: underline; }
+    .table-wrap { overflow-x: auto; margin: 0 0 1rem; border: 1px solid var(--border); border-radius: 10px; }
+    table.legal-table { width: 100%; border-collapse: collapse; font-size: .88rem; background: var(--surface); }
+    table.legal-table th, table.legal-table td { text-align: left; padding: .7rem .85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    table.legal-table th { background: var(--surface-2); color: var(--text); font-weight: 700; white-space: nowrap; }
+    table.legal-table tr:last-child td { border-bottom: none; }
+    table.legal-table td { color: var(--text-sec); }
+    .legal-footer { background: var(--surface); border-top: 1px solid var(--border); padding: 1.1rem 1.5rem; text-align: center; }
+    .legal-footer a { color: var(--blue); text-decoration: none; margin: 0 .5rem; font-size: .9rem; }
+    .legal-footer a:hover { text-decoration: underline; }
+    .legal-footer .sep { color: var(--border); }
+    @media (max-width: 600px) { .legal-main h1 { font-size: 1.6rem; } }
+  </style>
+</head>
+<body>
+  <div class="legal-page">
+    <header class="legal-header">
+      <a href="/" class="logo"><img src="assets/main_icon.png" alt="">Label<span>Labor</span></a>
+      <a href="/" class="back-link">← Vissza a főoldalra</a>
+    </header>
+
+    <main class="legal-main">
+      <h1>Adatkezelési tájékoztató</h1>
+
+      <p class="legal-intro">
+        Ez a tájékoztató a Label Labor weboldal (<a href="https://labellabor.com">labellabor.com</a>) használata
+        során kezelt személyes adatokról szól, az Európai Parlament és a Tanács (EU) 2016/679 rendelete
+        (<strong>GDPR</strong>) alapján.
+      </p>
+
+      <section class="legal-section" id="adatkezelo">
+        <h2>1. Az adatkezelő</h2>
+        <p>
+          <strong>Név:</strong> Galgóczi Zsombor egyéni vállalkozó<br>
+          <strong>Székhely:</strong> 2049 Diósd, Ferenc utca 16.<br>
+          <strong>E-mail:</strong> <a href="mailto:info@labellabor.com">info@labellabor.com</a>
+        </p>
+        <p>A szolgáltató további nyilvántartási adatai az <a href="impresszum.html">Impresszumban</a> érhetők el.</p>
+      </section>
+
+      <section class="legal-section" id="adatok">
+        <h2>2. Milyen adatokat, miért és milyen jogalapon kezelünk</h2>
+        <div class="table-wrap">
+          <table class="legal-table">
+            <thead>
+              <tr><th>Adatkezelés</th><th>Kezelt adatok</th><th>Cél</th><th>Jogalap</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Kapcsolatfelvételi / árajánlatkérő űrlap</td>
+                <td>név, e-mail cím, cégnév, üzenet</td>
+                <td>a megkeresés megválaszolása, árajánlat készítése, a szerződéskötés előkészítése</td>
+                <td>GDPR 6. cikk (1) b) - szerződéskötést megelőző lépések az érintett kérésére</td>
+              </tr>
+              <tr>
+                <td>Felhasználói fiók / bejelentkezés</td>
+                <td>felhasználónév, jelszó (titkosított, bcrypt-hash)</td>
+                <td>a címkegeneráló szolgáltatás nyújtása</td>
+                <td>GDPR 6. cikk (1) b) - szerződés teljesítése</td>
+              </tr>
+              <tr>
+                <td>Napló- és biztonsági adatok</td>
+                <td>IP-cím, kérések időpontja</td>
+                <td>a szolgáltatás biztonsága, visszaélés-megelőzés</td>
+                <td>GDPR 6. cikk (1) f) - jogos érdek</td>
+              </tr>
+              <tr>
+                <td>Rendszer- és tranzakciós e-mailek</td>
+                <td>e-mail cím, cégnév, a művelethez tartozó adat</td>
+                <td>a szolgáltatás teljesítéséhez kapcsolódó értesítések (pl. jelszó-visszaállítás, generálási visszaigazolás)</td>
+                <td>GDPR 6. cikk (1) b) - szerződés teljesítése</td>
+              </tr>
+              <tr>
+                <td>Számlázás</td>
+                <td>a számlázáshoz előírt adatok</td>
+                <td>jogszabályi számlázási kötelezettség</td>
+                <td>GDPR 6. cikk (1) c) - jogi kötelezettség</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          A kapcsolatfelvételi űrlap kizárólag üzleti célú, a szolgáltatásra vonatkozó árajánlatkérést szolgál, ezért
+          annak jogalapja egyértelműen a szerződéskötést megelőző lépések megtétele, nem pedig a hozzájárulás.
+        </p>
+        <p>
+          <strong>Az érdekmérlegelési teszt (napló- és biztonsági adatok):</strong> A szolgáltató elvégezte az
+          adatvédelmi jogszabályok által megkövetelt érdekmérlegelési tesztet (LIA), amely alapján megállapítható,
+          hogy a szolgáltató hálózat- és információbiztonsághoz, valamint a szolgáltatás zavartalan üzemeltetéséhez
+          fűződő jogos érdeke arányos az érintettek magánszférájába történő - a hálózati forgalom azonosításához
+          elengedhetetlenül szükséges technikai adatokra (IP-cím) korlátozódó - beavatkozással. Az érdekmérlegelési
+          teszt kivonatát az érintett kérésére rendelkezésre bocsátjuk.
+        </p>
+      </section>
+
+      <section class="legal-section" id="excel-ai">
+        <h2>3. Feltöltött adatok és a mesterséges intelligencia</h2>
+        <p>
+          A weboldalon feltöltött Excel-táblázatok a bolt <strong>termékadatait</strong> (cikkszám, EAN, megnevezés,
+          ár) tartalmazzák, amelyek a definíció szerint <strong>nem személyes adatok</strong>, így nem esnek a GDPR
+          hatálya alá.
+        </p>
+        <p>
+          A feltöltött adatállományokat a rendszer mesterséges intelligencia (Anthropic AI) segítségével automatikusan
+          ellenőrzi és rendezi. Ehhez kapcsolódóan az alábbiak irányadók:
+        </p>
+        <ul>
+          <li>A Felhasználó szavatolja, hogy a feltöltött fájlok kizárólag üzleti, termékre vonatkozó adatokat
+            tartalmaznak, és azokban semmilyen természetes személyre vonatkozó személyes adat nem szerepel.</li>
+          <li>Az AI-partner (Anthropic) a kereskedelmi API-feltételei szerint a beküldött adatokat
+            <strong>nem használja fel nyelvi modelljei betanítására</strong>. Az adatokat kizárólag a kérés
+            feldolgozásához, valamint a visszaélések megelőzése és a jogszabályi megfelelés céljából, korlátozott
+            ideig kezeli, majd törli.</li>
+        </ul>
+      </section>
+
+      <section class="legal-section" id="sutik">
+        <h2>4. Sütik és helyi tárolás</h2>
+        <p>
+          A weboldal <strong>nem használ marketing-, profilalkotó vagy nyomkövető sütiket</strong>. Kizárólag
+          technikailag, illetve a szolgáltatás és a hálózat biztonságához szigorúan szükséges tárolást alkalmaz,
+          amelyekhez az ePrivacy irányelv (2002/58/EK) 5. cikk (3) bekezdése alapján nem szükséges előzetes
+          hozzájárulás, ezért az oldalon nincs süti-hozzájárulási felugró ablak sem.
+        </p>
+        <div class="table-wrap">
+          <table class="legal-table">
+            <thead>
+              <tr><th>Megnevezés</th><th>Típus</th><th>Élettartam</th><th>Funkció és jogi besorolás</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>language_preference</td>
+                <td>localStorage</td>
+                <td>a böngésző törléséig</td>
+                <td>A kiválasztott nyelv (HU/EN) megjegyzése. Szigorúan szükséges technikai elem.</td>
+              </tr>
+              <tr>
+                <td>auth_token</td>
+                <td>sessionStorage</td>
+                <td>a munkamenet / böngésző bezárásáig</td>
+                <td>A bejelentkezett állapot fenntartása (Supabase hitelesítési token). Szigorúan szükséges.</td>
+              </tr>
+              <tr>
+                <td>__cf_bm</td>
+                <td>HTTP cookie (Cloudflare)</td>
+                <td>30 perc inaktivitás után lejár</td>
+                <td>A Cloudflare bot-védelmi sütije, amely a kártékony bot-forgalmat szűri és a hálózatot védi. Szigorúan szükséges biztonsági süti.</td>
+              </tr>
+              <tr>
+                <td>Cloudflare Web Analytics</td>
+                <td>sütimentes beacon</td>
+                <td>-</td>
+                <td>Anonim, sütimentes látogatottsági mérés, amely egyéni felhasználó azonosítására nem alkalmas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="legal-section" id="feldolgozok">
+        <h2>5. Adatfeldolgozók és címzettek</h2>
+        <div class="table-wrap">
+          <table class="legal-table">
+            <thead>
+              <tr><th>Szolgáltató</th><th>Tevékenység</th><th>Székhely</th><th>Adattovábbítás garanciája</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Netlify, Inc.</td>
+                <td>a weboldal (frontend) tárhelye, tartalomelosztó hálózat (CDN)</td>
+                <td>101 2nd Street, San Francisco, CA 94105, USA</td>
+                <td>EU-USA Adatvédelmi Keret (DPF) + SCC</td>
+              </tr>
+              <tr>
+                <td>Railway Corp.</td>
+                <td>szerveroldali alkalmazás- és API-tárhely (backend)</td>
+                <td>548 Market St, PMB 68956, San Francisco, CA 94104, USA</td>
+                <td>SCC (általános szerződési feltételek)</td>
+              </tr>
+              <tr>
+                <td>Supabase, Inc.</td>
+                <td>adatbázis, felhasználói fiókok hitelesítése</td>
+                <td>65 Chulia Street, #38-02/03 OCBC Centre, Singapore 049513 / Camden, DE, USA</td>
+                <td>SCC + DPA, valamint a továbbítási hatásvizsgálat (TIA)</td>
+              </tr>
+              <tr>
+                <td>Formspree, Inc.</td>
+                <td>a kapcsolati / árajánlatkérő űrlap üzeneteinek továbbítása</td>
+                <td>21750 Hardy Oak Blvd Ste 104, San Antonio, TX 78258, USA</td>
+                <td>EU-USA Adatvédelmi Keret (DPF) + SCC</td>
+              </tr>
+              <tr>
+                <td>Plus Five Five, Inc. (Resend)</td>
+                <td>rendszer- és tranzakciós e-mailek küldése</td>
+                <td>2261 Market Street #5039, San Francisco, CA 94114, USA</td>
+                <td>EU-USA Adatvédelmi Keret (DPF) + SCC</td>
+              </tr>
+              <tr>
+                <td>Cloudflare, Inc.</td>
+                <td>CDN, hálózati biztonság (WAF), bot-védelem, anonim forgalommérés</td>
+                <td>101 Townsend St, San Francisco, CA 94107, USA</td>
+                <td>EU-USA Adatvédelmi Keret (DPF)</td>
+              </tr>
+              <tr>
+                <td>Anthropic, PBC</td>
+                <td>a bemeneti adatok automatikus validálása és rendezése (AI, Claude)</td>
+                <td>251 Little Falls Drive, Wilmington, DE 19808, USA</td>
+                <td>SCC + kereskedelmi API-feltételek (nincs modellbetanítás)</td>
+              </tr>
+              <tr>
+                <td>KBOSS.hu Kft. (Számlázz.hu)</td>
+                <td>elektronikus számlázás</td>
+                <td>Magyarország (EGT)</td>
+                <td>az adatok az EGT-n belül maradnak</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="legal-section" id="tovabbitas">
+        <h2>6. Adattovábbítás harmadik országba</h2>
+        <p>
+          A szolgáltatás elosztott felhőarchitektúrára épül, ezért a fenti adatfeldolgozók egy része az Európai
+          Gazdasági Térségen (EGT) kívül - túlnyomórészt az Amerikai Egyesült Államokban, illetve Szingapúrban -
+          működik. Az adattovábbítás a GDPR V. fejezete (44-50. cikk) szerinti megfelelő garanciák mellett valósul meg:
+        </p>
+        <ul>
+          <li>Az <strong>egyesült államokbeli</strong> szolgáltatók esetében az <strong>EU-USA Adatvédelmi Keret
+            (Data Privacy Framework)</strong>, illetve annak hiányában az Európai Bizottság
+            <strong>általános szerződési feltételei (SCC)</strong> nyújtanak jogalapot.</li>
+          <li>A <strong>szingapúri</strong> adatfeldolgozó (a Supabase ázsiai egysége) esetében - amelyre nem
+            vonatkozik bizottsági megfelelőségi határozat - az adattovábbítás <strong>SCC</strong> alapján, továbbítási
+            hatásvizsgálat (Transfer Impact Assessment, TIA) elvégzése mellett történik.</li>
+        </ul>
+      </section>
+
+      <section class="legal-section" id="megorzes">
+        <h2>7. Az adatok megőrzési ideje</h2>
+        <ul>
+          <li><strong>Kapcsolatfelvételi üzenetek:</strong> a megkeresés lezárását követő legfeljebb 1 évig.</li>
+          <li><strong>Felhasználói fiók:</strong> a szerződéses jogviszony fennállásáig.</li>
+          <li><strong>Napló- és biztonsági adatok:</strong> a szolgáltatás önmagában nem vezet külön naplótáblát. Az
+            IP-címet a visszaélés-megelőzés (kérésszám-korlátozás) céljából <strong>átmenetileg, a memóriában</strong>
+            kezeli, amely a rendszer újraindításakor törlődik. A tartós hozzáférési naplókat az
+            infrastruktúra-szolgáltatók (Railway, Cloudflare, Netlify) kezelik, a saját megőrzési idejük szerint.</li>
+          <li><strong>Számlázási adatok:</strong> a számviteli törvény alapján 8 évig.</li>
+        </ul>
+      </section>
+
+      <section class="legal-section" id="jogok">
+        <h2>8. Az érintett jogai</h2>
+        <p>A GDPR alapján jogosult vagy a rólad kezelt adatokhoz való <strong>hozzáférésre</strong>, azok
+          <strong>helyesbítésére</strong>, <strong>törlésére</strong>, az adatkezelés <strong>korlátozására</strong>,
+          a jogos érdeken alapuló kezelés elleni <strong>tiltakozásra</strong>, valamint az
+          <strong>adathordozhatóságra</strong>.</p>
+        <p>A kérelmeket az <a href="mailto:info@labellabor.com">info@labellabor.com</a> címen lehet benyújtani; azokat
+          legfeljebb <strong>1 hónapon belül</strong> teljesítjük. Ez a határidő a GDPR 12. cikk (3) bekezdése alapján -
+          a kérelem összetettségére és a kérelmek számára figyelemmel - szükség esetén <strong>további két hónappal
+          meghosszabbítható</strong>, amiről a késedelem okainak megjelölésével a kérelem kézhezvételétől számított
+          egy hónapon belül tájékoztatunk.</p>
+      </section>
+
+      <section class="legal-section" id="jogorvoslat">
+        <h2>9. Jogorvoslat</h2>
+        <p>Ha úgy ítéled meg, hogy az adatkezelés a jogaidat sérti, panasszal a felügyeleti hatósághoz fordulhatsz:</p>
+        <p>
+          <strong>Nemzeti Adatvédelmi és Információszabadság Hatóság (NAIH)</strong><br>
+          1055 Budapest, Falk Miksa utca 9-11. · Postacím: 1363 Budapest, Pf. 9.<br>
+          E-mail: <a href="mailto:ugyfelszolgalat@naih.hu">ugyfelszolgalat@naih.hu</a> · Web: <a href="https://naih.hu">naih.hu</a>
+        </p>
+        <p>
+          A hatósági panasz mellett - vagy attól függetlenül - <strong>bírósághoz</strong> is fordulhatsz. A pert
+          választásod szerint az adatkezelő székhelye szerinti, vagy a saját lakóhelyed, illetve tartózkodási helyed
+          szerint illetékes törvényszék előtt is megindíthatod.
+        </p>
+      </section>
+    </main>
+
+    <footer class="legal-footer">
+      <a href="/">Főoldal</a><span class="sep">·</span>
+      <a href="impresszum.html">Impresszum</a><span class="sep">·</span>
+      <a href="adatkezeles.html">Adatkezelési tájékoztató</a><span class="sep">·</span>
+      <a href="aszf.html">ÁSZF</a>
+    </footer>
+  </div>
+</body>
+</html>

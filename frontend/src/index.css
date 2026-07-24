@@ -1,0 +1,3 @@
+/* Alap reset - a valódi stílusok a Fázis 3-5-ben érkeznek */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }

@@ -1,0 +1,950 @@
+/* ═══════════════════════════════════════════════
+   DEMO SKIN + WIZARD — a demo oldal a főoldal (landing)
+   arculatában, egy lépésről lépésre vezető varázslóként.
+   ───────────────────────────────────────────────
+   - Csak a body.demo-skin osztállyal aktív; a többi aloldal
+     (LL/EA/Ditall/Hudak) kinézete változatlan.
+   - A #labels / .page / .label DOM-hoz NEM nyúlunk — a PDF
+     abból készül. A wizard 4. lépése a .wiz-preview-ba ágyazva
+     mutatja, belső görgetéssel (az ablak fix marad → PDF-biztos).
+   - Cél: 40–50 éves festékboltos elsőre végig tudja csinálni.
+     Nagy gombok, tiszta lépések, egyértelmű visszajelzések,
+     kevés vizuális zaj.
+   ─────────────────────────────────────────────── */
+
+body.generator-page.demo-skin{
+  --d-blue:        #1D4ED8;
+  --d-blue-hover:  #1E40AF;
+  --d-blue-light:  #EEF2FF;
+  --d-blue-mid:    #DBEAFE;
+  --d-surface:     #FFFFFF;
+  --d-surface-2:   #F0EEE9;
+  --d-page:        #ECE9E1;
+  --d-border:      #C9C4B8;
+  --d-border-strong:#9A9488;
+  --d-text:        #1C1C1C;
+  --d-text-sec:    #5A5A5A;
+  --d-text-muted:  #837D72;
+  --d-amber:       #D97706;
+  --d-amber-bg:    #FFFBEB;
+  --d-green:       #059669;
+  --d-green-hover: #047857;
+  --d-green-bg:    #ECFDF5;
+  --d-red:         #DC2626;
+
+  font-family: 'Segoe UI', 'Calibri', system-ui, -apple-system, sans-serif;
+  background-color: var(--d-page);
+}
+
+/* A rejtett fájl-input (a dropzone label + e2e erre mutat) */
+.demo-file-input{ display: none; }
+
+/* ══ Angol nyelvnél: a demo csak magyarul érhető el ══ */
+body.generator-page.demo-skin .demo-lang-note{
+  flex: 0 0 auto;
+  background: var(--d-blue-light);
+  color: var(--d-blue-hover);
+  border-bottom: 1px solid var(--d-blue-mid);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 7px 12px;
+  text-align: center;
+}
+
+/* ══ Demo-sáv ══ */
+body.generator-page.demo-skin .demo-banner{
+  background: var(--d-amber-bg);
+  color: #92400E;
+  border-bottom: 2px solid #FCD34D;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 9px 12px;
+  text-align: center;
+}
+
+/* ═══════════════════ WIZARD HÉJ ═══════════════════ */
+body.generator-page.demo-skin .demo-wiz{
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #F5F4F0 0%, #E7E3DA 100%);
+  color: var(--d-text);
+}
+
+/* ── Mindig látható fejléc-sáv: cím + lépésjelző egy sorban ──
+   Fehér háttér + erős alsó keret + árnyék → élesen elválik a görgethető színpadtól. */
+body.generator-page.demo-skin .wiz-header{
+  flex: 0 0 auto;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 28px;
+  background: var(--d-surface);
+  border-bottom: 3px solid var(--d-border-strong);
+  box-shadow: 0 3px 12px rgba(0,0,0,.10);
+}
+body.generator-page.demo-skin .wiz-header-id{ flex: 1 1 0; text-align: left; min-width: 0; }
+body.generator-page.demo-skin .wiz-title{
+  margin: 0;
+  font-size: clamp(18px, 15px + 1vw, 25px);
+  font-weight: 800;
+  letter-spacing: -.5px;
+  line-height: 1.1;
+  color: var(--d-text);
+}
+body.generator-page.demo-skin .wiz-stat{
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--d-text-muted);
+}
+body.generator-page.demo-skin .wiz-stat b{ color: var(--d-blue); }
+
+/* ── Nagy, középre igazított lépésszámláló - látványos váltás-animációval ── */
+body.generator-page.demo-skin .wiz-header-count{
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  padding: 0 10px;
+}
+body.generator-page.demo-skin .wiz-count-big{
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: clamp(26px, 20px + 1.6vw, 40px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+  color: var(--d-blue);
+  animation: wizCountPop .55s cubic-bezier(.2,.9,.3,1.5) both;
+}
+body.generator-page.demo-skin .wiz-count-sep{ color: var(--d-text-muted); font-weight: 700; margin: 0 1px; }
+body.generator-page.demo-skin .wiz-count-big small{
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--d-text-muted);
+  margin-left: 6px;
+}
+@keyframes wizCountPop{
+  0%{ transform: scale(.55) translateY(4px); opacity: 0; }
+  45%{ transform: scale(1.28); opacity: 1; }
+  68%{ transform: scale(.92); }
+  100%{ transform: scale(1); opacity: 1; }
+}
+
+/* ── Lépésjelző (fejléc jobb oldala, kompakt, kattintható) ── */
+body.generator-page.demo-skin .wiz-header-steps{
+  display: flex;
+  flex: 1 1 0;
+  max-width: 460px;
+  min-width: 260px;
+}
+body.generator-page.demo-skin .wiz-stepper{
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body.generator-page.demo-skin .wiz-node{
+  flex: 1 1 0;
+  display: flex;
+  position: relative;
+  min-width: 0;
+}
+body.generator-page.demo-skin .wiz-node-btn{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  padding: 3px 2px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: background .15s;
+}
+body.generator-page.demo-skin .wiz-node-btn:hover{ background: var(--d-blue-light); }
+body.generator-page.demo-skin .wiz-node-btn:hover .wiz-dot{ border-color: var(--d-blue); transform: scale(1.09); }
+body.generator-page.demo-skin .wiz-node-btn:focus-visible{ outline: 3px solid rgba(29,78,216,.4); outline-offset: 1px; }
+body.generator-page.demo-skin .wiz-node:not(:first-child)::before{
+  content: "";
+  position: absolute;
+  top: 19px;
+  left: -50%;
+  right: 50%;
+  height: 3px;
+  background: var(--d-border);
+  z-index: 0;
+}
+body.generator-page.demo-skin .wiz-node-done::before,
+body.generator-page.demo-skin .wiz-node-current::before{ background: var(--d-blue); }
+
+body.generator-page.demo-skin .wiz-dot{
+  position: relative;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+  background: var(--d-surface);
+  border: 2px solid var(--d-border);
+  color: var(--d-text-muted);
+  transition: background .2s, border-color .2s, color .2s, transform .2s;
+}
+body.generator-page.demo-skin .wiz-dot svg{ width: 19px; height: 19px; }
+body.generator-page.demo-skin .wiz-node-current .wiz-dot{
+  background: var(--d-blue);
+  border-color: var(--d-blue);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(29,78,216,.18);
+  transform: scale(1.06);
+}
+body.generator-page.demo-skin .wiz-node-done .wiz-dot{
+  background: var(--d-green);
+  border-color: var(--d-green);
+  color: #fff;
+}
+body.generator-page.demo-skin .wiz-node-label{
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--d-text-muted);
+  text-align: center;
+  line-height: 1.15;
+}
+body.generator-page.demo-skin .wiz-node-current .wiz-node-label{ color: var(--d-text); font-weight: 700; }
+body.generator-page.demo-skin .wiz-node-done .wiz-node-label{ color: var(--d-text-sec); }
+
+/* ── Görgethető színpad (az ablak fix marad) ── */
+body.generator-page.demo-skin .wiz-stage{
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 20px 36px;
+  box-sizing: border-box;
+  /* Finom belső árnyék felül: jelzi, hogy a tartalom a fejléc alá görög */
+  box-shadow: inset 0 7px 9px -8px rgba(0,0,0,.18);
+}
+
+/* ── 2. és 4. lépés: a színpad NEM görög - kétoszlopos kártya, és csak a jobb
+      oszlop (mezők / címke-előnézet) görgethető. A kártya a SAJÁT tartalmához
+      igazodik (nem nyúlik a színpad aljáig), felülre igazítva. ── */
+body.generator-page.demo-skin .wiz-stage-fixed{
+  overflow: hidden;
+  align-items: flex-start;
+  padding-bottom: 20px;
+}
+
+/* ── Lépés-kártya ── */
+body.generator-page.demo-skin .wiz-card{
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  background: var(--d-surface);
+  border: 1.5px solid var(--d-border);
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.06), 0 16px 40px rgba(0,0,0,.08);
+  padding: 34px 34px 26px;
+  box-sizing: border-box;
+  text-align: center;
+  animation: wizIn .28s ease both;
+}
+/* 1/3/5: egyforma méret + függőleges közép */
+body.generator-page.demo-skin .wiz-card:not(.wiz-card-wide){
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 468px;
+}
+body.generator-page.demo-skin .wiz-card:not(.wiz-card-wide) .wiz-nav{ align-self: stretch; }
+body.generator-page.demo-skin .wiz-card:not(.wiz-card-wide) .wiz-drop{ width: 100%; }
+body.generator-page.demo-skin .wiz-card:not(.wiz-card-wide) .wiz-note{ width: 100%; }
+
+/* 2/4: kétoszlopos kártya. A magasság a SAJÁT tartalmához igazodik (nem a
+   színpadot kitöltő fix 100%), a színpad magasságáig felnyúlva - így a 2. lépés
+   (kevés tartalom) nem lesz feleslegesen nyújtott, a 4. lépés pedig annyi, amennyi
+   a címkékhez kell. Ha a tartalom magasabb a színpadnál, a max-height:100% miatt a
+   belső oszlop (mezők / előnézet) görgethető marad → a böngészőablak fix, PDF-biztos.
+   Elég széles, hogy a 4. lépésben a teljes A4 címke-oldal (3 oszlop, ~726px)
+   elférjen a jobb hasábban, ne vágja le a szélső címkéket. */
+body.generator-page.demo-skin .wiz-card-wide{
+  max-width: 1240px;
+  height: auto;
+  max-height: 100%;
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) 1fr;
+  gap: 28px;
+  padding: 26px 28px;
+  text-align: left;
+  min-height: 0;
+}
+body.generator-page.demo-skin .wiz-col-left{ display: flex; flex-direction: column; min-width: 0; }
+body.generator-page.demo-skin .wiz-col-right{ display: flex; min-height: 0; min-width: 0; }
+body.generator-page.demo-skin .wiz-col-actions{
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+/* wide kártya - balra igazított tipográfia, teljes szélességű elsődleges gomb */
+body.generator-page.demo-skin .wiz-card-wide .wiz-badge{ margin-bottom: 12px; }
+body.generator-page.demo-skin .wiz-card-wide .wiz-h{ margin-bottom: 8px; }
+body.generator-page.demo-skin .wiz-card-wide .wiz-lead{ max-width: none; margin: 0; }
+body.generator-page.demo-skin .wiz-card-wide .wiz-note{ max-width: none; margin: 0; }
+body.generator-page.demo-skin .wiz-card-wide .wiz-ok{ margin: 12px 0 0; }
+body.generator-page.demo-skin .wiz-card-wide .wiz-logo-choice{ margin: 16px 0 0; }
+body.generator-page.demo-skin .wiz-card-wide .wiz-logo-q{ text-align: left; }
+body.generator-page.demo-skin .wiz-card-wide .wiz-logo-opts{ justify-content: flex-start; }
+body.generator-page.demo-skin .wiz-card-wide .wiz-watermark-note{ margin: 0; text-align: left; }
+body.generator-page.demo-skin .wiz-card-wide .wiz-btn-primary,
+body.generator-page.demo-skin .wiz-card-wide .wiz-btn-download{ width: 100%; margin: 0; }
+body.generator-page.demo-skin .wiz-card-wide .wiz-progress{ margin: 0; max-width: none; }
+body.generator-page.demo-skin .wiz-card-wide .wiz-nav{ margin-top: 0; }
+
+/* ── 2. lépés (Kitöltés): keskenyebb kártya. A jobb hasáb csak mező-leírásokat
+   tartalmaz, nincs szüksége a 4. lépés teljes A4-szélességére. Csak addig nyúlik
+   jobbra, ameddig a szövegek indokolják (+ egy kis levegő), magassága a tartalomhoz
+   igazodik. ── */
+body.generator-page.demo-skin .wiz-card-guide{
+  max-width: 860px;
+}
+
+/* ── 4. lépés (Előnézet): a kártya kitölti a színpad magasságát, a grid-sort a
+   kártyamagassághoz kötjük (minmax(0,1fr)). Enélkül a magas A4-címkeoldal
+   megnyújtja a sort, kifut a kártyából, és a wiz-stage-fixed overflow:hidden
+   levágja a bal hasáb alján lévő "Töltse le a PDF-et" gombot ÉS megszünteti a
+   jobb hasáb belső görgetését. Így a gomb mindig látszik, az előnézet görgethető
+   marad, a böngészőablak pedig fix (PDF-biztos). ── */
+body.generator-page.demo-skin .wiz-card-preview{
+  height: 100%;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+/* jobb oszlop tartalma kitölti a magasságot, ott (és csak ott) van görgetés */
+body.generator-page.demo-skin .wiz-col-right .wiz-preview{
+  flex: 1 1 0;
+  width: 100%;
+  max-height: none;
+  min-height: 0;
+  margin: 0;
+}
+body.generator-page.demo-skin .wiz-col-right .wiz-fields{
+  flex: 1 1 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  overflow: auto;
+  align-content: start;
+}
+body.generator-page.demo-skin .wiz-fields-panel{
+  background: var(--d-surface-2);
+  border: 1.5px solid var(--d-border);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+@keyframes wizIn{
+  from{ opacity: 0; transform: translateY(10px); }
+  to{ opacity: 1; transform: none; }
+}
+
+body.generator-page.demo-skin .wiz-badge{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--d-blue);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 8px rgba(29,78,216,.30);
+}
+body.generator-page.demo-skin .wiz-h{
+  margin: 0 0 10px;
+  font-size: clamp(20px, 18px + .8vw, 26px);
+  font-weight: 800;
+  color: var(--d-text);
+}
+body.generator-page.demo-skin .wiz-lead{
+  margin: 0 auto;
+  max-width: 48ch;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--d-text-sec);
+}
+
+/* ── Sikerjelzés (chip) — saját sorban, a gomb ALATT, középen ── */
+body.generator-page.demo-skin .wiz-ok{
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  margin: 16px auto 0;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--d-green-bg);
+  color: var(--d-green);
+  font-weight: 700;
+  font-size: 15px;
+  animation: wizPop .3s ease both;
+}
+body.generator-page.demo-skin .wiz-ok svg{ width: 20px; height: 20px; }
+body.generator-page.demo-skin .wiz-ok-inline{ margin-top: 4px; }
+
+@keyframes wizPop{
+  0%{ opacity: 0; transform: scale(.8); }
+  60%{ transform: scale(1.06); }
+  100%{ opacity: 1; transform: scale(1); }
+}
+
+/* ══ Gombok ══ */
+body.generator-page.demo-skin .wiz-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.2;
+  min-height: 56px;
+  padding: 15px 28px;
+  cursor: pointer;
+  transition: background .2s, transform .15s, box-shadow .2s, border-color .2s, color .2s;
+}
+body.generator-page.demo-skin .wiz-btn svg{ width: 20px; height: 20px; flex-shrink: 0; }
+body.generator-page.demo-skin .wiz-btn:disabled{ opacity: .45; cursor: not-allowed; }
+body.generator-page.demo-skin .wiz-btn:focus-visible{
+  outline: 3px solid rgba(29,78,216,.45);
+  outline-offset: 2px;
+}
+
+body.generator-page.demo-skin .wiz-btn-primary{
+  margin: 22px auto 0;
+  background: var(--d-blue);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(29,78,216,.28);
+}
+body.generator-page.demo-skin .wiz-btn-primary:hover{
+  background: var(--d-blue-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(29,78,216,.30);
+}
+body.generator-page.demo-skin .wiz-btn-download{
+  font-size: 19px;
+  min-height: 64px;
+  padding: 18px 40px;
+}
+
+body.generator-page.demo-skin .wiz-btn-next{
+  background: var(--d-blue);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(29,78,216,.25);
+}
+body.generator-page.demo-skin .wiz-btn-next:hover{ background: var(--d-blue-hover); transform: translateY(-1px); }
+body.generator-page.demo-skin .wiz-btn-next.ghost{
+  background: transparent;
+  color: var(--d-text-sec);
+  border: 2px solid var(--d-border);
+  box-shadow: none;
+}
+body.generator-page.demo-skin .wiz-btn-next.ghost:hover{ background: var(--d-surface-2); color: var(--d-text); }
+body.generator-page.demo-skin .wiz-btn-next.pulse{ animation: wizPulse 1.8s ease-in-out infinite; }
+
+@keyframes wizPulse{
+  0%, 100%{ box-shadow: 0 0 0 0 rgba(29,78,216,.35); }
+  50%{ box-shadow: 0 0 0 9px rgba(29,78,216,0); }
+}
+
+body.generator-page.demo-skin .wiz-btn-back{
+  background: transparent;
+  color: var(--d-text-sec);
+  border: 2px solid var(--d-border);
+  min-height: 48px;
+  padding: 10px 20px;
+  font-size: 15px;
+}
+body.generator-page.demo-skin .wiz-btn-back:hover{ background: var(--d-surface-2); color: var(--d-text); }
+
+body.generator-page.demo-skin .wiz-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: none;
+  color: var(--d-blue);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 8px 6px;
+}
+body.generator-page.demo-skin .wiz-link:hover{ color: var(--d-blue-hover); text-decoration: underline; }
+body.generator-page.demo-skin .wiz-link svg{ width: 18px; height: 18px; }
+body.generator-page.demo-skin .wiz-link:disabled{ color: var(--d-text-muted); cursor: not-allowed; text-decoration: none; }
+
+/* ── Lépés-navigáció (vissza / tovább) ── */
+body.generator-page.demo-skin .wiz-nav{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+}
+
+/* ── 2. lépés: mezők ── */
+body.generator-page.demo-skin .wiz-fields{
+  display: grid;
+  gap: 10px;
+  max-width: 520px;
+  margin: 22px auto 0;
+  text-align: left;
+}
+body.generator-page.demo-skin .wiz-field{
+  background: var(--d-surface-2);
+  border-left: 4px solid var(--d-blue);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+body.generator-page.demo-skin .wiz-field b{ color: var(--d-text); }
+body.generator-page.demo-skin .wiz-field span{ color: var(--d-text-sec); }
+body.generator-page.demo-skin .wiz-field i{
+  display: block;
+  margin-top: 2px;
+  color: var(--d-text-muted);
+  font-size: 13px;
+}
+body.generator-page.demo-skin .wiz-note{
+  max-width: 520px;
+  margin: 18px auto 0;
+  padding: 14px 16px;
+  background: var(--d-blue-light);
+  border-radius: 10px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--d-text);
+  text-align: left;
+}
+
+/* ── 3. lépés: dropzone ── */
+body.generator-page.demo-skin .wiz-drop{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  max-width: 520px;
+  margin: 8px auto 0;
+  padding: 46px 24px;
+  border: 3px dashed var(--d-blue);
+  border-radius: 16px;
+  background: var(--d-blue-light);
+  cursor: pointer;
+  transition: background .18s, border-color .18s, transform .18s, box-shadow .18s;
+}
+body.generator-page.demo-skin .wiz-drop:hover{ background: var(--d-blue-mid); }
+body.generator-page.demo-skin .wiz-drop.over{
+  background: var(--d-blue-mid);
+  border-style: solid;
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(29,78,216,.20);
+}
+body.generator-page.demo-skin .wiz-drop.busy{ background: var(--d-surface-2); border-color: var(--d-border); cursor: default; }
+body.generator-page.demo-skin .wiz-drop-icon{ width: 48px; height: 48px; color: var(--d-blue); }
+body.generator-page.demo-skin .wiz-drop-title{ font-size: 19px; font-weight: 800; color: var(--d-text); }
+body.generator-page.demo-skin .wiz-drop-sub{ font-size: 14px; color: var(--d-text-sec); }
+body.generator-page.demo-skin .wiz-drop-spinner{
+  width: 44px;
+  height: 44px;
+  border: 5px solid var(--d-blue-mid);
+  border-top-color: var(--d-blue);
+  border-radius: 50%;
+  animation: wizSpin 1s linear infinite;
+}
+@keyframes wizSpin{ to{ transform: rotate(360deg); } }
+
+/* ── 4. lépés: logóválasztó ── */
+body.generator-page.demo-skin .wiz-logo-choice{ margin: 12px auto 0; }
+body.generator-page.demo-skin .wiz-logo-q{
+  display: block;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--d-text);
+}
+body.generator-page.demo-skin .wiz-logo-opts{
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+body.generator-page.demo-skin .wiz-logo{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 130px;
+  padding: 14px 20px;
+  background: var(--d-surface);
+  border: 2px solid var(--d-border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+body.generator-page.demo-skin .wiz-logo input{ position: absolute; opacity: 0; pointer-events: none; }
+body.generator-page.demo-skin .wiz-logo.sel{
+  border-color: var(--d-blue);
+  background: var(--d-blue-light);
+  box-shadow: 0 0 0 3px rgba(29,78,216,.15);
+}
+body.generator-page.demo-skin .wiz-logo-img{ height: 42px; width: auto; object-fit: contain; }
+body.generator-page.demo-skin .wiz-logo span{ font-weight: 600; font-size: 14px; color: var(--d-text); }
+
+/* ── 4. lépés: címke-előnézet (belső görgetés → PDF-biztos) ── */
+body.generator-page.demo-skin .wiz-preview{
+  margin: 20px auto 0;
+  max-width: 100%;
+  max-height: 58vh;
+  overflow: auto;
+  border: 1.5px solid var(--d-border);
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+  box-sizing: border-box;
+}
+body.generator-page.demo-skin .wiz-watermark-note{
+  margin: 14px auto 0;
+  font-size: 13px;
+  color: var(--d-text-muted);
+}
+
+/* ── 4. lépés: PDF-készítés folyamatjelző ── */
+body.generator-page.demo-skin .wiz-progress{
+  position: relative;
+  height: 40px;
+  max-width: 420px;
+  margin: 22px auto 0;
+  border-radius: 999px;
+  background: var(--d-surface-2);
+  border: 2px solid var(--d-border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body.generator-page.demo-skin .wiz-progress-bar{
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--d-blue);
+  opacity: .28;
+  transition: width .1s linear;
+}
+body.generator-page.demo-skin .wiz-progress-text{
+  position: relative;
+  z-index: 1;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--d-text);
+}
+
+/* ── 5. lépés: siker + konfetti ── */
+body.generator-page.demo-skin .wiz-done{ overflow: hidden; }
+/* Konverziós felhívás + gombpár (Árajánlat = elsődleges zöld CTA, Új címke = kék) */
+body.generator-page.demo-skin .wiz-done-cta-lead{
+  margin: 14px auto 0;
+  max-width: 44ch;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--d-text);
+}
+body.generator-page.demo-skin .wiz-done-actions{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+body.generator-page.demo-skin .wiz-done-actions .wiz-btn-primary{ margin: 0; }
+body.generator-page.demo-skin .wiz-btn-quote{
+  background: var(--d-green);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(5,150,105,.28);
+}
+body.generator-page.demo-skin .wiz-btn-quote:hover{
+  background: var(--d-green-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(5,150,105,.30);
+}
+body.generator-page.demo-skin .wiz-done-check{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--d-green-bg);
+  color: var(--d-green);
+  margin: 4px auto 10px;
+  animation: wizPop .45s ease both;
+}
+body.generator-page.demo-skin .wiz-done-check svg{ width: 42px; height: 42px; }
+body.generator-page.demo-skin .wiz-brand{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--d-text-muted);
+}
+body.generator-page.demo-skin .wiz-brand svg{ width: 16px; height: 16px; }
+
+body.generator-page.demo-skin .wiz-confetti{
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+body.generator-page.demo-skin .wiz-confetti span{
+  position: absolute;
+  top: -24px;
+  width: 9px;
+  height: 15px;
+  border-radius: 2px;
+  opacity: 0;
+  animation-name: wizConfetti;
+  animation-timing-function: cubic-bezier(.3,.6,.5,1);
+  animation-fill-mode: forwards;
+}
+@keyframes wizConfetti{
+  0%{ opacity: 0; transform: translateY(-24px) rotate(0deg); }
+  10%{ opacity: 1; }
+  100%{ opacity: 0; transform: translateY(420px) rotate(300deg); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  body.generator-page.demo-skin .wiz-card,
+  body.generator-page.demo-skin .wiz-ok,
+  body.generator-page.demo-skin .wiz-done-check,
+  body.generator-page.demo-skin .wiz-count-big,
+  body.generator-page.demo-skin .wiz-btn-next.pulse{ animation: none; }
+  body.generator-page.demo-skin .wiz-confetti{ display: none; }
+}
+
+/* ═══════════════════ MEGOSZTOTT OVERLAY-EK (demo szín) ═══════════════════ */
+
+/* ── Betöltési overlay ── */
+body.generator-page.demo-skin .loading-overlay{ background: rgba(28,28,28,.55); }
+body.generator-page.demo-skin .spinner{
+  border: 8px solid var(--d-blue-mid);
+  border-top: 8px solid var(--d-blue);
+}
+body.generator-page.demo-skin .loading-text{ color: #ffffff; font-family: inherit; }
+body.generator-page.demo-skin .loading-subtext{ color: #E0DDD6; font-family: inherit; }
+
+/* ── Validációs modal ── */
+body.generator-page.demo-skin .validation-modal{
+  background: var(--d-surface);
+  border: 2px solid var(--d-border-strong);
+  border-radius: 16px;
+  color: var(--d-text);
+  font-family: inherit;
+  box-shadow: 0 4px 8px rgba(0,0,0,.10), 0 12px 32px rgba(0,0,0,.12);
+}
+body.generator-page.demo-skin .validation-modal h2{ color: var(--d-text); font-weight: 800; }
+body.generator-page.demo-skin .validation-modal .summary{ color: var(--d-text-sec); opacity: 1; }
+body.generator-page.demo-skin .issue-card{
+  background: var(--d-surface-2);
+  border: 1.5px solid var(--d-border);
+  border-radius: 10px;
+}
+body.generator-page.demo-skin .issue-card .product-name{ color: var(--d-text); }
+body.generator-page.demo-skin .issue-item{
+  background: var(--d-surface);
+  border: 1.5px solid var(--d-border);
+  border-radius: 8px;
+}
+body.generator-page.demo-skin .issue-item .field-label{ color: var(--d-text-muted); opacity: 1; }
+body.generator-page.demo-skin .issue-item .error-text{ color: var(--d-red); }
+body.generator-page.demo-skin .issue-item input[type="text"]{
+  background: var(--d-surface);
+  border: 1.5px solid var(--d-border);
+  border-radius: 6px;
+  color: var(--d-text);
+  font-family: inherit;
+  font-weight: 600;
+}
+body.generator-page.demo-skin .issue-item input[type="text"]:focus{
+  outline: none;
+  border-color: var(--d-blue);
+  box-shadow: 0 0 0 3px var(--d-blue-light);
+}
+body.generator-page.demo-skin .issue-item .accept-btn{
+  background: var(--d-blue-light);
+  color: var(--d-blue);
+  border: 1.5px solid var(--d-blue-mid);
+  border-radius: 6px;
+  font-family: inherit;
+}
+body.generator-page.demo-skin .issue-item .accept-btn:hover{
+  background: var(--d-blue-mid);
+  color: var(--d-blue-hover);
+}
+body.generator-page.demo-skin .validation-modal .apply-btn{
+  background: var(--d-green);
+  color: #ffffff;
+  border-radius: 10px;
+  font-family: inherit;
+}
+body.generator-page.demo-skin .validation-modal .apply-btn:hover{ background: var(--d-green-hover); color: #ffffff; }
+body.generator-page.demo-skin .validation-modal .skip-btn{
+  background: var(--d-surface);
+  color: var(--d-text-sec);
+  border: 2px solid var(--d-border);
+  border-radius: 10px;
+  font-family: inherit;
+}
+body.generator-page.demo-skin .validation-modal .skip-btn:hover{
+  background: var(--d-surface-2);
+  border-color: var(--d-text-sec);
+  color: var(--d-text);
+}
+
+/* ── Adattábla modal ── */
+body.generator-page.demo-skin .data-table-modal{
+  background: var(--d-surface);
+  border: 2px solid var(--d-border-strong);
+  border-radius: 16px;
+  color: var(--d-text);
+  font-family: inherit;
+  box-shadow: 0 4px 8px rgba(0,0,0,.10), 0 12px 32px rgba(0,0,0,.12);
+}
+body.generator-page.demo-skin .data-table-header h2{ color: var(--d-text); font-weight: 800; }
+body.generator-page.demo-skin .data-table-close-btn{
+  background: var(--d-surface);
+  color: var(--d-text-sec);
+  border: 2px solid var(--d-border);
+  border-radius: 8px;
+  font-family: inherit;
+}
+body.generator-page.demo-skin .data-table-close-btn:hover{
+  background: var(--d-surface-2);
+  color: var(--d-text);
+}
+body.generator-page.demo-skin .data-table-scroll{
+  border: 1.5px solid var(--d-border);
+  border-radius: 10px;
+}
+body.generator-page.demo-skin .data-preview-table th{
+  background: var(--d-surface-2);
+  color: var(--d-text);
+  border-right: 1px solid var(--d-border);
+  border-bottom: 2px solid var(--d-border);
+}
+body.generator-page.demo-skin .data-preview-table th.col-readonly{ color: var(--d-text-muted); }
+body.generator-page.demo-skin .data-preview-table td{
+  border-right: 1px solid #EDEBE5;
+  border-bottom: 1px solid #EDEBE5;
+}
+body.generator-page.demo-skin .data-preview-table tr:nth-child(even) td{ background: #FAF9F6; }
+body.generator-page.demo-skin .table-cell-input{
+  background: var(--d-surface);
+  border: 1px solid var(--d-border);
+  border-radius: 6px;
+  color: var(--d-text);
+  font-family: inherit;
+}
+body.generator-page.demo-skin .table-cell-input:hover{ background: var(--d-blue-light); }
+body.generator-page.demo-skin .table-cell-input:focus{
+  border-color: var(--d-blue);
+  box-shadow: 0 0 0 2px var(--d-blue-light);
+}
+body.generator-page.demo-skin .cell-readonly{ background: var(--d-surface-2); color: var(--d-text-muted); }
+body.generator-page.demo-skin .data-table-save-btn{
+  background: var(--d-blue);
+  color: #ffffff;
+  border-radius: 10px;
+  font-family: inherit;
+  transition: background .2s, transform .15s;
+}
+body.generator-page.demo-skin .data-table-save-btn:hover{
+  background: var(--d-blue-hover);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* ── Custom alert ── */
+body.generator-page.demo-skin .custom-alert-overlay{ background: rgba(28,28,28,.55); }
+body.generator-page.demo-skin .custom-alert-modal{
+  background: var(--d-surface);
+  border: 2px solid var(--d-border-strong);
+  border-radius: 16px;
+  font-family: inherit;
+  box-shadow: 0 4px 8px rgba(0,0,0,.10), 0 12px 32px rgba(0,0,0,.12);
+}
+body.generator-page.demo-skin .custom-alert-header{ border-bottom: 1.5px solid var(--d-border); }
+body.generator-page.demo-skin .custom-alert-title{ color: var(--d-blue); font-weight: 800; }
+body.generator-page.demo-skin .custom-alert-close{ color: var(--d-text-muted); }
+body.generator-page.demo-skin .custom-alert-close:hover{ color: var(--d-text); }
+body.generator-page.demo-skin .custom-alert-message{ color: var(--d-text); }
+body.generator-page.demo-skin .custom-alert-ok{
+  background: var(--d-blue);
+  color: #ffffff;
+  border-radius: 10px;
+  font-family: inherit;
+  padding: 10px 32px;
+}
+body.generator-page.demo-skin .custom-alert-ok:hover{ background: var(--d-blue-hover); }
+
+/* ── Görgetősávok ── */
+body.generator-page.demo-skin .wiz-stage,
+body.generator-page.demo-skin .wiz-preview,
+body.generator-page.demo-skin .data-table-scroll{
+  scrollbar-width: thin;
+  scrollbar-color: var(--d-border) transparent;
+}
+body.generator-page.demo-skin .wiz-stage::-webkit-scrollbar,
+body.generator-page.demo-skin .wiz-preview::-webkit-scrollbar,
+body.generator-page.demo-skin .data-table-scroll::-webkit-scrollbar{ width: 9px; height: 9px; }
+body.generator-page.demo-skin .wiz-stage::-webkit-scrollbar-thumb,
+body.generator-page.demo-skin .wiz-preview::-webkit-scrollbar-thumb,
+body.generator-page.demo-skin .data-table-scroll::-webkit-scrollbar-thumb{
+  background: var(--d-border);
+  border-radius: 5px;
+}

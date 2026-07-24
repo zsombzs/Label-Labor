@@ -2,6 +2,10 @@ venv/
 __pycache__/
 *.pyc
 .env
+# Minden .env változat (pl. .env.production, .env.development, .env.local) - a
+# titkok sosem kerülnek a repóba. Kivétel a verziózott .env.example minta.
+.env.*
+!.env.example
 
 # macOS
 .DS_Store
@@ -20,3 +24,28 @@ node_modules/
 design_preview.html
 
 .claude/
+
+# Lokális fejlesztői segédek — NEM kerülnek a repóba (portfólió-repo: a kód
+# megtekinthető, de nem másoknak-futtatásra való). Ha kell a CI, töröld a /.github/ sort.
+/docker-compose.yml
+/dev.sh
+/.github/
+
+# Docker: csak kísérlet volt, nem a deploy útja (a backend a Railway-en a
+# requirements.txt-ből épül, a frontend a Netlify-on npm build-del). Helyben
+# megmaradnak, de nem kerülnek a nyilvános repóba. (Ha portfólióként meg akarod
+# mutatni a konténerizálást, töröld ezeket a sorokat.)
+/Dockerfile
+/.dockerignore
+/frontend/Dockerfile
+/frontend/.dockerignore
+/frontend/nginx.conf
+
+# A régi (vanilla) rendszer archívuma — csak lokálisan tartjuk meg, nem publikus.
+# (A git history amúgy is őrzi a régi fájlokat, ha valaha kellenének.)
+/legacy/
+
+# Egyszeri Supabase setup-scriptek — lokálisan bemásolod a Supabase SQL editorba,
+# utána törölhetők. Nem kell a nyilvános portfólió-repóba.
+/demo_usage.sql
+/demo_user.sql

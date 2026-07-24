@@ -80,6 +80,20 @@ SUBPAGE_CONFIGS: dict[str, dict] = {
     },
 
     # ------------------------------------------------------------------
+    # DEMO - nyilvános próbafelület, standard logika (akciós ár támogatott)
+    # ------------------------------------------------------------------
+    "demo": {
+        "max_chars_per_line": 18,
+        "max_chars_line3": None,
+        "extract_kiszereles": True,
+        "extract_szin": False,
+        "max_lines": 3,
+        "unit_map": "standard",
+        "batch_autofix": False,
+        "ft_m2": False,
+    },
+
+    # ------------------------------------------------------------------
     # DITALL - egyedi logika: 4 sor, m2 egység, szín, batch auto-fix
     # ------------------------------------------------------------------
     "ditall": {

@@ -402,12 +402,15 @@ body.generator-page .label{
 body.generator-page .logo{
   position: absolute;
 }
-body.generator-page .logo-a{
+/* A .label leszűkítés magasabb specificitást ad, mint a generator.css alap
+   `.logo-a` szabálya (42px) - így a Ditáll-méret determinisztikusan nyer,
+   függetlenül a lazy-load ditall.css chunk betöltési sorrendjétől. */
+body.generator-page .label .logo-a{
   width: 55px;
   top: 6px;
   right: 4px;
 }
-body.generator-page .logo-b{
+body.generator-page .label .logo-b{
   width: 40px;
   top: 6px;
   right: 7px;
@@ -513,12 +516,12 @@ body.generator-page .barcode{
   font-family: Calibri, sans-serif;
   font-weight: bold;
 }
-body.generator-page .logo-a-sm{
+body.generator-page .label .logo-a-sm{
   width: 55px;
   top: 6px;
   right: 4px;
 }
-body.generator-page .logo-b-sm{
+body.generator-page .label .logo-b-sm{
   width: 40px;
   top: 6px;
   right: 7px;

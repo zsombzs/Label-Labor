@@ -403,12 +403,16 @@ body.generator-page .circle-radio{
 body.generator-page .logo{
   position: absolute;
 }
-body.generator-page .logo-a{
+/* A .label leszűkítés magasabb specificitást ad, mint a generator.css alap
+   `.logo-a` szabálya (42px) - így a Hudák-méret determinisztikusan nyer, függetlenül
+   attól, milyen sorrendben tölt be a lazy-load hudak.css chunk (különben "néha" a
+   42px-es alap méret érvényesült). */
+body.generator-page .label .logo-a{
   width: 50px;
   top: 8px;
   right: 6px;
 }
-body.generator-page .logo-b{
+body.generator-page .label .logo-b{
   width: 58px;
   top: 8px;
   right: 6px;
@@ -518,12 +522,12 @@ body.generator-page .barcode{
   font-family: Calibri, sans-serif;
   font-weight: bold;
 }
-body.generator-page .logo-a-sm{
+body.generator-page .label .logo-a-sm{
   width: 44px;
   top: 6px;
   right: 5px;
 }
-body.generator-page .logo-b-sm{
+body.generator-page .label .logo-b-sm{
   width: 50px;
   top: 6px;
   right: 5px;
@@ -1163,7 +1167,8 @@ body.generator-page .custom-alert-ok:hover{
 body.generator-page .cimbi-launcher{
   position: fixed; right: 22px; bottom: 22px;
   width: 60px; height: 60px; border-radius: 50%;
-  border: none; background: #1D4ED8; cursor: pointer;
+  border: 2px solid #ffffff; box-sizing: border-box;
+  background: #1D4ED8; cursor: pointer;
   box-shadow: 0 6px 20px rgba(29,78,216,0.35);
   display: flex; align-items: center; justify-content: center;
   z-index: 1400; transition: transform 0.15s ease;

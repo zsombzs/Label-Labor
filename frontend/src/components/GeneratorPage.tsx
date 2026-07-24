@@ -14,9 +14,11 @@ import { DataTableModal } from "./DataTableModal";
 import { CimbiChat } from "./CimbiChat";
 import { ArvaltozasPanel } from "./ArvaltozasPanel";
 import { DemoWizard } from "./DemoWizard";
+import { GeneratorDashboard } from "./GeneratorDashboard";
 import { useLanguage } from "../i18n/LanguageContext";
 import "../styles/generator.css";
 import "../styles/generator-demo.css";
+import "../styles/generator-dashboard.css";
 
 interface AlertState {
   title: string;
@@ -61,9 +63,25 @@ export function GeneratorPage({ config }: { config: SubpageConfig }) {
   const [undoSnapshot, setUndoSnapshot] = useState<ProcessedRow[] | null>(null);
   const [showUndoToast, setShowUndoToast] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
-  // ── Demo wizard állapot (csak demónál használt) ──
-  const [demoStep, setDemoStep] = useState(1);
+  // ── Varázsló-állapot (demo ÉS dashboard elrendezés használja) ──
+  // A demo és a dashboard is lépés-vezérelt, auto-léptetéssel.
+  const isDashboard = config.uiStyle === "dashboard";
+  const isWizardLayout = config.isDemo || isDashboard;
+  // Ha ezen az aloldalon már volt generálás (a böngészőben megjegyezve), a dashboard
+  // egyből a 3. (Feltöltés) lépéssel nyit - a visszatérő ügyfélnek nem kell újra
+  // végigmennie a sablon-/kitöltés-lépéseken.
+  const generatedKey = `ll-generated-${config.subpageId}`;
+  const hasGeneratedBefore = () => {
+    try {
+      return typeof localStorage !== "undefined" && !!localStorage.getItem(generatedKey);
+    } catch {
+      return false;
+    }
+  };
+  const [wizardStep, setWizardStep] = useState(() => (isDashboard && hasGeneratedBefore() ? 3 : 1));
   const [templateDownloaded, setTemplateDownloaded] = useState(false);
+  // Confetti csak az ELSŐ generálásnál (utána már csak a számláló-animáció).
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const labelsRef = useRef<HTMLDivElement>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -118,26 +136,42 @@ export function GeneratorPage({ config }: { config: SubpageConfig }) {
       document.documentElement.classList.add("demo-skin");
       document.body.classList.add("demo-skin");
     }
+    // Dashboard elrendezés (pl. Hudák): a főoldalhoz illő, világos skin.
+    if (config.uiStyle === "dashboard") {
+      document.documentElement.classList.add("dash-skin");
+      document.body.classList.add("dash-skin");
+    }
     return () => {
-      document.documentElement.classList.remove("generator-page", "demo-skin");
-      document.body.classList.remove("generator-page", "demo-skin");
+      document.documentElement.classList.remove("generator-page", "demo-skin", "dash-skin");
+      document.body.classList.remove("generator-page", "demo-skin", "dash-skin");
     };
-  }, [config.isDemo]);
+  }, [config.isDemo, config.uiStyle]);
 
-  // ── Demo wizard: automatikus lépés-váltás a VALÓS állapot alapján ──
+  // ── Varázsló: automatikus lépés-váltás a VALÓS állapot alapján ──
   // (Nem a kattintások, hanem az állapot vezérli - így az e2e is működik,
   //  ami közvetlenül a #excelFile inputra tölt fel, lépések nélkül.)
+  // Feltöltött + validált adat → az előnézet (4.) lépésre lépünk.
   useEffect(() => {
-    if (!config.isDemo) return;
+    if (!isWizardLayout) return;
     if (validatedData && validatedData.length > 0) {
-      setDemoStep((s) => (s < 4 ? 4 : s));
+      setWizardStep((s) => (s < 4 ? 4 : s));
     }
-  }, [validatedData, config.isDemo]);
+  }, [validatedData, isWizardLayout]);
 
+  // Demo: a PDF letöltése után az 5. (Kész) lépés. A dashboardon nincs 5. lépés
+  // (a 4. panel mutat siker-állapotot), ezért ott nem léptetünk tovább.
   useEffect(() => {
     if (!config.isDemo) return;
-    if (pdf.reloadMode) setDemoStep(5);
+    if (pdf.reloadMode) setWizardStep(5);
   }, [pdf.reloadMode, config.isDemo]);
+
+  // Dashboard: a sablon letöltése után rövid késleltetéssel a 2. (Kitöltés)
+  // lépésre lépünk - "ha egy lépés teljesült, automatikusan a következőre".
+  useEffect(() => {
+    if (!isDashboard || !templateDownloaded) return;
+    const t = setTimeout(() => setWizardStep((s) => (s === 1 ? 2 : s)), 900);
+    return () => clearTimeout(t);
+  }, [templateDownloaded, isDashboard]);
 
   // ── Cég címkeszám ──
   useEffect(() => {
@@ -146,6 +180,19 @@ export function GeneratorPage({ config }: { config: SubpageConfig }) {
       .then((d) => setCompanyCount(d.count))
       .catch((e) => console.error("Hiba a címkeszám betöltésekor:", e));
   }, []);
+
+  // Dashboard: ha a cégnek MÁR van generált címkéje (bármely eszközön), jegyezzük
+  // meg, és ha a felhasználó még érintetlenül az 1. lépésnél áll, ugorjunk a
+  // feltöltésre (3. lépés).
+  useEffect(() => {
+    if (!isDashboard || companyCount <= 0) return;
+    try {
+      localStorage.setItem(generatedKey, "1");
+    } catch {
+      /* ignore */
+    }
+    setWizardStep((s) => (s === 1 && !templateDownloaded && !validatedData ? 3 : s));
+  }, [isDashboard, companyCount, generatedKey, templateDownloaded, validatedData]);
 
   const updateLabelCount = useCallback((count: number) => {
     // A demo is a többi aloldallal AZONOSAN a backendet hívja. A szerver a demo
@@ -350,7 +397,18 @@ export function GeneratorPage({ config }: { config: SubpageConfig }) {
     }
     if (!labelsRef.current || !validatedData) return;
     setEditingIndex(null); // nyitott szerkesztés lezárása
-    pdf.exportPdf(labelsRef.current, () => updateLabelCount(validatedData.length));
+    const isFirstGeneration = isDashboard && !hasGeneratedBefore();
+    pdf.exportPdf(labelsRef.current, () => {
+      updateLabelCount(validatedData.length);
+      if (isDashboard) {
+        try {
+          localStorage.setItem(generatedKey, "1");
+        } catch {
+          /* ignore */
+        }
+        if (isFirstGeneration) setShowConfetti(true); // csak az első generálásnál
+      }
+    });
   }
 
   // ── Címkék oldalakra bontása a layout szerint ──
@@ -430,8 +488,8 @@ export function GeneratorPage({ config }: { config: SubpageConfig }) {
           />
           <DemoWizard
             config={config}
-            step={demoStep}
-            setStep={setDemoStep}
+            step={wizardStep}
+            setStep={setWizardStep}
             templateDownloaded={templateDownloaded}
             onDownloadTemplate={() =>
               downloadTemplate((config.templates[0] as { file: string }).file)
@@ -480,6 +538,66 @@ export function GeneratorPage({ config }: { config: SubpageConfig }) {
               // külön route, a Landing a #arajanlat horgonyra görget belépéskor).
               window.location.href = "/#arajanlat";
             }}
+          />
+        </>
+      ) : isDashboard ? (
+        <>
+          {/* A rejtett fájl-input MINDIG a DOM-ban van: a dropzone label erre mutat. */}
+          <input
+            type="file"
+            id="excelFile"
+            className="dash-file-input"
+            accept={config.acceptExtensions.join(",")}
+            onChange={(e) => acceptFile(e.target.files?.[0])}
+          />
+          <GeneratorDashboard
+            config={config}
+            step={wizardStep}
+            setStep={setWizardStep}
+            templateDownloaded={templateDownloaded}
+            onDownloadTemplate={() =>
+              downloadTemplate((config.templates[0] as { file: string }).file)
+            }
+            dragOver={dragOver}
+            onDragOver={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setDragOver(true);
+            }}
+            onDragLeave={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node))
+                setDragOver(false);
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setDragOver(false);
+              acceptFile(e.dataTransfer.files[0]);
+            }}
+            uploadedFileName={uploadedFileName}
+            processing={validation.loading}
+            labelsNode={demoLabelsNode}
+            logos={config.logos}
+            selectedLogoValue={selectedLogoValue}
+            setSelectedLogoValue={setSelectedLogoValue}
+            onOpenDataTable={() => {
+              if (!validatedData || validatedData.length === 0) {
+                showAlert("Nincs megjeleníthető adat. Töltse fel az Excel fájlt először!");
+                return;
+              }
+              setDataTableOpen(true);
+            }}
+            onDownloadPdf={onDownloadClick}
+            busy={busy}
+            progress={pdf.progress}
+            labelCount={validatedData?.length ?? 0}
+            companyCount={companyCount}
+            hasData={!!validatedData && validatedData.length > 0}
+            pdfDone={pdf.reloadMode}
+            showConfetti={showConfetti}
+            onRestart={() => window.location.reload()}
           />
         </>
       ) : (

@@ -1,0 +1,6 @@
+# SPA-fallback: az összes kliens-route-ot (pl. /ll, /hudak, /demo) az index.html
+# szolgálja ki, hogy a React Router vegye át — különben Netlify 404-et adna
+# az aloldalak közvetlen megnyitására / frissítésére.
+# A valódi fájlok (pl. /aszf.html, /assets/*, /subpage-assets/*) elsőbbséget
+# élveznek, ezeket Netlify közvetlenül szolgálja ki, a szabály rájuk nem hat.
+/*    /index.html   200

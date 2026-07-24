@@ -1,0 +1,1116 @@
+/* ═══════════════════════════════════════════════
+   DASHBOARD SKIN — a főoldalhoz illő, modern generátor-elrendezés.
+   ───────────────────────────────────────────────
+   - Csak a body.dash-skin osztállyal aktív; a classic aloldalak
+     (LL/EA/Ditall) és a demo kinézete változatlan.
+   - Bal: mindig látható, számozott lépés-dashboard. Jobb: egy nagy
+     panel, amelyben lépésenként történik a tevékenység.
+   - A #labels / .page / .label DOM-hoz NEM nyúlunk — a PDF abból
+     készül. A jobb panel (4. lépés előnézete) belül görget, az ablak
+     fix marad → html2canvas-biztos.
+   - Config-vezérelt (uiStyle: "dashboard"), bármelyik aloldalra
+     egy sorral integrálható.
+   ─────────────────────────────────────────────── */
+
+body.generator-page.dash-skin {
+  --d-blue: #1d4ed8;
+  --d-blue-hover: #1e40af;
+  --d-blue-light: #eef2ff;
+  --d-blue-mid: #dbeafe;
+  --d-surface: #ffffff;
+  --d-surface-2: #f0eee9;
+  --d-page: #ece9e1;
+  --d-border: #c9c4b8;
+  --d-border-strong: #9a9488;
+  --d-text: #1c1c1c;
+  --d-text-sec: #5a5a5a;
+  --d-text-muted: #837d72;
+  --d-green: #059669;
+  --d-green-bg: #ecfdf5;
+
+  font-family: "Segoe UI", "Calibri", system-ui, -apple-system, sans-serif;
+  background-color: var(--d-page);
+}
+
+/* A rejtett fájl-input (a dropzone label + e2e erre mutat) */
+body.generator-page.dash-skin .dash-file-input {
+  display: none;
+}
+
+/* ═══════════════════ HÉJ ═══════════════════ */
+body.generator-page.dash-skin .dash-root {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #f5f4f0 0%, #e7e3da 100%);
+  color: var(--d-text);
+}
+
+/* ── Fejléc ── */
+body.generator-page.dash-skin .dash-header {
+  flex: 0 0 auto;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 22px 32px;
+  background: var(--d-surface);
+  border-bottom: 3px solid var(--d-border-strong);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+}
+body.generator-page.dash-skin .dash-header-id {
+  min-width: 0;
+}
+body.generator-page.dash-skin .dash-title {
+  margin: 0;
+  font-size: clamp(18px, 15px + 1vw, 25px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  color: var(--d-text);
+}
+body.generator-page.dash-skin .dash-stat {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: var(--d-text-sec);
+}
+body.generator-page.dash-skin .dash-stat b {
+  color: var(--d-blue);
+  font-size: 16px;
+}
+body.generator-page.dash-skin .dash-header-version {
+  flex: 0 0 auto;
+  align-self: flex-end; /* a számláló (alsó) sorával egy vonalba */
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--d-blue-light);
+  color: var(--d-blue-hover);
+  border: 1px solid var(--d-blue-mid);
+  font-size: 17px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+/* Kattintható LL-logó a fejléc jobb szélén → vissza a főoldalra */
+body.generator-page.dash-skin .dash-home-link {
+  flex: 0 0 auto;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 12px;
+  transition: background 0.15s, transform 0.15s;
+}
+body.generator-page.dash-skin .dash-home-link:hover {
+  background: var(--d-blue-light);
+  transform: translateY(-1px);
+}
+body.generator-page.dash-skin .dash-home-link:focus-visible {
+  outline: 3px solid rgba(29, 78, 216, 0.4);
+  outline-offset: 2px;
+}
+body.generator-page.dash-skin .dash-home-logo {
+  height: 46px;
+  width: auto;
+  display: block;
+}
+
+/* ── Kétoszlopos test ── */
+body.generator-page.dash-skin .dash-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Bal: dashboard ── */
+body.generator-page.dash-skin .dash-sidebar {
+  flex: 0 0 300px;
+  min-width: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: var(--d-surface);
+  border-right: 2px solid var(--d-border);
+  padding: 24px 18px;
+  overflow-y: auto;
+}
+
+/* ── Info-címke a dashboard alján (üres hely kitöltése) ── */
+body.generator-page.dash-skin .dash-info-card {
+  margin-top: auto;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+body.generator-page.dash-skin .dash-info-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--d-blue);
+}
+body.generator-page.dash-skin .dash-info-frame {
+  border: 1.5px solid var(--d-border);
+  border-radius: 14px;
+  background: var(--d-surface);
+  padding: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+body.generator-page.dash-skin .dash-info-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+body.generator-page.dash-skin .dash-info-foot {
+  font-size: 12.5px;
+  color: var(--d-text-muted);
+  line-height: 1.4;
+}
+body.generator-page.dash-skin .dash-steplist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+body.generator-page.dash-skin .dash-step {
+  position: relative;
+}
+/* Összekötő vonal a lépés-pöttyök közt: a pötty KÖZEPÉTŐL a következő pötty
+   közepéig húzódik (z-index:0), a pöttyök (z-index:1) pedig eltakarják a két
+   végét - így a látható vonal pontosan a két pötty KÖZÖTT jelenik meg. */
+body.generator-page.dash-skin .dash-step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 34px;
+  top: 50%; /* a pötty függőleges közepe (a gomb align-items:center miatt) */
+  height: calc(100% + 6px); /* a következő pötty közepéig (li-magasság + 6px gap) */
+  width: 2px;
+  background: var(--d-border);
+  z-index: 0;
+}
+body.generator-page.dash-skin .dash-step-done::before,
+body.generator-page.dash-skin .dash-step-current::before {
+  background: var(--d-blue);
+}
+body.generator-page.dash-skin .dash-step-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+body.generator-page.dash-skin .dash-step-btn:hover {
+  background: var(--d-blue-light);
+}
+body.generator-page.dash-skin .dash-step-btn:focus-visible {
+  outline: 3px solid rgba(29, 78, 216, 0.4);
+  outline-offset: 1px;
+}
+body.generator-page.dash-skin .dash-step-num {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 1; /* a pötty a pöttyök közti összekötő vonal FÖLÖTT → eltakarja a végét */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--d-surface);
+  border: 2px solid var(--d-border);
+  color: var(--d-text-muted);
+  font-size: 18px;
+  font-weight: 800;
+  transition: all 0.18s;
+}
+body.generator-page.dash-skin .dash-step-num svg {
+  width: 22px;
+  height: 22px;
+}
+body.generator-page.dash-skin .dash-step-current .dash-step-num {
+  background: var(--d-blue);
+  border-color: var(--d-blue);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(29, 78, 216, 0.3);
+  transform: scale(1.05);
+}
+body.generator-page.dash-skin .dash-step-done .dash-step-num {
+  background: var(--d-blue-light);
+  border-color: var(--d-blue);
+  color: var(--d-blue);
+}
+body.generator-page.dash-skin .dash-step-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+body.generator-page.dash-skin .dash-step-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--d-text-sec);
+}
+body.generator-page.dash-skin .dash-step-sub {
+  font-size: 12.5px;
+  color: var(--d-text-muted);
+}
+body.generator-page.dash-skin .dash-step-current .dash-step-label {
+  color: var(--d-text);
+}
+body.generator-page.dash-skin .dash-step-done .dash-step-label {
+  color: var(--d-text-sec);
+}
+
+/* ── Jobb: nagy panel ── */
+body.generator-page.dash-skin .dash-stage {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 22px 28px 26px;
+  box-shadow: inset 7px 0 9px -8px rgba(0, 0, 0, 0.14);
+}
+body.generator-page.dash-skin .dash-stage-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-bottom: 18px;
+}
+body.generator-page.dash-skin .dash-stage-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--d-blue);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+  animation: dashPop 0.3s ease both;
+}
+body.generator-page.dash-skin .dash-stage-heading {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+body.generator-page.dash-skin .dash-stage-eyebrow {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--d-blue);
+}
+body.generator-page.dash-skin .dash-stage-title {
+  margin: 2px 0 0;
+  font-size: clamp(19px, 17px + 0.6vw, 24px);
+  font-weight: 800;
+  color: var(--d-text);
+}
+
+/* A lépés tartalma tölti ki a maradék magasságot */
+body.generator-page.dash-skin .dash-stage-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+
+/* ── Panel-kártya ── */
+body.generator-page.dash-skin .dash-panel {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--d-surface);
+  border: 1.5px solid var(--d-border);
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06), 0 16px 40px rgba(0, 0, 0, 0.08);
+  padding: 30px 32px;
+  animation: dashIn 0.28s ease both;
+  overflow: auto;
+}
+/* 1. lépés: minden tartalom függőlegesen ÉS vízszintesen középre */
+body.generator-page.dash-skin .dash-panel-center {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+body.generator-page.dash-skin .dash-center-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 560px;
+  width: 100%;
+}
+body.generator-page.dash-skin .dash-center-inner .dash-lead,
+body.generator-page.dash-skin .dash-center-inner .dash-ok,
+body.generator-page.dash-skin .dash-center-inner .dash-btn {
+  margin: 0;
+}
+
+/* 2. lépés: a két alsó gomb feljebb, egy sorban, egyforma méretben (a Cimbi
+   lebegő gombja ne takarja a jobb szélső gombot). */
+body.generator-page.dash-skin .dash-nav-2 {
+  margin-top: 6px;
+  padding-top: 0;
+  flex-wrap: nowrap;
+}
+body.generator-page.dash-skin .dash-nav-2 .dash-btn {
+  flex: 1 1 0;
+  min-height: 54px;
+  margin: 0;
+  padding: 14px 20px;
+  font-size: 16px;
+}
+
+/* 3. lépés: a dropzone majdnem a teljes panelt kitölti (minimális oldalgap),
+   a leírás középen, a Vissza gomb kicsit lejjebb (ne érjen a dropzone-hoz). */
+body.generator-page.dash-skin .dash-panel-drop {
+  align-items: stretch;
+  text-align: center;
+  padding: 24px 16px 28px;
+}
+body.generator-page.dash-skin .dash-lead-center {
+  margin: 0 auto 16px;
+  max-width: 700px;
+  text-align: center;
+}
+/* Compound selector (.dash-drop.dash-drop-fill), hogy biztosan felülírja az
+   alap .dash-drop max-width:560px korlátját, függetlenül a szabályok sorrendjétől
+   → a dropzone tényleg olyan széles lesz, mint a jobb oldali konténer. */
+body.generator-page.dash-skin .dash-drop.dash-drop-fill {
+  flex: 1 1 auto;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+}
+body.generator-page.dash-skin .dash-drop-nav {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  padding-top: 22px;
+}
+
+body.generator-page.dash-skin .dash-lead {
+  margin: 0 0 22px;
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: var(--d-text-sec);
+}
+body.generator-page.dash-skin .dash-panel:not(.dash-panel-center) .dash-lead {
+  margin-top: 0;
+}
+
+/* ── Sikerjelzés (chip) ── */
+body.generator-page.dash-skin .dash-ok {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  margin: 18px auto 0;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--d-green-bg);
+  color: var(--d-green);
+  font-weight: 700;
+  font-size: 15px;
+  animation: dashPop 0.3s ease both;
+}
+body.generator-page.dash-skin .dash-ok svg {
+  width: 20px;
+  height: 20px;
+}
+body.generator-page.dash-skin .dash-ok-inline {
+  margin: 0;
+}
+
+/* ══ Gombok ══ */
+body.generator-page.dash-skin .dash-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.2;
+  min-height: 56px;
+  padding: 15px 28px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s, border-color 0.2s, color 0.2s;
+}
+body.generator-page.dash-skin .dash-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+body.generator-page.dash-skin .dash-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+body.generator-page.dash-skin .dash-btn:focus-visible {
+  outline: 3px solid rgba(29, 78, 216, 0.45);
+  outline-offset: 2px;
+}
+body.generator-page.dash-skin .dash-btn-primary {
+  margin: 6px 0 0;
+  background: var(--d-blue);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(29, 78, 216, 0.28);
+}
+body.generator-page.dash-skin .dash-btn-primary:hover {
+  background: var(--d-blue-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(29, 78, 216, 0.3);
+}
+body.generator-page.dash-skin .dash-btn-download {
+  font-size: 19px;
+  min-height: 64px;
+  padding: 18px 40px;
+}
+body.generator-page.dash-skin .dash-btn-next {
+  background: var(--d-blue);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.25);
+}
+body.generator-page.dash-skin .dash-btn-next:hover {
+  background: var(--d-blue-hover);
+  transform: translateY(-1px);
+}
+body.generator-page.dash-skin .dash-btn-next.ghost {
+  background: transparent;
+  color: var(--d-text-sec);
+  border: 2px solid var(--d-border);
+  box-shadow: none;
+}
+body.generator-page.dash-skin .dash-btn-next.ghost:hover {
+  background: var(--d-surface-2);
+  color: var(--d-text);
+}
+body.generator-page.dash-skin .dash-btn-next.pulse {
+  animation: dashPulse 1.8s ease-in-out infinite;
+}
+body.generator-page.dash-skin .dash-btn-back {
+  background: transparent;
+  color: var(--d-text-sec);
+  border: 2px solid var(--d-border);
+  min-height: 48px;
+  padding: 10px 20px;
+  font-size: 15px;
+}
+body.generator-page.dash-skin .dash-btn-back:hover {
+  background: var(--d-surface-2);
+  color: var(--d-text);
+}
+body.generator-page.dash-skin .dash-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: none;
+  color: var(--d-blue);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 8px 6px;
+}
+body.generator-page.dash-skin .dash-link:hover {
+  color: var(--d-blue-hover);
+  text-decoration: underline;
+}
+body.generator-page.dash-skin .dash-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Lépés-navigáció ── */
+body.generator-page.dash-skin .dash-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 24px;
+  flex-wrap: wrap;
+}
+
+/* ── 2. lépés: mezők ── */
+body.generator-page.dash-skin .dash-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+  margin: 0 0 4px;
+}
+body.generator-page.dash-skin .dash-field {
+  background: var(--d-surface-2);
+  border-left: 4px solid var(--d-blue);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+body.generator-page.dash-skin .dash-field b {
+  color: var(--d-text);
+}
+body.generator-page.dash-skin .dash-field span {
+  color: var(--d-text-sec);
+}
+body.generator-page.dash-skin .dash-field i {
+  display: block;
+  margin-top: 2px;
+  color: var(--d-text-muted);
+  font-size: 13px;
+}
+body.generator-page.dash-skin .dash-note {
+  margin: 16px 0 0;
+  padding: 14px 16px;
+  background: var(--d-blue-light);
+  border-radius: 10px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--d-text);
+}
+
+/* ── 3. lépés: dropzone ── */
+body.generator-page.dash-skin .dash-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 46px 24px;
+  border: 3px dashed var(--d-blue);
+  border-radius: 16px;
+  background: var(--d-blue-light);
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+}
+body.generator-page.dash-skin .dash-drop:hover {
+  background: var(--d-blue-mid);
+}
+body.generator-page.dash-skin .dash-drop.over {
+  background: var(--d-blue-mid);
+  border-style: solid;
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(29, 78, 216, 0.2);
+}
+body.generator-page.dash-skin .dash-drop.busy {
+  background: var(--d-surface-2);
+  border-color: var(--d-border);
+  cursor: default;
+}
+body.generator-page.dash-skin .dash-drop-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--d-blue);
+}
+body.generator-page.dash-skin .dash-drop-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--d-text);
+}
+body.generator-page.dash-skin .dash-drop-sub {
+  font-size: 14px;
+  color: var(--d-text-sec);
+}
+body.generator-page.dash-skin .dash-drop-spinner {
+  width: 44px;
+  height: 44px;
+  border: 5px solid var(--d-blue-mid);
+  border-top-color: var(--d-blue);
+  border-radius: 50%;
+  animation: dashSpin 1s linear infinite;
+}
+
+/* ── 4. lépés: előnézet — kétoszlopos (a demo elrendezése) ── */
+body.generator-page.dash-skin .dash-panel-preview {
+  display: grid;
+  /* Keskenyebb bal oszlop + kisebb gap/padding → a jobb oszlop elég széles a
+     teljes A4 címke-oldalhoz (~726px), így nem vágja le a szélső címkéket. */
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 18px;
+  padding: 18px 18px;
+  overflow: hidden; /* a belső .dash-preview görget, nem a panel */
+}
+body.generator-page.dash-skin .dash-preview-left {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+body.generator-page.dash-skin .dash-preview-left .dash-ok-inline {
+  align-self: flex-start;
+}
+/* A műveletek a bal oszlop aljára tapadnak (mint a demónál) */
+body.generator-page.dash-skin .dash-left-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+}
+body.generator-page.dash-skin .dash-left-actions .dash-btn-primary,
+body.generator-page.dash-skin .dash-left-actions .dash-btn-download {
+  width: 100%;
+  margin: 0;
+}
+/* "Új fájl" ugyanakkora, mint a felette lévő (letöltés) gomb: teljes szélesség,
+   azonos magasság - csak a másodlagos (ghost) stílust tartja meg. */
+body.generator-page.dash-skin .dash-btn-newfile {
+  width: 100%;
+  min-height: 56px;
+  margin: 0;
+  padding: 14px 24px;
+  font-size: 16px;
+}
+/* "Adatok megtekintése" középre igazítva (nem nyúlik teljes szélességre) */
+body.generator-page.dash-skin .dash-link-center {
+  align-self: center;
+}
+body.generator-page.dash-skin .dash-left-actions .dash-nav {
+  margin-top: 0;
+  padding-top: 0;
+}
+body.generator-page.dash-skin .dash-edit-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 14px;
+  background: var(--d-blue-light);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--d-text);
+}
+body.generator-page.dash-skin .dash-edit-note svg {
+  width: 17px;
+  height: 17px;
+  color: var(--d-blue);
+  flex-shrink: 0;
+}
+body.generator-page.dash-skin .dash-preview-right {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+/* Nyomtatási összefoglaló chippek a fejlécben, a lépéscím mellett jobbra,
+   egy sorban (bizalom: mit nyomtatok, mielőtt nyomtatok). */
+body.generator-page.dash-skin .dash-head-summary {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+body.generator-page.dash-skin .dash-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: var(--d-blue-light);
+  border: 1px solid var(--d-blue-mid);
+  color: var(--d-blue-hover);
+  font-size: 13.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+body.generator-page.dash-skin .dash-chip svg {
+  width: 16px;
+  height: 16px;
+  /* Fehér korong + lágy árnyék az ikon mögött, hogy ne olvadjon a háttérbe */
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 3px;
+  box-sizing: content-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+body.generator-page.dash-skin .dash-logo-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 16px;
+}
+body.generator-page.dash-skin .dash-logo-q {
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--d-text);
+}
+body.generator-page.dash-skin .dash-logo-opts {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+body.generator-page.dash-skin .dash-logo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: var(--d-surface);
+  border: 2px solid var(--d-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+body.generator-page.dash-skin .dash-logo input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+body.generator-page.dash-skin .dash-logo.sel {
+  border-color: var(--d-blue);
+  background: var(--d-blue-light);
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+}
+body.generator-page.dash-skin .dash-logo-img {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+}
+body.generator-page.dash-skin .dash-logo span {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--d-text);
+}
+/* A címke-előnézet: belső görgetés → az ablak fix marad, PDF-biztos.
+   A jobb oszlopot (dash-preview-right) tölti ki. */
+body.generator-page.dash-skin .dash-preview {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  overflow: auto;
+  border: 1.5px solid var(--d-border);
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+  box-sizing: border-box;
+}
+/* Ha a címke-oldal szélesebb a konténernél, a "safe center" a bal szélt is
+   elérhetővé teszi (nem vágja le) - egyébként középre igazít. */
+body.generator-page.dash-skin .dash-preview #labels {
+  align-items: center;
+  align-items: safe center;
+}
+/* Siker-/reset-állapot a keskeny bal oszlopban → függőleges elrendezés */
+body.generator-page.dash-skin .dash-done {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+}
+body.generator-page.dash-skin .dash-done .dash-ok {
+  margin: 0;
+  width: fit-content;
+}
+body.generator-page.dash-skin .dash-done .dash-btn {
+  width: 100%;
+}
+
+/* ── PDF-folyamatjelző ── */
+body.generator-page.dash-skin .dash-progress {
+  position: relative;
+  height: 44px;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 999px;
+  background: var(--d-surface-2);
+  border: 2px solid var(--d-border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+body.generator-page.dash-skin .dash-progress-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, var(--d-blue), var(--d-blue-hover));
+  transition: width 0.25s ease;
+}
+body.generator-page.dash-skin .dash-progress-text {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--d-text);
+  mix-blend-mode: difference;
+  filter: invert(1);
+}
+
+/* ── Animációk ── */
+@keyframes dashIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes dashPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  60% {
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes dashPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(29, 78, 216, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 9px rgba(29, 78, 216, 0);
+  }
+}
+@keyframes dashSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Confetti (csak az első generálásnál, egyszer lejátszva) ── */
+body.generator-page.dash-skin .dash-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 6;
+}
+body.generator-page.dash-skin .dash-confetti span {
+  position: absolute;
+  top: -14px;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0;
+  animation-name: dashConfettiFall;
+  animation-timing-function: ease-in;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+@keyframes dashConfettiFall {
+  0% {
+    top: -14px;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  100% {
+    top: 102%;
+    opacity: 0;
+  }
+}
+
+/* ═══ Adattábla-modal + alert — a demo skin átvétele (azonos arculat) ═══ */
+body.generator-page.dash-skin .data-table-modal {
+  background: var(--d-surface);
+  border: 2px solid var(--d-border-strong);
+  border-radius: 16px;
+  color: var(--d-text);
+  font-family: inherit;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+body.generator-page.dash-skin .data-table-header h2 {
+  color: var(--d-text);
+  font-weight: 800;
+}
+body.generator-page.dash-skin .data-table-close-btn {
+  background: var(--d-surface);
+  color: var(--d-text-sec);
+  border: 2px solid var(--d-border);
+  border-radius: 8px;
+  font-family: inherit;
+}
+body.generator-page.dash-skin .data-table-close-btn:hover {
+  background: var(--d-surface-2);
+  color: var(--d-text);
+}
+body.generator-page.dash-skin .data-table-scroll {
+  border: 1.5px solid var(--d-border);
+  border-radius: 10px;
+}
+body.generator-page.dash-skin .data-preview-table th {
+  background: var(--d-surface-2);
+  color: var(--d-text);
+  border-right: 1px solid var(--d-border);
+  border-bottom: 2px solid var(--d-border);
+}
+body.generator-page.dash-skin .data-preview-table th.col-readonly {
+  color: var(--d-text-muted);
+}
+body.generator-page.dash-skin .data-preview-table td {
+  border-right: 1px solid #edebe5;
+  border-bottom: 1px solid #edebe5;
+}
+body.generator-page.dash-skin .data-preview-table tr:nth-child(even) td {
+  background: #faf9f6;
+}
+body.generator-page.dash-skin .table-cell-input {
+  background: var(--d-surface);
+  border: 1px solid var(--d-border);
+  border-radius: 6px;
+  color: var(--d-text);
+  font-family: inherit;
+}
+body.generator-page.dash-skin .table-cell-input:hover {
+  background: var(--d-blue-light);
+}
+body.generator-page.dash-skin .table-cell-input:focus {
+  border-color: var(--d-blue);
+  box-shadow: 0 0 0 2px var(--d-blue-light);
+}
+body.generator-page.dash-skin .cell-readonly {
+  background: var(--d-surface-2);
+  color: var(--d-text-muted);
+}
+body.generator-page.dash-skin .data-table-save-btn {
+  background: var(--d-blue);
+  color: #ffffff;
+  border-radius: 10px;
+  font-family: inherit;
+  transition: background 0.2s, transform 0.15s;
+}
+body.generator-page.dash-skin .data-table-save-btn:hover {
+  background: var(--d-blue-hover);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+body.generator-page.dash-skin .custom-alert-overlay {
+  background: rgba(28, 28, 28, 0.55);
+}
+body.generator-page.dash-skin .custom-alert-modal {
+  background: var(--d-surface);
+  border: 2px solid var(--d-border-strong);
+  border-radius: 16px;
+  font-family: inherit;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+body.generator-page.dash-skin .custom-alert-header {
+  border-bottom: 1.5px solid var(--d-border);
+}
+body.generator-page.dash-skin .custom-alert-title {
+  color: var(--d-blue);
+  font-weight: 800;
+}
+body.generator-page.dash-skin .custom-alert-close {
+  color: var(--d-text-muted);
+}
+body.generator-page.dash-skin .custom-alert-close:hover {
+  color: var(--d-text);
+}
+body.generator-page.dash-skin .custom-alert-message {
+  color: var(--d-text);
+}
+body.generator-page.dash-skin .custom-alert-ok {
+  background: var(--d-blue);
+  color: #ffffff;
+  border-radius: 10px;
+  font-family: inherit;
+  padding: 10px 32px;
+}
+body.generator-page.dash-skin .custom-alert-ok:hover {
+  background: var(--d-blue-hover);
+}
+/* Vékony görgetősávok, mint a demónál */
+body.generator-page.dash-skin .dash-preview,
+body.generator-page.dash-skin .dash-panel,
+body.generator-page.dash-skin .data-table-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--d-border) transparent;
+}
+body.generator-page.dash-skin .dash-preview::-webkit-scrollbar,
+body.generator-page.dash-skin .dash-panel::-webkit-scrollbar,
+body.generator-page.dash-skin .data-table-scroll::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+body.generator-page.dash-skin .dash-preview::-webkit-scrollbar-thumb,
+body.generator-page.dash-skin .dash-panel::-webkit-scrollbar-thumb,
+body.generator-page.dash-skin .data-table-scroll::-webkit-scrollbar-thumb {
+  background: var(--d-border);
+  border-radius: 5px;
+}
+
+/* ── Reszponzív: keskeny képernyőn a dashboard fölülre kerül ── */
+@media (max-width: 860px) {
+  body.generator-page.dash-skin .dash-body {
+    flex-direction: column;
+  }
+  body.generator-page.dash-skin .dash-sidebar {
+    flex: 0 0 auto;
+    border-right: none;
+    border-bottom: 2px solid var(--d-border);
+    padding: 12px;
+  }
+  body.generator-page.dash-skin .dash-steplist {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  body.generator-page.dash-skin .dash-step:not(:last-child)::before {
+    display: none;
+  }
+  body.generator-page.dash-skin .dash-step-sub {
+    display: none;
+  }
+  /* Az info-címke a vízszintes sávban zavaró lenne → keskeny nézetben elrejtjük */
+  body.generator-page.dash-skin .dash-info-card {
+    display: none;
+  }
+  /* A 4. lépés kétoszlopos elrendezése egymás alá kerül */
+  body.generator-page.dash-skin .dash-panel-preview {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+}

@@ -76,6 +76,14 @@ export interface SubpageConfig {
   arvaltozasEnabled: boolean;
   cimbiEnabled: boolean;
   isDemo: boolean;
+  /**
+   * A generátor felület elrendezése.
+   * - "classic" (alap): a régi kétpaneles LL-elrendezés (bal vezérlők, jobb címkék).
+   * - "dashboard": új, a főoldalhoz illő elrendezés — bal oldali számozott lépés-dashboard
+   *   + jobb oldali nagy panel, lépésenkénti tartalommal és auto-léptetéssel.
+   * Config-vezérelt, hogy később bármelyik aloldal egy sorral átállítható legyen.
+   */
+  uiStyle?: "classic" | "dashboard";
   /** Vízjel-oszlopok szövegei (a címke hátterében, függőlegesen). */
   watermarkColumns?: string[];
   maxRows?: number;

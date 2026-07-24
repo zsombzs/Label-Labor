@@ -23,15 +23,16 @@ export function buildTableColumns(config: SubpageConfig): TableColumn[] {
   ];
   if (ditall) cols.push({ key: "Szín", editable: true });
   cols.push({ key: "Kiszerelés", editable: true });
-  if (config.saleEnabled) cols.push({ key: "Akciós_ár", editable: true });
   cols.push(
     { key: "Első_sor", editable: true },
     { key: "Második_sor", editable: true },
     { key: "Harmadik_sor", editable: true },
   );
   if (ditall) cols.push({ key: "Negyedik_sor", editable: false });
+  // Az akciós ár a rendes ár oszlop UTÁN jelenjen meg.
+  cols.push({ key: "Ár", editable: true });
+  if (config.saleEnabled) cols.push({ key: "Akciós_ár", editable: true });
   cols.push(
-    { key: "Ár", editable: true },
     { key: "ml", editable: false },
     { key: "l", editable: false },
     { key: "kg", editable: false },

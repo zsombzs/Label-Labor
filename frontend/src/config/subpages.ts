@@ -93,7 +93,7 @@ export const subpages: Record<string, SubpageConfig> = {
   hudak: {
     subpageId: "hudak",
     companyUsername: "HUDAK",
-    uiTexts: { focim: "Hudák Kft. címkéi", alcim: "Címke generátor 1.0.0" },
+    uiTexts: { focim: "Label Labor - Hudák", alcim: "Címkegenerátor 1.0.0" },
     pdfFilename: "hudak_cimkek.pdf",
     templates: [{ label: "Sablon Excel", file: "hudak_sablon.xlsx" }],
     logos: [
@@ -113,6 +113,7 @@ export const subpages: Record<string, SubpageConfig> = {
     arvaltozasEnabled: false, // LL-only beta - itt SOHA
     cimbiEnabled: true,
     isDemo: false,
+    uiStyle: "dashboard", // ÚJ, főoldalhoz illő elrendezés (teszt-ügyfél; később bárkire kiterjeszthető)
   },
 
   // Ritzer helyén: nyilvános demo - részletek: DEMO_OLDAL_TERV.md
